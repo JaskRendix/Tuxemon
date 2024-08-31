@@ -86,8 +86,17 @@
         "sprite_name": "scientist",
         "combat_front": "scientist",
         "slug": "scientist"
-      }
-  
+      },
+    "ai": 
+      {
+        "low_health_opponent_threshold": 0.2,
+        "high_health_opponent_threshold": 0.8,
+        "low_health_user_threshold": 0.2,
+        "high_health_user_threshold": 0.8,
+        "type_bonus": 5,
+        "type_penalty": -5,
+        "type_standard": 1
+      }  
   },
   {
     "slug": "spyder_route3_connor",

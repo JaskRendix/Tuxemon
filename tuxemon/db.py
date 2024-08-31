@@ -969,6 +969,40 @@ class BagItemModel(BaseModel):
         raise ValueError(f"the item {v} doesn't exist in the db")
 
 
+class NpcAIModel(BaseModel):
+    # Thresholds opponent
+    low_health_opponent_threshold: float = Field(
+        0.0, description="Low health opponent threshold", ge=-1.0, lt=1.0
+    )
+    high_health_opponent_threshold: float = Field(
+        0.0, description="High health opponent threshold", ge=-1.0, lt=1.0
+    )
+    # Thresholds user
+    low_health_user_threshold: float = Field(
+        0.0, description="Low health user threshold", ge=-1.0, lt=1.0
+    )
+    high_health_user_threshold: float = Field(
+        0.0, description="High health user threshold", ge=-1.0, lt=1.0
+    )
+    # Type bonus / penalty
+    type_standard: int = Field(
+        0, description="Type weight (multiplier = 1)", ge=-5, le=5
+    )
+    type_bonus: int = Field(
+        0, description="Type weight bonus (multiplier > 1)", ge=0, le=5
+    )
+    type_penalty: int = Field(
+        0, description="Type weight (multiplier < 1)", ge=-5, le=0
+    )
+    # Item
+    critical_threshold_item: float = Field(
+        0.0,
+        description="Critical health threshold to use a potion",
+        ge=0.0,
+        le=1.0,
+    )
+
+
 class NpcTemplateModel(BaseModel):
     sprite_name: str = Field(
         ..., description="Name of the overworld sprite filename"
@@ -1013,6 +1047,7 @@ class NpcTemplateModel(BaseModel):
 class NpcModel(BaseModel):
     slug: str = Field(..., description="Slug of the name of the NPC")
     forfeit: bool = Field(False, description="Whether you can forfeit or not")
+    ai: Optional[NpcAIModel] = Field(None)
     template: NpcTemplateModel
     monsters: Sequence[PartyMemberModel] = Field(
         [], description="List of monsters in the NPCs party"

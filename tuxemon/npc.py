@@ -96,6 +96,7 @@ class NPC(Entity[NPCState]):
         # load initial data from the npc database
         npc_data = db.lookup(npc_slug, table="npc")
         self.template = npc_data.template
+        self.ai = npc_data.ai
 
         # This is the NPC's name to be used in dialog
         self.name = T.translate(self.slug)
@@ -850,6 +851,10 @@ class NPC(Entity[NPCState]):
 
         # load NPC template
         self.template = npc_details.template
+        if npc_details.ai is not None:
+            self.ai = npc_details.ai.model_dump()
+        else:
+            self.ai = {}
         self.load_sprites()
 
     def has_tech(self, tech: Optional[str]) -> bool:
