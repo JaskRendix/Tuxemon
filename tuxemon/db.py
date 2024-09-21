@@ -160,6 +160,31 @@ class MapType(str, Enum):
     dungeon = "dungeon"
 
 
+class MapTerrain(str, Enum):
+    ANY = "Any"
+    ARCTIC = "Arctic"
+    BOREAL_SNOW = "Boreal/Snow"
+    COASTAL = "Coastal"
+    DESERT = "Desert"
+    EXTRAPLANAR = "Extraplanar"
+    EXTRATERRESTRIAL = "Extraterrestrial"
+    FRESHWATER = "Freshwater"
+    GEOTHERMAL = "Geothermal"
+    GRASSLAND = "Grassland"
+    JUNGLE = "Jungle"
+    LAVA = "Lava"
+    MOUNTAINS = "Mountains"
+    RUINS = "Ruins"
+    SEA = "Sea"
+    SWAMP = "Swamp"
+    TUNDRA = "Tundra"
+    UNDERGROUND = "Underground"
+    URBAN = "Urban"
+    VOLCANIC = "Volcanic"
+    WOODLAND = "Woodland"
+    OTHER = "Other"
+
+
 class StatType(str, Enum):
     armour = "armour"
     dodge = "dodge"
