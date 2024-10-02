@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import math
-from collections.abc import Callable, Container, Iterator, Sequence
+from collections.abc import Callable, Container, Iterable, Iterator, Sequence
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -492,6 +492,16 @@ class VisualSpriteList(RelativeGroup[_MenuElement]):
         """
         super().add(*sprites, **kwargs)
         self._needs_arrange = True
+
+    def extend(self, items: Iterable[_MenuElement]) -> None:
+        """
+        Add multiple items to the sprite group.
+
+        Parameters:
+            items: Items to add.
+        """
+        for item in items:
+            self.add(item)
 
     def remove(
         self,

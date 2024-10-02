@@ -664,10 +664,7 @@ class Menu(Generic[T], state.State):
         if self.shrink_to_items:
             self.fit_border()
 
-    def draw(
-        self,
-        surface: pygame.surface.Surface,
-    ) -> None:
+    def draw(self, surface: pygame.surface.Surface) -> None:
         """
         Draws the menu object to a pygame surface.
 

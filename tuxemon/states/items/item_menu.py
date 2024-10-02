@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Generator, Sequence
+from typing import Optional
 
 import pygame
 
@@ -14,10 +15,21 @@ from tuxemon.locale import T
 from tuxemon.menu.interface import MenuItem
 from tuxemon.menu.menu import Menu
 from tuxemon.monster import Monster
+from tuxemon.platform.const import buttons
+from tuxemon.platform.events import PlayerInput
 from tuxemon.session import local_session
 from tuxemon.sprite import Sprite
 from tuxemon.states.monster import MonsterMenuState
 from tuxemon.ui.text import TextArea
+
+SCROLLBAR_WIDTH = 10
+SCROLLBAR_COLOR = (200, 200, 200)
+SCROLLBAR_THUMB_COLOR = (100, 100, 100)
+
+SCROLLBAR_WIDTH = 10
+SCROLLBAR_COLOR = (200, 200, 200)
+SCROLLBAR_THUMB_COLOR = (100, 100, 100)
+SCROLLBAR_HOVER_COLOR = (150, 150, 150)
 
 
 def sort_inventory(
@@ -74,6 +86,8 @@ class ItemMenuState(Menu[Item]):
         self.text_area = TextArea(self.font, self.font_color, (96, 96, 128))
         self.text_area.rect = rect
         self.sprites.add(self.text_area, layer=100)
+        self.scroll_offset = 0
+        self.visible_items = 10
 
         # load the backpack icon
         self.backpack_center = self.rect.width * 0.16, self.rect.height * 0.45
@@ -221,10 +235,21 @@ class ItemMenuState(Menu[Item]):
         if not inventory:
             return
 
-        for obj in sort_inventory(inventory):
-            label = f"{obj.name} x {obj.quantity}"
-            image = self.shadow_text(label, bg=prepare.DIMGRAY_COLOR)
-            yield MenuItem(image, obj.name, obj.description, obj)
+        sorted_inventory = sort_inventory(inventory)
+        visible_inventory = sorted_inventory[
+            self.scroll_offset : self.scroll_offset + self.visible_items
+        ]
+
+        for obj in visible_inventory:
+            if obj is not None and isinstance(obj, Item):
+                label = f"{obj.name} x {obj.quantity}"
+                image = self.shadow_text(label, bg=prepare.DIMGRAY_COLOR)
+                yield MenuItem(image, obj.name, obj.description, obj)
+
+    def refresh_menu_items(self) -> None:
+        self.menu_items.clear()
+        self.menu_items.extend(self.initialize_items())
+        self.on_menu_selection_change()
 
     def get_inventory(self, state: str) -> list[Item]:
         """Get player inventory items based on the current state."""
@@ -264,3 +289,51 @@ class ItemMenuState(Menu[Item]):
         """Show the description of the selected item."""
         if item.description:
             self.alert(item.description)
+
+    def _draw_scrollbar(self, surface: pygame.surface.Surface) -> None:
+        inventory = self.get_inventory(self.determine_state_called_from())
+        if len(inventory) > self.visible_items:
+            scrollbar_height = int(
+                (self.visible_items / len(inventory)) * self.rect.height
+            )
+
+            scrollbar_pos = int(
+                (self.scroll_offset / len(inventory)) * self.rect.height
+            )
+
+            scrollbar_rect = pygame.Rect(
+                self.rect.right - SCROLLBAR_WIDTH - 5,
+                self.rect.top + scrollbar_pos + 5,
+                SCROLLBAR_WIDTH,
+                scrollbar_height,
+            )
+            if scrollbar_rect.collidepoint(pygame.mouse.get_pos()):
+                pygame.draw.rect(
+                    surface, SCROLLBAR_HOVER_COLOR, scrollbar_rect
+                )
+            else:
+                pygame.draw.rect(surface, SCROLLBAR_COLOR, scrollbar_rect)
+
+            pygame.draw.rect(
+                surface, SCROLLBAR_THUMB_COLOR, scrollbar_rect.inflate(-2, -2)
+            )
+
+    def process_event(self, event: PlayerInput) -> Optional[PlayerInput]:
+        if event.button == buttons.UP and event.pressed:
+            self.scroll_offset = max(0, self.scroll_offset - 1)
+            self.refresh_menu_items()
+        elif event.button == buttons.DOWN and event.pressed:
+            max_offset = max(
+                0,
+                len(self.get_inventory(self.determine_state_called_from()))
+                - self.visible_items,
+            )
+            self.scroll_offset = min(max_offset, self.scroll_offset + 1)
+            self.refresh_menu_items()
+        else:
+            return super().process_event(event)
+        return None
+
+    def draw(self, surface: pygame.surface.Surface) -> None:
+        super().draw(surface)
+        self._draw_scrollbar(surface)
