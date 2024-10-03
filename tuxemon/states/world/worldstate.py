@@ -51,7 +51,6 @@ if TYPE_CHECKING:
     from tuxemon.monster import Monster
     from tuxemon.networking import EventData
     from tuxemon.npc import NPC
-    from tuxemon.player import Player
 
 logger = logging.getLogger(__name__)
 
@@ -174,7 +173,7 @@ class WorldState(state.State):
         self.camera = Camera(local_session.player, self.boundary_checker)
 
         if map_name:
-            self.change_map(map_name)
+            self.change_map(map_name, local_session.player)
         else:
             raise ValueError("You must pass the map name to load")
 
@@ -594,7 +593,7 @@ class WorldState(state.State):
     so it doesn't rely on a running game, players, or a screen
     """
 
-    def add_player(self, player: Player) -> None:
+    def add_player(self, entity: NPC) -> None:
         """
         WIP.  Eventually handle players coming and going (for server).
 
@@ -602,8 +601,8 @@ class WorldState(state.State):
             player: Player to add to the world.
 
         """
-        self.player = player
-        self.add_entity(player)
+        self.player = entity
+        self.add_entity(entity)
 
     def add_entity(self, entity: Entity[Any]) -> None:
         """
@@ -1218,15 +1217,23 @@ class WorldState(state.State):
     ####################################################
     #             Map Change/Load Functions            #
     ####################################################
-    def change_map(self, map_name: str) -> None:
+    def change_map(
+        self, map_name: str, character: Optional[NPC] = None
+    ) -> None:
         """
         Changes the current map and updates the player state.
 
         Parameters:
             map_name: The name of the map to load.
+            character: The character to focus on after loading the map. Defaults to None.
         """
         self.load_and_update_map(map_name)
-        self.update_player_state()
+        if character:
+            self.add_player(character)
+            self.stop_char(character)
+            self.set_player_spawn_position(character)
+        else:
+            self.camera.set_default_state()
 
     def load_and_update_map(self, map_name: str) -> None:
         """
@@ -1260,18 +1267,6 @@ class WorldState(state.State):
         """
         self.npcs = []
         self.npcs_off_map = []
-
-    def update_player_state(self) -> None:
-        """
-        Updates the player's state after changing maps.
-
-        Parameters:
-            player: The player object to update.
-        """
-        player = local_session.player
-        self.add_player(player)
-        self.stop_char(player)
-        self.set_player_spawn_position(player)
 
     def set_player_spawn_position(self, character: NPC) -> None:
         """

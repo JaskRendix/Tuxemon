@@ -94,7 +94,7 @@ class Teleporter:
             world.current_map is None
             or target_map != world.current_map.filename
         ):
-            world.change_map(target_map)
+            world.change_map(target_map, character)
             logger.debug(f"Loaded map '{target_map}'")
 
             if not world.boundary_checker.is_within_boundaries((x, y)):
@@ -110,3 +110,31 @@ class Teleporter:
 
         logger.debug(f"Unlocking {character.slug}'s controls")
         world.unlock_controls(character)
+
+    def teleport(
+        self,
+        world: WorldState,
+        map_name: str,
+    ) -> None:
+        """
+        Teleport to a specific map.
+
+        Parameters:
+            world: The current game state.
+            map_name: The name of the map to teleport to.
+        """
+
+        try:
+            target_map = prepare.fetch("maps", map_name)
+        except FileNotFoundError:
+            logger.error(f"Map '{map_name}' not found")
+            return
+
+        if (
+            world.current_map is None
+            or target_map != world.current_map.filename
+        ):
+            world.change_map(target_map)
+            logger.debug(f"Loaded map '{target_map}'")
+
+        logger.debug(f"Teleported to {map_name}")

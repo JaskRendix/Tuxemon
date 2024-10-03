@@ -65,6 +65,11 @@ class Camera:
         self.free_roaming_enabled = False
         self.boundary = boundary
 
+    def set_default_state(self) -> None:
+        self.position = Vector2(0, 0)
+        self.follows_entity = False
+        self.free_roaming_enabled = True
+
     def follow(self) -> None:
         """
         Start the camera following the current entity.
