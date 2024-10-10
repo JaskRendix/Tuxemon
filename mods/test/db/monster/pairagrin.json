@@ -1,0 +1,38 @@
+{
+    "slug": "pairagrin",
+    "category": "bird",
+    "moveset": [
+        {
+            "level_learned": 2,
+            "technique": "peck"
+        },
+        {
+            "level_learned": 2,
+            "technique": "whirlwind"
+        }
+    ],
+    "evolutions": [
+        {
+            "at_level": 26,
+            "monster_slug": "pairagrim"
+        }
+    ],
+    "history": [
+        {
+            "mon_slug": "pairagrim",
+            "evo_stage": "stage1"
+        }
+    ],
+    "shape": "flier",
+    "stage": "basic",
+    "types": [
+        "wood"
+    ],
+    "possible_genders": ["male", "female"],
+    "txmn_id": 181,
+    "height": 70,
+    "weight": 4,
+    "catch_rate": 100.0,
+    "lower_catch_resistance": 0.95,
+    "upper_catch_resistance": 1.05
+}

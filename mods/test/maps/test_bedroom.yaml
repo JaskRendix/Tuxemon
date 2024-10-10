@@ -1,0 +1,94 @@
+events:
+  Go Downstairs:
+    actions:
+    - transition_teleport test_house.tmx,0,2,0.3
+    - char_face player,down
+    conditions:
+    - is char_at player
+    x: 7
+    y: 2
+    type: "event"
+  Use Computer:
+    actions:
+    - change_state PCState
+    conditions:
+    - is char_facing_tile player
+    - is button_pressed K_RETURN
+    x: 3
+    y: 1
+    type: "event"
+  Player Spawn:
+    x: 3
+    y: 4
+    type: "event"
+  Resting in Bed:
+    actions:
+    - screen_transition 1
+    - wait 0.5
+    - translated_dialog test_restinbed
+    - set_monster_health
+    - set_monster_status
+    - set_variable teleport_faint:test_bedroom.tmx 6 5
+    conditions:
+    - is button_pressed K_RETURN
+    - is char_facing_tile player
+    height: 2
+    width: 1
+    x: 0
+    y: 2
+    type: "event"
+  Intro:
+    actions:
+    - change_bg gradient_blue,rockitten
+    - translated_dialog test_skip_question
+    - translated_dialog_choice no:yes,question_arch
+    conditions:
+    - not variable_set question_arch:yes
+    - not variable_set question_arch:no
+    x: 8
+    y: 0
+    type: "event"
+  Intro Yes:
+    actions:
+    - translated_dialog test_intro_1
+    - change_bg gradient_blue,ceo
+    - translated_dialog test_intro_2
+    - change_bg gradient_blue,rockitten
+    - translated_dialog test_intro_3
+    - translated_dialog test_intro_question
+    - rename_player random
+    - change_bg
+    - set_variable test_intro:done
+    conditions:
+    - is variable_set question_arch:no
+    - not variable_set test_intro:done
+    x: 8
+    y: 1
+    type: "event"
+  Intro No:
+    actions:
+    - translated_dialog test_intro_question
+    - rename_player random
+    - change_bg
+    - set_variable test_intro:done
+    conditions:
+    - is variable_set question_arch:yes
+    - not variable_set test_intro:done
+    x: 9
+    y: 0
+    type: "event"
+  Play Music:
+    actions:
+    - play_music music_home
+    conditions:
+    - not music_playing music_home
+    type: "event"
+  Auto healing teleported:
+    actions:
+    - set_monster_health
+    - set_monster_status
+    - set_variable teleport_clinic:none
+    conditions:
+    - is variable_set teleport_clinic:lost
+    - is current_state WorldState
+    type: "event"

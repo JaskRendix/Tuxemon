@@ -1,0 +1,137 @@
+events:
+  Teleport Faint:
+    actions:
+    - teleport_faint
+    conditions:
+    - is char_defeated player
+    - not location_type clinic
+    - not location_name wayfarer_inn1:wayfarer_inn2:scoop3:scoop4:paper_town:bedroom
+    - is current_state WorldState
+    type: "event"
+  Auto healing teleported:
+    actions:
+    - set_monster_health
+    - set_monster_status
+    - set_variable teleport_clinic:none
+    - format_variable cathedral_fee,int
+    - modify_money bill_cathedral,,cathedral_fee
+    conditions:
+    - is location_type clinic
+    - is variable_set teleport_clinic:lost
+    - is current_state WorldState
+    type: "event"
+  Evolution all:
+    actions:
+    - evolution player
+    conditions:
+    - is check_evolution player
+    - is current_state WorldState
+    type: "event"
+  Choice Surf:
+    actions:
+    - translated_dialog itsswimmingtime
+    - translated_dialog_choice yes:no,swimming
+    conditions:
+    - is has_item player,surfboard
+    - is char_facing_tile player,surfable
+    - is button_pressed K_RETURN
+    - not char_in player,surfable
+    type: "event"
+  Surfable:
+    actions:
+    - set_template player,swimmer
+    conditions:
+    - is char_in player,surfable
+    - not char_sprite player,swimmer
+    type: "event"
+  Not surfable Boy:
+    actions:
+    - set_template player,adventurer,adventurer
+    - set_variable swimming:no
+    conditions:
+    - not char_in player,surfable
+    - is char_sprite player,swimmer
+    - is variable_set gender_choice:gender_male
+    type: "event"
+  Not surfable Girl:
+    actions:
+    - set_template player,heroine,heroine
+    - set_variable swimming:no
+    conditions:
+    - not char_in player,surfable
+    - is char_sprite player,swimmer
+    - is variable_set gender_choice:gender_female
+    type: "event"
+  Allow Swim:
+    actions:
+    - update_tile_properties surfable
+    conditions:
+    - is variable_set swimming:yes
+    - is current_state WorldState
+    type: "event"
+  Forbid Swim:
+    actions:
+    - update_tile_properties surfable,0
+    conditions:
+    - is variable_set swimming:no
+    - is current_state WorldState
+    type: "event"
+  Swim Encounters Day:
+    actions:
+    - random_encounter routec,0.25
+    conditions:
+    - is char_sprite player,swimmer
+    - is current_state WorldState
+    - is check_char_parameter player,moving,1
+    - is variable_set environment:ocean
+    type: "event"
+  Swim Encounters Night:
+    actions:
+    - random_encounter routec,0.75
+    conditions:
+    - is char_sprite player,swimmer
+    - is current_state WorldState
+    - is check_char_parameter player,moving,1
+    - is variable_set environment:night_ocean
+    type: "event"
+  Swim Day Environment:
+    actions:
+    - set_variable environment:ocean
+    conditions:
+    - is char_sprite player,swimmer
+    - not variable_set stage_of_day:night
+    - not variable_set environment:ocean
+    type: "event"
+  Swim Night Environment:
+    actions:
+    - set_variable environment:night_ocean
+    conditions:
+    - is char_sprite player,swimmer
+    - is variable_set stage_of_day:night
+    - not variable_set environment:night_ocean
+    type: "event"
+  Night Day Cycle Outside:
+    actions:
+    - set_layer 0:0:128:128
+    conditions:
+    - is variable_set stage_of_day:night
+    - not location_inside
+    - not check_world layer,0:0:128:128
+    type: "event"
+  Night Day Cycle Inside:
+    actions:
+    - set_layer
+    conditions:
+    - is variable_set stage_of_day:night
+    - is location_inside
+    - not check_world layer,255:255:255:0
+    type: "event"
+  Check Max Moves:
+    actions:
+    - translated_dialog new_tech_delete
+    - get_monster_tech chosen_tech
+    - remove_tech chosen_tech
+    conditions:
+    - is check_max_tech
+    - is current_state MainCombatMenuState
+    type: "event"

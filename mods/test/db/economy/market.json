@@ -1,0 +1,10 @@
+{
+  "slug": "market",
+  "items": [
+    {
+      "item_name": "tuxeball",
+      "price": 50,
+      "cost": 10
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+[
+  {
+  "slug": "npc_red",
+  "template": 
+    {
+      "sprite_name": "adventurer",
+      "combat_front": "adventurer",
+      "slug": "adventurer"
+    }
+  },
+  {
+    "slug": "test_mom",
+    "template": 
+      {
+        "sprite_name": "florist_fiery",
+        "combat_front": "florist",
+        "slug": "florist"
+      }
+  
+  },
+  {
+    "slug": "test_silver",
+    "template": 
+      {
+        "sprite_name": "florist_fiery",
+        "combat_front": "florist",
+        "slug": "florist"
+      }  
+  }
+]
