@@ -18,7 +18,7 @@ events:
     y: 1
     type: "event"
   Player Spawn:
-    x: 3
+    x: 4
     y: 4
     type: "event"
   Resting in Bed:
@@ -39,43 +39,11 @@ events:
     type: "event"
   Intro:
     actions:
-    - change_bg gradient_blue,rockitten
-    - translated_dialog test_skip_question
-    - translated_dialog_choice no:yes,question_arch
-    conditions:
-    - not variable_set question_arch:yes
-    - not variable_set question_arch:no
-    x: 8
-    y: 0
-    type: "event"
-  Intro Yes:
-    actions:
-    - translated_dialog test_intro_1
-    - change_bg gradient_blue,ceo
-    - translated_dialog test_intro_2
-    - change_bg gradient_blue,rockitten
-    - translated_dialog test_intro_3
-    - translated_dialog test_intro_question
     - rename_player random
-    - change_bg
     - set_variable test_intro:done
-    conditions:
-    - is variable_set question_arch:no
-    - not variable_set test_intro:done
-    x: 8
-    y: 1
-    type: "event"
-  Intro No:
-    actions:
-    - translated_dialog test_intro_question
-    - rename_player random
     - change_bg
-    - set_variable test_intro:done
     conditions:
-    - is variable_set question_arch:yes
     - not variable_set test_intro:done
-    x: 9
-    y: 0
     type: "event"
   Play Music:
     actions:

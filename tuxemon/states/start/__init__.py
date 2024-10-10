@@ -89,6 +89,13 @@ class StartState(PygameMenuState):
                 font_size=self.font_size_big,
                 button_id="menu_new_game",
             )
+        else:
+            menu.add.button(
+                title=T.translate("menu_new_game"),
+                action=change_state("ModsChoice"),
+                font_size=self.font_size_big,
+                button_id="menu_mod_choice",
+            )
         menu.add.button(
             title=T.translate("menu_minigame"),
             action=change_state("MinigameState"),
@@ -122,3 +129,41 @@ class StartState(PygameMenuState):
             return None
         else:
             return super().process_event(event)
+
+
+class ModsChoice(PygameMenuState):
+    """The state responsible for the start menu."""
+
+    def add_menu_items(
+        self,
+        menu: pygame_menu.Menu,
+    ) -> None:
+
+        def new_game(mod_name: str) -> None:
+            destination = f"{prepare.STARTING_MAP}{mod_name}.tmx"
+            map_path = prepare.fetch("maps", destination)
+            self.client.push_state("WorldState", map_name=map_path)
+            game_var = local_session.player.game_variables
+            game_var["date_start_game"] = formula.today_ordinal()
+            self.client.remove_state_by_name("StartState")
+            self.client.remove_state_by_name("ModsChoice")
+
+        for mod_name in prepare.CONFIG.mods:
+            menu.add.button(
+                title=T.translate(f"{mod_name}_campaign"),
+                action=partial(new_game, mod_name),
+                font_size=self.font_size_big,
+                button_id=mod_name,
+            )
+
+    def __init__(self) -> None:
+        width, height = prepare.SCREEN_SIZE
+
+        theme = self._setup_theme(prepare.BG_START_SCREEN)
+        theme.scrollarea_position = locals.POSITION_EAST
+        theme.widget_alignment = locals.ALIGN_CENTER
+
+        super().__init__(height=height, width=width)
+
+        self.add_menu_items(self.menu)
+        self.reset_theme()
