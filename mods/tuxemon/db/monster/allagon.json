@@ -61,8 +61,13 @@
         {
             "mon_slug": "wrougon",
             "evo_stage": "basic"
+        },
+        {
+            "mon_slug": "ferricran",
+            "evo_stage": "stage2"
         }
     ],
+    "tags": ["dragon"],
     "shape": "dragon",
     "stage": "stage1",
     "types": [

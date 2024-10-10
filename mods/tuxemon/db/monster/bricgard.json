@@ -1,6 +1,6 @@
 {
     "slug": "bricgard",
-    "category": "brick_wall",	
+    "category": "brick_wall",
     "moveset": [
         {
             "level_learned": 2,
@@ -57,8 +57,13 @@
         {
             "mon_slug": "imbrickcile",
             "evo_stage": "basic"
+        },
+        {
+            "mon_slug": "brickhemoth",
+            "evo_stage": "stage2"
         }
     ],
+    "tags": ["blob", "ruins", "urban"],
     "shape": "blob",
     "stage": "stage1",
     "types": [

@@ -4,15 +4,15 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from configparser import ConfigParser
 from functools import partial
 from typing import Any, Optional, Union
 
 import pygame
 import pygame_menu
 from pygame_menu import locals
-from pygame_menu.locals import POSITION_CENTER
 
-from tuxemon import config, prepare, tools
+from tuxemon import config, prepare
 from tuxemon.animation import Animation
 from tuxemon.constants import paths
 from tuxemon.event.eventengine import EventEngine
@@ -28,10 +28,42 @@ from tuxemon.state import State
 tuxe_config = config.TuxemonConfig(paths.USER_CONFIG_PATH)
 pre_config = prepare.CONFIG
 
-METRIC = "Metric"
-IMPERIAL = "Imperial"
-NORTHERN = "Northern"
-SOUTHERN = "Southern"
+
+def update_custom_pygame_keyboard_controls(
+    config: ConfigParser, button: str, key: int
+) -> None:
+    config.set("controls", button, pygame.key.name(key))
+    with open(paths.USER_CONFIG_PATH, "w") as fp:
+        config.write(fp)
+    # Get the current control state and reload controls
+    control_state = local_session.client.get_state_by_name(ControlState)
+    if isinstance(control_state, ControlState):
+        control_state.reload_controls()
+
+
+def reset_config_to_default() -> None:
+    default_controls = {
+        "up": "up",
+        "down": "down",
+        "left": "left",
+        "right": "right",
+        "a": "return",
+        "b": "rshift, lshift",
+        "back": "escape",
+        "backspace": "backspace",
+    }
+
+    config = tuxe_config.cfg
+
+    for button, key in default_controls.items():
+        config.set("controls", button, key)
+
+    with open(paths.USER_CONFIG_PATH, "w") as fp:
+        config.write(fp)
+
+    control_state = local_session.client.get_state_by_name(ControlState)
+    if isinstance(control_state, ControlState):
+        control_state.reload_controls()
 
 
 class SetKeyState(PygameMenuState):
@@ -50,24 +82,9 @@ class SetKeyState(PygameMenuState):
         super().__init__(**kwargs)
         self.menu.add.label(T.translate("options_new_input_key0").upper())
         self.button = button
-        self.repristinate()
-
-    def repristinate(self) -> None:
-        """Repristinate original theme (color, alignment, etc.)"""
-        theme = get_theme()
-        theme.scrollarea_position = locals.SCROLLAREA_POSITION_NONE
-        theme.widget_alignment = locals.ALIGN_LEFT
+        self.reset_theme()
 
     def process_event(self, event: PlayerInput) -> Optional[PlayerInput]:
-        # must use get_pressed because the events do not contain references to pygame events
-        pressed_key: Optional[int] = None
-        for k in range(len(pygame.key.get_pressed())):
-            if pygame.key.get_pressed()[k]:
-                pressed_key = k
-
-        # to prevent a KeyError from happening, the game won't let you
-        # input a key if that key has already been set a value
-        invalid_keys: list[int] = []
         invalid_keys = [
             pygame.K_UP,
             pygame.K_DOWN,
@@ -80,27 +97,31 @@ class SetKeyState(PygameMenuState):
             pygame.K_BACKSPACE,
         ]
 
-        is_pressed = (
-            event.pressed or event.value == ""
-        ) and pressed_key is not None
+        pressed_key = next(
+            (
+                k
+                for k in range(len(pygame.key.get_pressed()))
+                if pygame.key.get_pressed()[k]
+            ),
+            None,
+        )
+
         if (
             isinstance(pressed_key, int)
-            and is_pressed
+            and (event.pressed or event.value == "")
             and pressed_key not in invalid_keys
         ):
-            # TODO: fix or rewrite PlayerInput
-            # event.value is being compared here since sometimes the
-            # value just returns an empty string and event.pressed doesn't
-            # return True when a key is being pressed
             assert self.button and pressed_key
-            local_session.client.pop_state()
+            self.client.pop_state()
             pressed_key_str = pygame.key.name(pressed_key)
             if event.value == pressed_key_str:
+                # Update the configuration file with the new key
+                update_custom_pygame_keyboard_controls(
+                    tuxe_config.cfg, self.button, pressed_key
+                )
                 return event
-            else:
-                return None
-        else:
-            return None
+
+        return None
 
     def update_animation_size(self) -> None:
         widgets_size = self.menu.get_size(widget=True)
@@ -138,13 +159,7 @@ class ControlState(PygameMenuState):
         super().__init__(**kwargs)
         self.initialize_items(self.menu)
         self.reload_controls()
-        self.repristinate()
-
-    def repristinate(self) -> None:
-        """Repristinate original theme (color, alignment, etc.)"""
-        theme = get_theme()
-        theme.scrollarea_position = locals.SCROLLAREA_POSITION_NONE
-        theme.widget_alignment = locals.ALIGN_LEFT
+        self.reset_theme()
 
     def initialize_items(
         self,
@@ -164,6 +179,8 @@ class ControlState(PygameMenuState):
         )
         for k, v in key_names.items():
             display_buttons[v] = k
+
+        menu.select_widget(None)
 
         menu.add.button(
             title=T.translate("menu_up_key").upper(),
@@ -214,26 +231,30 @@ class ControlState(PygameMenuState):
             ),
             font_size=self.font_size_small,
         )
+        menu.add.button(
+            title=T.translate("menu_reset_default").upper(),
+            action=reset_config_to_default,
+            font_size=self.font_size_small,
+        )
 
-        default_music: int = 50
-        default_sound: int = 20
-        default_unit: int = 0
-        default_hemi: int = 0
+        default_music = prepare.MUSIC_VOLUME
+        default_sound = prepare.SOUND_VOLUME
+        _unit: int = 0
+        _hemi: int = 0
         if player:
-            default_music = int(
-                float(player.game_variables["music_volume"]) * 100
-            )
-            default_sound = int(
-                float(player.game_variables["sound_volume"]) * 100
-            )
-            if player.game_variables["unit_measure"] == METRIC:
-                default_unit = 0
-            elif player.game_variables["unit_measure"] == IMPERIAL:
-                default_unit = 1
-            if player.game_variables["hemisphere"] == NORTHERN:
-                default_hemi = 0
-            elif player.game_variables["hemisphere"] == SOUTHERN:
-                default_hemi = 1
+            _music = player.game_variables.get("music_volume", default_music)
+            default_music = int(float(_music) * 100)
+            _sound = player.game_variables.get("sound_volume", default_sound)
+            default_sound = int(float(_sound) * 100)
+
+            unit = player.game_variables.get("unit_measure", prepare.METRIC)
+            _unit = 0 if str(unit) == prepare.METRIC else 1
+
+            hemi = player.game_variables.get("hemisphere", prepare.NORTHERN)
+            _hemi = 0 if str(hemi) == prepare.NORTHERN else 1
+        else:
+            default_music *= 100
+            default_sound *= 100
 
         music = menu.add.range_slider(
             title=T.translate("menu_music_volume").upper(),
@@ -259,7 +280,9 @@ class ControlState(PygameMenuState):
             Updates the value.
             """
             if player:
-                player.game_variables["music_volume"] = round(val / 100, 1)
+                volume = round(val / 100, 1)
+                self.client.current_music.set_volume(volume)
+                player.game_variables["music_volume"] = volume
 
         def on_change_sound(val: int) -> None:
             """
@@ -286,7 +309,7 @@ class ControlState(PygameMenuState):
             title=T.translate("menu_units").upper(),
             items=units,
             selector_id="unit",
-            default=default_unit,
+            default=_unit,
             style="fancy",
             onchange=on_change_units,
             font_size=self.font_size_small,
@@ -307,7 +330,7 @@ class ControlState(PygameMenuState):
             title=T.translate("menu_hemisphere").upper(),
             items=hemispheres,
             selector_id="hemisphere",
-            default=default_hemi,
+            default=_hemi,
             style="fancy",
             onchange=on_change_hemisphere,
             font_size=self.font_size_small,
@@ -340,8 +363,7 @@ class ControlState(PygameMenuState):
         return ani
 
     def reload_controls(self) -> None:
-        with open(paths.USER_CONFIG_PATH, "w") as fp:
-            tuxe_config.cfg.write(fp)
+        tuxe_config.cfg.read(paths.USER_CONFIG_PATH)
 
         # reload inputs
         tuxe_config.keyboard_button_map = (
@@ -356,5 +378,6 @@ class ControlState(PygameMenuState):
     def process_event(self, event: PlayerInput) -> Optional[PlayerInput]:
         if event.button == buttons.BACK:
             self.reload_controls()
+            self.client.pop_state()
 
         return super().process_event(event)

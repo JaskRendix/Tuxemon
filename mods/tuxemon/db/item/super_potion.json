@@ -4,17 +4,17 @@
     "is current_hp >,0"
   ],
   "effects": [
-    "heal 50"
+    "heal 50,fixed"
   ],
   "slug": "super_potion",
   "sort": "potion",
   "sprite": "gfx/items/super_potion.png",
   "category": "potion",
-  "type": "Consumable",
   "usable_in": [
     "MainCombatMenuState",
     "WorldState"
   ],
+  "behaviors": {},
   "use_failure": "generic_failure",
   "use_item": "combat_used_x",
   "use_success": "generic_success"

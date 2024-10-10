@@ -43,8 +43,17 @@
         {
             "mon_slug": "katapill",
             "evo_stage": "basic"
+        },
+        {
+            "mon_slug": "bugnin",
+            "evo_stage": "stage2"
+        },
+        {
+            "mon_slug": "sumchon",
+            "evo_stage": "stage2"
         }
     ],
+    "tags": ["grub", "woodland"],
     "shape": "grub",
     "stage": "stage1",
     "types": [

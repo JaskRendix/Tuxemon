@@ -1,6 +1,6 @@
 {
     "slug": "demosnow",
-    "category": "tempted",	
+    "category": "tempted",
     "moveset": [
         {
             "level_learned": 2,
@@ -37,8 +37,13 @@
         {
             "mon_slug": "waysprite",
             "evo_stage": "basic"
+        },
+        {
+            "mon_slug": "lucifice",
+            "evo_stage": "stage2"
         }
     ],
+    "tags": ["sprite", "extraplanar"],
     "shape": "sprite",
     "stage": "stage1",
     "types": [

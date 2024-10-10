@@ -5,15 +5,13 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import Any
 
-import pygame_menu
-from pygame_menu.locals import POSITION_CENTER, POSITION_EAST
+from pygame_menu.locals import POSITION_EAST
 from pygame_menu.widgets.selection.highlight import HighlightSelection
 
 from tuxemon import prepare
 from tuxemon.db import db
 from tuxemon.menu.menu import PygameMenuState
 from tuxemon.menu.theme import get_theme
-from tuxemon.tools import transform_resource_filename
 
 ChoiceMenuGameObj = Callable[[], None]
 
@@ -55,11 +53,11 @@ class ChoiceItem(PygameMenuState):
         super().__init__(width=width, height=height, **kwargs)
 
         for name, slug, callback in menu:
-            item = db.lookup(slug, table="item")
-            new_image = pygame_menu.BaseImage(
-                transform_resource_filename(item.sprite),
-                drawing_position=POSITION_CENTER,
-            )
+            try:
+                item = db.lookup(slug, table="item")
+            except KeyError:
+                raise RuntimeError(f"Item {slug} not found")
+            new_image = self._create_image(item.sprite)
             new_image.scale(prepare.SCALE * 0.5, prepare.SCALE * 0.5)
             self.menu.add.image(
                 new_image,

@@ -12,6 +12,7 @@ from typing import Any, Optional, TypeVar, Union, overload
 import pygame as pg
 
 from tuxemon import networking, prepare, rumble
+from tuxemon.audio import MusicPlayerState, SoundManager
 from tuxemon.cli.processor import CommandProcessor
 from tuxemon.config import TuxemonConfig
 from tuxemon.db import MapType
@@ -105,11 +106,8 @@ class LocalPygameClient:
         self.event_persist: dict[str, dict[str, Any]] = {}
 
         # Set up a variable that will keep track of currently playing music.
-        self.current_music = {
-            "status": "stopped",
-            "song": None,
-            "previoussong": None,
-        }
+        self.current_music = MusicPlayerState()
+        self.sound_manager = SoundManager()
 
         if self.config.cli:
             # TODO: There is no protection for the main thread from the cli
@@ -159,11 +157,11 @@ class LocalPygameClient:
 
         # Check if the map type exists
         self.map_type = MapType.notype
-        if map_data.types in list(MapType):
-            self.map_type = MapType(map_data.types)
+        if map_data.map_type in list(MapType):
+            self.map_type = MapType(map_data.map_type)
         else:
             logger.warning(
-                f"The type '{map_data.types}' doesn't exist."
+                f"The type '{map_data.map_type}' doesn't exist."
                 f"By default assigned {MapType.notype}!"
             )
 
@@ -559,6 +557,10 @@ class LocalPygameClient:
         """Remove a state"""
         self.state_manager.remove_state(state)
 
+    def remove_state_by_name(self, state: str) -> None:
+        """Remove a state by name"""
+        self.state_manager.remove_state_by_name(state)
+
     @overload
     def push_state(self, state_name: str, **kwargs: Any) -> State:
         pass
@@ -608,3 +610,8 @@ class LocalPygameClient:
     def current_state(self) -> Optional[State]:
         """Current State object, or None"""
         return self.state_manager.current_state
+
+    @property
+    def active_state_names(self) -> Sequence[str]:
+        """List of names of active states"""
+        return self.state_manager.get_active_state_names()

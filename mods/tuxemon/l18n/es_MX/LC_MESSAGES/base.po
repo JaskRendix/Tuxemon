@@ -134,9 +134,6 @@ msgstr "¡Has capturado a {name}!"
 msgid "combat_capturing_fail"
 msgstr "¡{name} se liberó!"
 
-msgid "combat_recharging"
-msgstr "{name} necesita un descanso antes de usar {move} nuevamente..."
-
 msgid "combat_replacement"
 msgstr "¡Selecciona un reemplazo!"
 
@@ -383,10 +380,10 @@ msgid "anoleaf_description"
 msgstr ""
 "Considera a las plantas que crecen cerca de él como sus hermanos y hermanas."
 
-msgid "axylightl"
-msgstr "Axylightl"
+msgid "axolightl"
+msgstr "Axolightl"
 
-msgid "axylightl_description"
+msgid "axolightl_description"
 msgstr ""
 "Ilumina las aguas profundas con su cola, señalando un refugio seguro para "
 "los peces."
@@ -1415,9 +1412,6 @@ msgstr "Respira Fuego"
 msgid "energy_field"
 msgstr "Campo de Energía"
 
-msgid "headbutt"
-msgstr "Golpe de cabeza"
-
 msgid "ice_claw"
 msgstr "Garra de Hielo"
 
@@ -1957,9 +1951,6 @@ msgid "nudiflot_male_description"
 msgstr ""
 "Ingiere y almacena el veneno de las criaturas marinas que le sirven de "
 "alimento."
-
-msgid "birb_robo"
-msgstr "Robot Pajarito"
 
 msgid "firsts"
 msgstr ""
@@ -3383,9 +3374,6 @@ msgstr "Lujuria"
 msgid "magma"
 msgstr "Magma"
 
-msgid "maori"
-msgstr "Maorí"
-
 msgid "meltdown"
 msgstr "Fusión"
 
@@ -3439,9 +3427,6 @@ msgstr "Estrangulación"
 
 msgid "sunburst"
 msgstr "Rayos de Sol"
-
-msgid "sword"
-msgstr "Espada"
 
 msgid "sylvan"
 msgstr "Silvestre"
@@ -3518,9 +3503,6 @@ msgid "Kennel"
 msgstr "refugio"
 
 msgid "dark_robo_description"
-msgstr "Un robot hostil."
-
-msgid "birb_robo_description"
 msgstr "Un robot hostil."
 
 msgid "mk01_delta_description"

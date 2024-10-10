@@ -28,7 +28,7 @@
         },
         {
             "level_learned": 20,
-            "technique": "suck_poison"
+            "technique": "spit_poison"
         },
         {
             "level_learned": 24,
@@ -53,6 +53,7 @@
     ],
     "evolutions": [],
     "history": [],
+    "tags": ["landrace"],
     "shape": "landrace",
     "stage": "standalone",
     "types": [

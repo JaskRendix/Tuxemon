@@ -213,10 +213,6 @@ msgstr "Du hast {name} gefangen!"
 msgid "combat_capturing_fail"
 msgstr "{name} ist ausgebrochen!"
 
-msgid "combat_recharging"
-msgstr ""
-"{name} braucht eine Pause, bevor {move} wieder eingesetzt werden kann..."
-
 msgid "combat_replacement"
 msgstr "Wähle einen Ersatz!"
 
@@ -447,9 +443,6 @@ msgstr "Finsterblick"
 
 msgid "goad"
 msgstr "Anspornen"
-
-msgid "headbutt"
-msgstr "Kopfnuss"
 
 msgid "hibernate"
 msgstr "Winterschlaf"
@@ -870,10 +863,10 @@ msgstr "Wenn die Sonne scheint kann es so hoch oder weit fliegen, wie es möchte
 msgid "av8r"
 msgstr "Av8r"
 
-msgid "axylightl"
-msgstr "Axylightl"
+msgid "axolightl"
+msgstr "Axolightl"
 
-msgid "axylightl_description"
+msgid "axolightl_description"
 msgstr "Mit seinem leuchtenden Schweif markiert es sichere Unterkünfte für Fische in tiefen Gewässern."
 
 msgid "b_ver_1_description"
@@ -2571,9 +2564,6 @@ msgstr "Yiinaang"
 msgid "dark_robo"
 msgstr "Dark Robo"
 
-msgid "birb_robo"
-msgstr "Birb Robo"
-
 msgid "xeon"
 msgstr "Xeon"
 
@@ -2984,9 +2974,6 @@ msgstr "Sei vorsichtig!"
 
 msgid "spyder_citypark_maniac"
 msgstr "Puh, wir sind fix und fertig!"
-
-msgid "sword"
-msgstr "Schwert"
 
 msgid "ubuntu"
 msgstr "Ubuntu"
@@ -3749,11 +3736,6 @@ msgstr ""
 "Kann nicht entkommen.\n"
 "{monster} ist {status}!"
 
-msgid "combat_player_forfeit_status"
-msgstr ""
-"Kann das Spiel nicht verlieren.\n"
-"{monster} ist {status}!"
-
 msgid "combat_player_swap_status"
 msgstr ""
 "Monster können nicht gewechselt werden.\n"
@@ -3791,9 +3773,6 @@ msgstr "Lust"
 
 msgid "magma"
 msgstr "Magma"
-
-msgid "maori"
-msgstr "Maori"
 
 msgid "mobbing"
 msgstr "Mobbing"

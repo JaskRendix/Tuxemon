@@ -52,7 +52,7 @@ config.generate_default_config()
 CONFIG = config.TuxemonConfig(paths.USER_CONFIG_PATH)
 
 # Starting map
-STARTING_MAP = "debug.tmx"
+STARTING_MAP = "start_"
 
 with open(paths.USER_CONFIG_PATH, "w") as fp:
     CONFIG.cfg.write(fp)
@@ -115,6 +115,8 @@ SEA_BLUE_COLOR = (0, 105, 148)
 DARKGRAY_COLOR = (169, 169, 169)
 DIMGRAY_COLOR = (105, 105, 105)
 # Default colors
+UNAVAILABLE_COLOR = (220, 220, 220)
+UNAVAILABLE_COLOR_SHOP = (51, 51, 51)
 TRANSPARENT_COLOR = (255, 255, 255, 0)
 BACKGROUND_COLOR = (248, 248, 248)  # Guyabano
 FONT_COLOR = BLACK_COLOR
@@ -205,6 +207,23 @@ MOVERATE_RANGE: tuple[float, float] = (0.0, 20.0)
 TRANS_TIME: float = 0.3  # transition time
 
 # PC
+METRIC: str = "Metric"
+IMPERIAL: str = "Imperial"
+NORTHERN: str = "Northern"
+SOUTHERN: str = "Southern"
+U_KM: str = "km"
+U_MI: str = "mi"
+U_KG: str = "kg"
+U_LB: str = "lb"
+U_CM: str = "cm"
+U_FT: str = "ft"
+MUSIC_VOLUME: float = 0.5
+MUSIC_RANGE: tuple[float, float] = (0.0, 1.0)
+SOUND_VOLUME: float = 0.2
+SOUND_RANGE: tuple[float, float] = (0.0, 1.0)
+MUSIC_LOOP: int = -1
+MUSIC_FADEIN: int = 1000  # milliseconds
+MUSIC_FADEOUT: int = 1000  # milliseconds
 KENNEL: str = "Kennel"
 LOCKER: str = "Locker"
 MAX_KENNEL: int = 30  # nr max of pc monsters
@@ -218,7 +237,7 @@ MAX_TYPES_BAG: int = 99  # eg 5 capture devices, 1 type and 5 items
 MAX_LEVEL: int = 999
 MAX_MOVES: int = 4
 MISSING_IMAGE: str = "gfx/sprites/battle/missing.png"
-CATCH_RATE_RANGE: tuple[int, int] = (0, 255)
+CATCH_RATE_RANGE: tuple[int, int] = (0, 100)
 CATCH_RESISTANCE_RANGE: tuple[float, float] = (0.0, 2.0)
 # set bond and define range
 BOND: int = 25
@@ -253,7 +272,7 @@ RECHARGE_RANGE: tuple[int, int] = (0, 5)
 POTENCY_RANGE: tuple[float, float] = (0.0, 1.0)
 ACCURACY_RANGE: tuple[float, float] = (0.0, 1.0)
 POWER_RANGE: tuple[float, float] = (0.0, 3.0)
-HEALING_POWER_RANGE: tuple[int, int] = (0, 10)
+HEALING_POWER_RANGE: tuple[float, float] = (0.0, 3.0)
 
 # Combat
 # Hud right/left lines
@@ -266,6 +285,10 @@ HUD_LT_LINE2: tuple[int, int] = (5, 13)  # position hp_bar
 RIGHT_COMBAT: dict[str, tuple[int, int, int, int]] = {}
 # where appears the monster (character right side)
 RIGHT_COMBAT["home"] = (0, 62, 95, 70)
+# 1st spot 2 vs 2
+RIGHT_COMBAT["home0"] = (15, 62, 95, 70)
+# 2nd spot 2 vs 2
+RIGHT_COMBAT["home1"] = (-15, 62, 95, 70)
 # name, level, etc.
 RIGHT_COMBAT["hud"] = (145, 45, 110, 50)
 # 1st spot 2 vs 2
@@ -278,6 +301,10 @@ RIGHT_COMBAT["party"] = (145, 57, 110, 50)
 LEFT_COMBAT: dict[str, tuple[int, int, int, int]] = {}
 # where appears the monster (character left side)
 LEFT_COMBAT["home"] = (140, 18, 95, 70)
+# 1st spot 2 vs 2
+LEFT_COMBAT["home0"] = (125, 18, 95, 70)
+# 2nd spot 2 vs 2
+LEFT_COMBAT["home1"] = (155, 18, 95, 70)
 # name, level, etc.
 LEFT_COMBAT["hud"] = (18, 0, 85, 30)
 # 1st spot 2 vs 2
@@ -291,6 +318,10 @@ LEFT_COMBAT["party"] = (18, 12, 85, 30)
 # it calculates the user strength
 # eg: user_strength = user.melee * (COEFF_DAMAGE + user.level)
 COEFF_DAMAGE: int = 7
+# This is used as random offset in the def speed_test
+SPEED_OFFSET: float = 50.0
+# This is used as multiplier in the def speed_test
+MULTIPLIER_SPEED: float = 1.5
 
 # Min and max multiplier are the multiplier upper/lower bounds
 MULTIPLIER_RANGE: tuple[float, float] = (0.25, 4.0)

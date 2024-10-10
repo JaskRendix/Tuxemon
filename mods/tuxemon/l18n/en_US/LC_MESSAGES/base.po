@@ -424,6 +424,36 @@ msgid "cureall_description"
 msgstr "Heals your tuxemon to full health and removes any conditions."
 
 # TMs
+msgid "tm_all_in"
+msgstr "TM: All In"
+
+msgid "tm_all_in_description"
+msgstr "Technique Manual that teaches the All In technique."
+
+msgid "tm_blade"
+msgstr "TM: Blade"
+
+msgid "tm_blade_description"
+msgstr "Technique Manual that teaches the Blade technique."
+
+msgid "tm_panjandrum"
+msgstr "TM: Panjandrum"
+
+msgid "tm_panjandrum_description"
+msgstr "Technique Manual that teaches the Panjandrum technique."
+
+msgid "tm_scope"
+msgstr "TM: Scope"
+
+msgid "tm_scope_description"
+msgstr "Technique Manual that teaches the Scope technique."
+
+msgid "tm_shadow_boxing"
+msgstr "TM: Shadow Boxing"
+
+msgid "tm_shadow_boxing_description"
+msgstr "Technique Manual that teaches the Shadow Boxing technique."
+
 msgid "tm_avalanche"
 msgstr "TM: Avalanche"
 
@@ -704,7 +734,7 @@ msgid "item_no_available_target"
 msgstr "{name} cannot be used on any of your Tuxemon right now."
 
 msgid "technique_description"
-msgstr "ID.{id} ({types}) - Accuracy {acc}%, Potency {pot}%, Power {pow}/3, Recharge {rec} turns - Successful: {sus}%"
+msgstr "ID.{id} ({types}) - Accuracy {acc}%, Potency {pot}%, Power {pow}/3, Recharge {rec} turns"
 
 msgid "reg_papers"
 msgstr "Registration Papers"
@@ -784,17 +814,11 @@ msgstr "You have forfeited!\n{npc} is disappointed."
 msgid "combat_cannot_run_away"
 msgstr "You can't run away!"
 
-msgid "combat_forfeit_trainer"
-msgstr "Can't forfeit!"
-
 msgid "combat_player_run"
 msgstr "You ran away!"
 
 msgid "combat_player_run_status"
 msgstr "Can't escape.\n{monster} is {status}!"
-
-msgid "combat_player_forfeit_status"
-msgstr "Can't forfeit the match.\n{monster} is {status}!"
 
 msgid "combat_player_swap_status"
 msgstr "Can't switch monsters.\n{monster} is {status}!"
@@ -861,9 +885,6 @@ msgstr "You captured {name}!"
 
 msgid "combat_capturing_fail"
 msgstr "{name} broke free!"
-
-msgid "combat_recharging"
-msgstr "{name} needs a break before using {move} again..."
 
 msgid "combat_replacement"
 msgstr "Choose a replacement!"
@@ -1248,19 +1269,19 @@ msgstr "Wild"
 
 ## TECHNIQUE TRANSLATIONS ##
 msgid "acid_description"
-msgstr ""
+msgstr "A corrosive liquid is ejected from the user's mouth, burning the opponent."
 
 msgid "acid"
 msgstr "Acid"
 
 msgid "adamantine_description"
-msgstr ""
+msgstr "The user's body glows intensely before it delivers a crushing blow."
 
 msgid "adamantine"
 msgstr "Adamantine"
 
 msgid "air_chain_description"
-msgstr ""
+msgstr "The user rapidly strikes the air, creating a series of powerful gusts that hit the opponent."
 
 msgid "air_chain"
 msgstr "Air Chain"
@@ -1284,7 +1305,7 @@ msgid "amnesia"
 msgstr "Amnesia"
 
 msgid "ants_description"
-msgstr ""
+msgstr "The user summons a swarm of ants that crawl over the opponent, changing their type to Earth."
 
 msgid "ants"
 msgstr "Ants"
@@ -1296,43 +1317,43 @@ msgid "arcane_eye"
 msgstr "Arcane Eye"
 
 msgid "assault_description"
-msgstr ""
+msgstr "The user unleashes a flurry of rapid, powerful attacks."
 
 msgid "assault"
 msgstr "Assault"
 
 msgid "avalanche_description"
-msgstr ""
+msgstr "The user gathers momentum before unleashing a devastating avalanche of ice and rock."
 
 msgid "avalanche"
 msgstr "Avalanche"
 
 msgid "barking_description"
-msgstr ""
+msgstr "The user lets out a powerful, intimidating roar that makes the opponent flinch."
 
 msgid "barking"
 msgstr "Barking"
 
 msgid "battery_acid_description"
-msgstr ""
+msgstr "A corrosive liquid is ejected from the user's body, poisoning the opponent."
 
 msgid "battery_acid"
 msgstr "Battery Acid"
 
 msgid "battery_discharge_description"
-msgstr ""
+msgstr "The user's body emits a bright light as it restores its own health."
 
 msgid "battery_discharge"
 msgstr "Battery Discharge"
 
 msgid "beam_description"
-msgstr ""
+msgstr "A concentrated beam of energy is fired from the user's eyes, blinding the opponent."
 
 msgid "beam"
 msgstr "Beam"
 
 msgid "berserk_description"
-msgstr ""
+msgstr "The user enters a frenzied state, attacking with reckless abandon."
 
 msgid "berserk"
 msgstr "Berserk"
@@ -1356,7 +1377,7 @@ msgid "blood_bond"
 msgstr "Blood Bond"
 
 msgid "blood_nets_description"
-msgstr ""
+msgstr "A web of sticky, blood-red substance is shot from the user's body, draining the opponent's life force."
 
 msgid "blood_nets"
 msgstr "Blood Nets"
@@ -1374,7 +1395,7 @@ msgid "boulder"
 msgstr "Boulder"
 
 msgid "breath_description"
-msgstr ""
+msgstr "The user exhales a cloud of sleep-inducing gas."
 
 msgid "breath"
 msgstr "Breath"
@@ -1386,7 +1407,7 @@ msgid "breathe_fire"
 msgstr "Breathe Fire"
 
 msgid "bubble_trap_description"
-msgstr ""
+msgstr "The user creates a large bubble that traps both itself and the opponent."
 
 msgid "bubble_trap"
 msgstr "Bubble Trap"
@@ -1398,109 +1419,109 @@ msgid "bullet"
 msgstr "Bullet"
 
 msgid "canine_description"
-msgstr ""
+msgstr "The user unleashes a primal, ferocious attack that sends the opponent into a frenzy."
 
 msgid "canine"
 msgstr "Canine"
 
 msgid "cat_calling_description"
-msgstr ""
+msgstr "The user emits a high-pitched cry that distracts the opponent."
 
 msgid "cat_calling"
 msgstr "Cat Calling"
 
 msgid "cavity_description"
-msgstr ""
+msgstr "The user strikes with pinpoint accuracy, targeting the opponent's weak points."
 
 msgid "cavity"
 msgstr "Cavity"
 
 msgid "chameleon_description"
-msgstr ""
+msgstr "The user changes its type to Wood, while also creating a protective shell around itself."
 
 msgid "chameleon"
 msgstr "Chameleon"
 
 msgid "changeling_description"
-msgstr ""
+msgstr "The user undergoes a transformation, healing its wounds in the process."
 
 msgid "changeling"
 msgstr "Changeling"
 
 msgid "chill_mist_description"
-msgstr ""
+msgstr "The user releases a freezing mist that lowers the opponent's stats."
 
 msgid "chill_mist"
 msgstr "Chill Mist"
 
 msgid "clairaudience_description"
-msgstr ""
+msgstr "The user attunes its senses, anticipating the opponent's next move and preparing a counterattack."
 
 msgid "clairaudience"
 msgstr "Clairaudience"
 
 msgid "clamp_on_description"
-msgstr ""
+msgstr "The user latches onto the opponent with its powerful jaws."
 
 msgid "clamp_on"
 msgstr "Clamp On"
 
 msgid "clock_description"
-msgstr ""
+msgstr "The user creates a swirling vortex that confuses the opponent."
 
 msgid "clock"
 msgstr "Clock"
 
 msgid "cloud_aether_description"
-msgstr ""
+msgstr "The user is enveloped in a swirling cloud, causing both it and the opponent to change types randomly."
 
 msgid "cloud_aether"
 msgstr "Cloud Aether"
 
 msgid "conjurer_description"
-msgstr ""
+msgstr "The user conjures a force field that traps the opponent."
 
 msgid "conjurer"
 msgstr "Conjurer"
 
 msgid "constrict_description"
-msgstr ""
+msgstr "The user wraps its body around the opponent, squeezing tightly."
 
 msgid "constrict"
 msgstr "Constrict"
 
 msgid "crystal_description"
-msgstr ""
+msgstr "The user fires a sharp, crystalline projectile at the opponent."
 
 msgid "crystal"
 msgstr "Crystal"
 
 msgid "demiurge_description"
-msgstr ""
+msgstr "The user undergoes a transformation, healing itself and confusing the opponent."
 
 msgid "demiurge"
 msgstr "Demiurge"
 
 msgid "earthquake_description"
-msgstr ""
+msgstr "The ground shakes violently as the user unleashes a powerful ground attack."
 
 msgid "earthquake"
 msgstr "Earthquake"
 
 msgid "electrical_storm_description"
-msgstr ""
+msgstr "The user summons a raging thunderstorm, striking the opponent with lightning bolts."
 
 msgid "electrical_storm"
 msgstr "Electrical Storm"
 
 msgid "electroplate_description"
-msgstr ""
+msgstr "Electricity causes the target to be coated in metal, changing its type."
 
 msgid "electroplate"
 msgstr "Electroplate"
 
 msgid "energy_claws_description"
-msgstr ""
+msgstr "The user's claws glow with energy as it delivers a powerful, focused attack."
 
 msgid "energy_claws"
 msgstr "Energy Claws"
@@ -1512,7 +1533,7 @@ msgid "energy_field"
 msgstr "Energy Field"
 
 msgid "evasion_description"
-msgstr ""
+msgstr "The user becomes a blur of motion, making it difficult in the next round to miss."
 
 msgid "evasion"
 msgstr "Evasion"
@@ -1524,13 +1545,13 @@ msgid "eyebite"
 msgstr "Eyebite"
 
 msgid "feint_description"
-msgstr ""
+msgstr "The user feigns an attack, then strikes with a swift, surprise blow."
 
 msgid "feint"
 msgstr "Feint"
 
 msgid "feline_description"
-msgstr ""
+msgstr "The user focuses its predatory instincts."
 
 msgid "feline"
 msgstr "Feline"
@@ -1542,7 +1563,7 @@ msgid "fester"
 msgstr "Fester"
 
 msgid "fiery_description"
-msgstr ""
+msgstr "The user emits a powerful blast of fire that changes the opponent's type to Fire."
 
 msgid "fiery"
 msgstr "Fiery"
@@ -1554,79 +1575,79 @@ msgid "fire_ball"
 msgstr "Fire Ball"
 
 msgid "fire_claw_description"
-msgstr ""
+msgstr "The user's claws ignite with fire as it delivers a burning attack."
 
 msgid "fire_claw"
 msgstr "Fire Claw"
 
 msgid "fire_shield_description"
-msgstr ""
+msgstr "The user surrounds itself with a protective wall of fire, while also burning the opponent."
 
 msgid "fire_shield"
 msgstr "Fire Shield"
 
 msgid "firestorm_description"
-msgstr ""
+msgstr "The user creates a raging inferno that engulfs the opponent."
 
 msgid "firestorm"
 msgstr "Firestorm"
 
 msgid "flamethrower_description"
-msgstr ""
+msgstr "The user spews a stream of intense flames at the opponent."
 
 msgid "flamethrower"
 msgstr "Flamethrower"
 
 msgid "fledgling_description"
-msgstr ""
+msgstr "The user hurls sharp feathers at the opponent."
 
 msgid "fledgling"
 msgstr "Fledgling"
 
 msgid "flood_description"
-msgstr ""
+msgstr "The user summons a powerful flood that washes over the opponent."
 
 msgid "flood"
 msgstr "Flood"
 
 msgid "flow_description"
-msgstr ""
+msgstr "The user channels a powerful water stream."
 
 msgid "flow"
 msgstr "Flow"
 
 msgid "fluff_up_description"
-msgstr ""
+msgstr "The user's body puffs up, healing its wounds."
 
 msgid "fluff_up"
 msgstr "Fluff Up"
 
 msgid "font_description"
-msgstr ""
+msgstr "The user draws energy from a mystical font to heal itself."
 
 msgid "font"
 msgstr "Font"
 
 msgid "frostbite_description"
-msgstr ""
+msgstr "The user shoots a freezing blast that inflicts poison on the opponent."
 
 msgid "frostbite"
 msgstr "Frostbite"
 
 msgid "fume_description"
-msgstr ""
+msgstr "The user becomes enraged."
 
 msgid "fume"
 msgstr "Fume"
 
 msgid "geyser_description"
-msgstr ""
+msgstr "The user erupts with a powerful water spout, changing the opponent's type to Water."
 
 msgid "geyser"
 msgstr "Geyser"
 
 msgid "give_all_description"
-msgstr ""
+msgstr "The user sacrifices itself."
 
 msgid "give_all"
 msgstr "Give All"
@@ -1638,40 +1659,46 @@ msgid "glower"
 msgstr "Glower"
 
 msgid "goad_description"
-msgstr ""
+msgstr "The user taunts the opponent, causing them to become enraged."
 
 msgid "goad"
 msgstr "Goad"
 
 msgid "gold_digger_description"
-msgstr ""
+msgstr "The user digs into the ground, finding treasure or attacking itself."
 
 msgid "gold_digger"
 msgstr "Gold Digger"
 
+msgid "greenstone_description"
+msgstr "The user strikes with the force of a falling stone."
+
+msgid "greenstone"
+msgstr "Greenstone"
+
 msgid "grinding_description"
-msgstr ""
+msgstr "The user grinds its opponent down with a relentless attack."
 
 msgid "grinding"
 msgstr "Grinding"
 
 msgid "gust_description"
-msgstr ""
+msgstr "The user creates a powerful wind that blows the opponent back."
 
 msgid "gust"
 msgstr "Gust"
 
+msgid "hammerhead_description"
+msgstr "The user charges forward, striking the opponent with its head."
+
+msgid "hammerhead"
+msgstr "Hammerhead"
+
 msgid "hawk_description"
-msgstr ""
+msgstr "The user soars high into the air before diving down with a powerful attack."
 
 msgid "hawk"
 msgstr "Hawk"
-
-msgid "headbutt_description"
-msgstr ""
-
-msgid "headbutt"
-msgstr "Headbutt"
 
 msgid "hibernate_description"
 msgstr "The user falls into a restorative sleep."
@@ -1680,61 +1707,61 @@ msgid "hibernate"
 msgstr "Hibernate"
 
 msgid "ice_claw_description"
-msgstr ""
+msgstr "The user's claws become covered in ice as it delivers a freezing attack."
 
 msgid "ice_claw"
 msgstr "Ice Claw"
 
 msgid "ice_shield_description"
-msgstr ""
+msgstr "The user surrounds itself with a protective wall of ice, while also slowing down the opponent."
 
 msgid "ice_shield"
 msgstr "Ice Shield"
 
 msgid "ice_storm_description"
-msgstr ""
+msgstr "The opponent is engulfed in a freezing aura, creating a treacherous environment."
 
 msgid "ice_storm"
 msgstr "Ice Storm"
 
 msgid "icicle_spear_description"
-msgstr ""
+msgstr "The user launches a volley of sharp ice shards at the opponent."
 
 msgid "icicle_spear"
 msgstr "Icicle Spear"
 
 msgid "insanity_description"
-msgstr ""
+msgstr "The user becomes consumed by rage, increasing its power."
 
 msgid "insanity"
 msgstr "Insanity"
 
 msgid "invictus_description"
-msgstr ""
+msgstr "The user enters a berserker state, attacking with relentless fury and trapping the opponent."
 
 msgid "invictus"
 msgstr "Invictus"
 
 msgid "kindling_flame_description"
-msgstr ""
+msgstr "The user ignites with inner fire, increasing its attack power."
 
 msgid "kindling_flame"
 msgstr "Kindling Flame"
 
 msgid "kraken_description"
-msgstr ""
+msgstr "The user summons the power of a legendary sea creature, unleashing a devastating attack."
 
 msgid "kraken"
 msgstr "Kraken"
 
 msgid "lantern_description"
-msgstr ""
+msgstr "The user creates a bright light that illuminates the battlefield, boosts its accuracy and damages the opponent."
 
 msgid "lantern"
 msgstr "Lantern"
 
 msgid "lava_description"
-msgstr ""
+msgstr "The user erupts with molten lava, burning both itself and the opponent."
 
 msgid "lava"
 msgstr "Lava"
@@ -1752,67 +1779,61 @@ msgid "life_surge"
 msgstr "Life Surge"
 
 msgid "lightning_spheres_description"
-msgstr ""
+msgstr "The user launches multiple balls of electricity at the opponent."
 
 msgid "lightning_spheres"
 msgstr "Lightning Spheres"
 
 msgid "lineage_description"
-msgstr ""
+msgstr "The user draws power from its ancestors to unleash an attack."
 
 msgid "lineage"
 msgstr "Lineage"
 
 msgid "lust_description"
-msgstr ""
+msgstr "The user uses its charm to weaken the opponent's defenses."
 
 msgid "lust"
 msgstr "Lust"
 
 msgid "magma_description"
-msgstr ""
+msgstr "The user erupts with a torrent of molten rock."
 
 msgid "magma"
 msgstr "Magma"
 
-msgid "maori_description"
-msgstr ""
-
-msgid "maori"
-msgstr "Maori"
-
 msgid "meltdown_description"
-msgstr ""
+msgstr "The user unleashes a corrosive attack that damages the opponent."
 
 msgid "meltdown"
 msgstr "Meltdown"
 
 msgid "mending_description"
-msgstr ""
+msgstr "The user draws energy from its surroundings to heal itself."
 
 msgid "mending"
 msgstr "Mending"
 
 msgid "midnight_mantle_description"
-msgstr ""
+msgstr "The user shrouds itself in a cloak of darkness, striking out with shadowy tendrils that inflict damage and disorient the opponent."
 
 msgid "midnight_mantle"
 msgstr "Midnight Mantle"
 
 msgid "mind_vise_description"
-msgstr ""
+msgstr "The user traps the opponent's mind, preventing them from acting."
 
 msgid "mind_vise"
 msgstr "Mind Vise"
 
 msgid "mobbing_description"
-msgstr ""
+msgstr "A swarm of small creatures emerges from the user, overwhelming the opponent with a flurry of attacks."
 
 msgid "mobbing"
 msgstr "Mobbing"
 
 msgid "muck_description"
-msgstr ""
+msgstr "The user covers the opponent in a sticky, poisonous substance."
 
 msgid "muck"
 msgstr "Muck"
@@ -1824,25 +1845,25 @@ msgid "muddle"
 msgstr "Muddle"
 
 msgid "mudslide_description"
-msgstr ""
+msgstr "The user creates a massive mudslide that engulfs the opponent."
 
 msgid "mudslide"
 msgstr "Mudslide"
 
 msgid "mystic_blending_description"
-msgstr ""
+msgstr "The user becomes one with its surroundings, healing itself."
 
 msgid "mystic_blending"
 msgstr "Mystic Blending"
 
 msgid "negation_description"
-msgstr ""
+msgstr "The user cancels out the effects of the opponent's healing."
 
 msgid "negation"
 msgstr "Negation"
 
 msgid "nest_description"
-msgstr ""
+msgstr "The user constructs a protective nest around itself."
 
 msgid "nest"
 msgstr "Nest"
@@ -1854,13 +1875,13 @@ msgid "neutralize"
 msgstr "Neutralize"
 
 msgid "oedipus_description"
-msgstr ""
+msgstr "The user attacks with a vengeance, confusing the opponent and seeking revenge."
 
 msgid "oedipus"
 msgstr "Oedipus"
 
 msgid "one_million_talons_description"
-msgstr ""
+msgstr "The user unleashes a flurry of rapid, razor-sharp attacks."
 
 msgid "one_million_talons"
 msgstr "One Million Talons"
@@ -1872,13 +1893,13 @@ msgid "one_two"
 msgstr "One-Two"
 
 msgid "orbs_description"
-msgstr "The user undergoes a magical transformation, firing off an energy ball of a random element."
+msgstr "The user fires off an energy ball that causes a mystical transformation in the target."
 
 msgid "orbs"
 msgstr "Orbs"
 
 msgid "overfeed_description"
-msgstr ""
+msgstr "The user overloads the opponent with energy, slowing them down."
 
 msgid "overfeed"
 msgstr "Overfeed"
@@ -1896,109 +1917,118 @@ msgid "panjandrum"
 msgstr "Panjandrum"
 
 msgid "peck_description"
-msgstr ""
+msgstr "The user attacks with a sharp peck from its beak."
 
 msgid "peck"
 msgstr "Peck"
 
 msgid "peregrine_description"
-msgstr ""
+msgstr "The user dives from the sky with incredible speed, delivering a powerful, piercing attack."
 
 msgid "peregrine"
 msgstr "Peregrine"
 
 msgid "perfect_cut_description"
-msgstr ""
+msgstr "The user strikes with surgical precision, leaving no room for error."
 
 msgid "perfect_cut"
 msgstr "Perfect Cut"
 
 msgid "petrify_description"
-msgstr ""
+msgstr "The user emits a powerful aura that renders the opponent stuck."
 
 msgid "petrify"
 msgstr "Petrify"
 
 msgid "phantasmal_force_description"
-msgstr ""
+msgstr "The user creates an illusionary copy of itself that attacks the opponent."
 
 msgid "phantasmal_force"
 msgstr "Phantasmal Force"
 
+msgid "solar_synthesis_description"
+msgstr "Heals the user's health by absorbing sunlight."
+
+msgid "solar_synthesis_fail"
+msgstr "The lack of sunlight prevents the healing."
+
+msgid "solar_synthesis"
+msgstr "Solar Synthesis"
+
 msgid "pit_description"
-msgstr ""
+msgstr "The user creates a pit beneath the opponent, causing them to fall and take damage."
 
 msgid "pit"
 msgstr "Pit"
 
 msgid "platinum_description"
-msgstr ""
+msgstr "The user's body becomes infused with a lustrous metal, granting it increased defense and the ability to inflict damage."
 
 msgid "platinum"
 msgstr "Platinum"
 
 msgid "poison_courtship_description"
-msgstr ""
+msgstr "The user emits a seductive aura laces with toxins, charming the opponent while slowly poisoning them."
 
 msgid "poison_courtship"
 msgstr "Poison Courtship"
 
 msgid "proboscis_description"
-msgstr ""
+msgstr "The user extends a long, proboscis-like appendage, draining the opponent's life force while inflicting damage."
 
 msgid "proboscis"
 msgstr "Proboscis"
 
 msgid "pseudopod_description"
-msgstr ""
+msgstr "The user extends a pseudopod to deliver a forceful, sticky blow."
 
 msgid "pseudopod"
 msgstr "Pseudopod"
 
 msgid "punch_description"
-msgstr ""
+msgstr "A classic, powerful strike with the user's fist."
 
 msgid "punch"
 msgstr "Punch"
 
 msgid "quicksand_description"
-msgstr ""
+msgstr "The user creates a treacherous patch of quicksand, trapping and damaging the opponent."
 
 msgid "quicksand"
 msgstr "Quicksand"
 
 msgid "radiance_description"
-msgstr ""
+msgstr "The user emits blinding flash of light, followed by a powerful energy blast."
 
 msgid "radiance"
 msgstr "Radiance"
 
 msgid "ram_description"
-msgstr ""
+msgstr "The user charges forward with incredible force, delivering a devastating physical blow."
 
 msgid "ram"
 msgstr "Ram"
 
 msgid "refresh_description"
-msgstr ""
+msgstr "The user rejuvenates itself, restoring health and entering a state of rapid recovery."
 
 msgid "refresh"
 msgstr "Refresh"
 
 msgid "revenge_stance_description"
-msgstr ""
+msgstr "The user adopts a defensive posture, provoking the opponent into attacking first, while preparing for revenge."
 
 msgid "revenge_stance"
 msgstr "Revenge Stance"
 
 msgid "ring_description"
-msgstr ""
+msgstr "The user conjures a ring that expands, engulfing the opponent."
 
 msgid "ring"
 msgstr "Ring"
 
 msgid "riposte_description"
-msgstr ""
+msgstr "The user assumes a defensive stance, preparing to counter any attack with a swift and powerful retaliation."
 
 msgid "riposte"
 msgstr "Riposte"
@@ -2016,19 +2046,19 @@ msgid "rot"
 msgstr "Rot"
 
 msgid "ruby_description"
-msgstr ""
+msgstr "The user fires a concentrated beam of ruby-like energy, inflicting damage."
 
 msgid "ruby"
 msgstr "Ruby"
 
 msgid "rust_bomb_description"
-msgstr ""
+msgstr "A corrosive projectile that explodes on impact, dealing damage and poisoning the opponent."
 
 msgid "rust_bomb"
 msgstr "Rust Bomb"
 
 msgid "saber_description"
-msgstr ""
+msgstr "The user strikes with a swift and powerful sword-like attack."
 
 msgid "saber"
 msgstr "Saber"
@@ -2040,7 +2070,7 @@ msgid "salamander"
 msgstr "Salamander"
 
 msgid "sand_spray_description"
-msgstr ""
+msgstr "A cloud of abrasive sand is hurled at the opponent, damaging their vision and inflicting damage."
 
 msgid "sand_spray"
 msgstr "Sand Spray"
@@ -2058,19 +2088,28 @@ msgid "shadow_boxing"
 msgstr "Shadow Boxing"
 
 msgid "shapechange_description"
-msgstr ""
+msgstr "The user undergoes a rapid transformation, striking the opponent with a surprising and powerful attack."
 
 msgid "shapechange"
 msgstr "Shapechange"
 
+msgid "shooting_star_description"
+msgstr "Heals the user's health by harnessing the energy of a shooting star streaking across the night sky."
+
+msgid "shooting_star_fail"
+msgstr "The lack of starlight from the daytime sky prevents the healing."
+
+msgid "shooting_star"
+msgstr "Shooting Star"
+
 msgid "shrapnel_description"
-msgstr ""
+msgstr "The user unleashes a barrage of sharp fragments, causing widespread damage."
 
 msgid "shrapnel"
 msgstr "Shrapnel"
 
 msgid "shuriken_description"
-msgstr ""
+msgstr "The user hurls a deadly array of throwing stars, reinforcing its own resolve with each hit."
 
 msgid "shuriken"
 msgstr "Shuriken"
@@ -2082,19 +2121,25 @@ msgid "sleep_bomb"
 msgstr "Sleep Bomb"
 
 msgid "sleeping_powder_description"
-msgstr ""
+msgstr "A cloud of sleep-inducing pollen is released, causing the opponent to fall asleep."
 
 msgid "sleeping_powder"
 msgstr "Sleeping Powder"
 
+msgid "slice_description"
+msgstr "The user wields a sharp blade, delivery a powerful, cutting attack."
+
+msgid "slice"
+msgstr "Slice"
+
 msgid "slime_description"
-msgstr ""
+msgstr "A sticky, viscous substance is emitted, engulfing the opponent and dealing damage."
 
 msgid "slime"
 msgstr "Slime"
 
 msgid "snowstorm_description"
-msgstr ""
+msgstr "A blizzard engulfs the opponent, inflicting cold damage and leaving them exhausted."
 
 msgid "snowstorm"
 msgstr "Snowstorm"
@@ -2106,37 +2151,37 @@ msgid "spit_poison"
 msgstr "Spit Poison"
 
 msgid "splinter_description"
-msgstr ""
+msgstr "The user launches a barrage of wooden splinters, blinding and damaging the opponent."
 
 msgid "splinter"
 msgstr "Splinter"
 
 msgid "stabilo_description"
-msgstr ""
+msgstr "The user summons a barrage of sharp wooden splinters that pierce the opponent."
 
 msgid "stabilo"
 msgstr "Stabilo"
 
 msgid "stampede_description"
-msgstr ""
+msgstr "A powerful, overwhelming charge that inflicts heavy physical damage."
 
 msgid "stampede"
 msgstr "Stampede"
 
 msgid "starfall_description"
-msgstr ""
+msgstr "A shower of celestial bodies descends upon the opponent, inflicting damage and granting the user heightened focus while exhausting the opponent."
 
 msgid "starfall"
 msgstr "Starfall"
 
 msgid "static_field_description"
-msgstr ""
+msgstr "The user generates a static electric field around itself, granting it increased defense."
 
 msgid "static_field"
 msgstr "Static Field"
 
 msgid "sting_description"
-msgstr ""
+msgstr "The user inflicts a painful sting, injecting poison into the opponent's body."
 
 msgid "sting"
 msgstr "Sting"
@@ -2148,109 +2193,103 @@ msgid "stone_rot"
 msgstr "Stone Rot"
 
 msgid "stonehenge_description"
-msgstr ""
+msgstr "The user manipulates the earth, creating a ring of stones that crush the opponent."
 
 msgid "stonehenge"
 msgstr "Stonehenge"
 
 msgid "strangulation_description"
-msgstr ""
+msgstr "The user constricts the opponent's throat, cutting off their air supply."
 
 msgid "strangulation"
 msgstr "Strangulation"
 
 msgid "strike_description"
-msgstr ""
+msgstr "The user delivers a powerful, focused blow."
 
 msgid "strike"
 msgstr "Strike"
 
 msgid "suck_poison_description"
-msgstr ""
+msgstr "The user draws out the poison from their own body and infects their enemy with it."
 
 msgid "suck_poison"
 msgstr "Suck Poison"
 
 msgid "sudden_glow_description"
-msgstr ""
+msgstr "The user emits a radiant light, healing itself and restoring its stamina."
 
 msgid "sudden_glow"
 msgstr "Sudden Glow"
 
 msgid "sunburst_description"
-msgstr ""
+msgstr "The user channels the energy of the sun, unleashing a blindingly bright attack."
 
 msgid "sunburst"
 msgstr "Sunburst"
 
 msgid "supernova_description"
-msgstr ""
+msgstr "A cataclysmic explosion of energy, dealing immense damage to all opponents."
 
 msgid "supernova"
 msgstr "Supernova"
 
 msgid "suplex_description"
-msgstr ""
+msgstr "A powerful grappling move that throws the opponent to the ground, inflicting damage and granting the user increased resilience."
 
 msgid "suplex"
 msgstr "Suplex"
 
 msgid "surf_description"
-msgstr ""
+msgstr "AA massive wave crashes down upon the opponent."
 
 msgid "surf"
 msgstr "Surf"
 
 msgid "surge_description"
-msgstr ""
+msgstr "A powerful electric discharge that shocks the opponent."
 
 msgid "surge"
 msgstr "Surge"
 
-msgid "sword_description"
-msgstr ""
-
-msgid "sword"
-msgstr "Sword"
-
 msgid "sylvan_description"
-msgstr ""
+msgstr "The user summons the power of nature, transforming the opponent into a wooden puppet."
 
 msgid "sylvan"
 msgstr "Sylvan"
 
 msgid "take_cover_description"
-msgstr ""
+msgstr "The user assumes a defensive stance, increasing its accuracy."
 
 msgid "take_cover"
 msgstr "Take Cover"
 
 msgid "ten_thousand_feathers_description"
-msgstr ""
+msgstr "A flurry of feathers descends upon the opponent, inflicting multiple hits."
 
 msgid "ten_thousand_feathers"
 msgstr "Ten Thousand Feathers"
 
 msgid "terror_description"
-msgstr ""
+msgstr "The target is shaking with fear, unable to pick up or use items."
 
 msgid "terror"
 msgstr "Terror"
 
 msgid "thunderball_description"
-msgstr ""
+msgstr "With a rumbling like thunder, a hard ball of rock strikes the target."
 
 msgid "thunderball"
 msgstr "Thunderball"
 
 msgid "thunderclap_description"
-msgstr ""
+msgstr "A sudden, deafening clap of thunder that stuns and damages the opponent."
 
 msgid "thunderclap"
 msgstr "Thunderclap"
 
 msgid "time_crisis_description"
-msgstr ""
+msgstr "The user distorts the flow of time, causing the opponent damage."
 
 msgid "time_crisis"
 msgstr "Time Crisis"
@@ -2262,7 +2301,7 @@ msgid "tinder"
 msgstr "Tinder"
 
 msgid "tip_description"
-msgstr ""
+msgstr "The user delivery a swift, precise strike to a vital point."
 
 msgid "tip"
 msgstr "Tip"
@@ -2274,61 +2313,61 @@ msgid "tonguespear"
 msgstr "Tonguespear"
 
 msgid "torch_description"
-msgstr ""
+msgstr "A projectile that strikes the opponent."
 
 msgid "torch"
 msgstr "Torch"
 
 msgid "tsunami_description"
-msgstr ""
+msgstr "The user summons a colossal wave that crashes down upon the opponent."
 
 msgid "tsunami"
 msgstr "Tsunami"
 
 msgid "tux_attack_description"
-msgstr ""
+msgstr "The user transforms into a whirlwind of data, dealing heavy damage."
 
 msgid "tux_attack"
 msgstr "Tux Attack"
 
 msgid "ubuntu_description"
-msgstr ""
+msgstr "The user emits a chaotic energy that randomly alters the opponent's type."
 
 msgid "ubuntu"
 msgstr "Ubuntu"
 
 msgid "undertaker_description"
-msgstr ""
+msgstr "A desperate, self-sacrificing attack that deals a massive damage at the cost of the user's health."
 
 msgid "undertaker"
 msgstr "Undertaker"
 
 msgid "venom_description"
-msgstr ""
+msgstr "The user secretes a corrosive acid that burns the opponent upon contact."
 
 msgid "venom"
 msgstr "Venom"
 
 msgid "venomous_tentacle_description"
-msgstr ""
+msgstr "A poisonous tentacle strikes the opponent, inflicting damage and poisoning them."
 
 msgid "venomous_tentacle"
 msgstr "Venomous Tentacle"
 
 msgid "viper_description"
-msgstr ""
+msgstr "The user launches a volley of sharp, wooden darts with incredible speed and accuracy."
 
 msgid "viper"
 msgstr "Viper"
 
 msgid "vorpal_description"
-msgstr ""
+msgstr "The user unleashes a devastating, precision strike that inflicts severe damage and fills the opponent with a burning desire for revenge."
 
 msgid "vorpal"
 msgstr "Vorpal"
 
 msgid "wall_fire_description"
-msgstr ""
+msgstr "The user conjures a fiery wall that both protects it and scorches the opponent."
 
 msgid "wall_fire"
 msgstr "Wall Fire"
@@ -2340,37 +2379,37 @@ msgid "wall_of_steel"
 msgstr "Wall of Steel"
 
 msgid "wallow_description"
-msgstr ""
+msgstr "The user relaxes in a pool of mud, healing its wounds."
 
 msgid "wallow"
 msgstr "Wallow"
 
 msgid "walls_description"
-msgstr ""
+msgstr "The user constructs sturdy walls of earth or rock to create a defensive barrier."
 
 msgid "walls"
 msgstr "Walls"
 
 msgid "web_description"
-msgstr ""
+msgstr "A sticky web is shot at the opponent, trapping them and inflicting damage."
 
 msgid "web"
 msgstr "Web"
 
 msgid "webs_wind_description"
-msgstr ""
+msgstr "The user creates a swirling vortex of sticky webs that ensnare the opponent, dealing multiple hits and slowing their movement."
 
 msgid "webs_wind"
 msgstr "Webs Wind"
 
 msgid "whirlwind_description"
-msgstr ""
+msgstr "The user creates a powerful vortex of wind that sweeps the opponent away."
 
 msgid "whirlwind"
 msgstr "Whirlwind"
 
 msgid "wing_tip_description"
-msgstr ""
+msgstr "The user delivers a sharp, cutting attack with the tip of its wing."
 
 msgid "wing_tip"
 msgstr "Wing Tip"
@@ -2708,6 +2747,9 @@ msgstr "Tuxemon has too many techniques.\n"
 msgid "evolution_confirmation"
 msgstr "{name} is trying to evolve into {evolve}. Allow evolution?"
 
+msgid "evolution_ended"
+msgstr "{name} evolves into {evolve}!"
+
 msgid "no_signal"
 msgstr "No Signal"
 
@@ -2906,6 +2948,9 @@ msgstr "Cancel Key"
 msgid "menu_back_key"
 msgstr "Back Key"
 
+msgid "menu_reset_default"
+msgstr "Reset Keys to Default"
+
 msgid "enable"
 msgstr "Enable"
 
@@ -3091,6 +3136,12 @@ msgstr "The egg in its pouch does not hatch. Instead, it secretes a delicious dr
 msgid "ambuwl"
 msgstr "Ambuwl"
 
+msgid "ampystoma_description"
+msgstr "You would think AMPYSTOMA's warning coloration would make ambush impossible, but the murky waters it hunts in obscure it until it is ready to reveal itself. It likes to go on land during thunderstorms."
+
+msgid "ampystoma"
+msgstr "Ampystoma"
+
 msgid "angesnow_description"
 msgstr "Those who survive getting lost in hostile, icy conditions often mention a mysterious presence guiding them even when the snow is too heavy to see through."
 
@@ -3139,11 +3190,11 @@ msgstr "If the sun is out, it can fly as far or as high as it likes."
 msgid "av8r"
 msgstr "Av8r"
 
-msgid "axylightl_description"
+msgid "axolightl_description"
 msgstr "It lights the deep waters with its tail, marking a safe shelter for fish."
 
-msgid "axylightl"
-msgstr "Axylightl"
+msgid "axolightl"
+msgstr "Axolightl"
 
 msgid "b_ver_1_description"
 msgstr "It is designed for all those times you need something to be bitten by a robot."
@@ -5060,6 +5111,8 @@ msgid "cat_lamenting_emotion"
 msgstr "Lamenting Emotion"
 msgid "cat_light_fin"
 msgstr "Light Fin"
+msgid "cat_lightning_salamander"
+msgstr "Lightning Salamander"
 msgid "cat_lions_tooth"
 msgstr "Lion's Tooth"
 msgid "cat_lit"
@@ -7738,6 +7791,15 @@ msgstr "Great work on Tuxepedia, my friend.\n You're our top contributor."
 msgid "spyder_cottontown_mom2"
 msgstr "!!!"
 
+msgid "spyder_lostfight"
+msgstr "I guess I shouldn't have picked that fight. But it's the spirit, the spirit of too much coffee, that matters!"
+
+msgid "spyder_confused1"
+msgstr "This guy won't let me through! I can't figure out how to get out of town! If I win, you have to tell me how! \n If I lose... the same!"
+
+msgid "spyder_confused2"
+msgstr "Oh, you say there is another way out on the opposite side of town? Just go right and go straight past the heal center? Thanks!"
+
 msgid "spyder_cottontown_hacker2"
 msgstr "Right, right!\n There's a data center along the river to the north-east of Timber Town.\n If Omnichannel's done anything to the computer network, they would have done it there."
 
@@ -7837,8 +7899,11 @@ msgstr "You are so engrossed reading the new entries, that you don't notice peop
 msgid "spyder_cotton_tuxepediaintro4"
 msgstr "It's so cool that you came. There's still so many tuxemon to be added - over a hundred, I think. \n You could really get into it, and make a difference to the world. "
 
+msgid "spyder_request_fight"
+msgstr "Do you want a quick battle?"
+
 msgid "spyder_cotton_cafegoth"
-msgstr "Don't look at me. I'm just here for the free canapes."
+msgstr "Don't look at me. I'm just here for the free canapes and heals."
 
 msgid "spyder_cotton_cafeflorist1"
 msgstr "Shhh, it's about to begin."
@@ -7875,6 +7940,30 @@ msgstr "Enjoy the flower display! It's the pride of Leather Town."
 
 msgid "spyder_citypark2_florist"
 msgstr "The flowers look okay, don't they? ... Ever since the mining began in Leather Town, the flowers have been under the weather!"
+
+msgid "spyder_generic_nurse"
+msgstr "Hey, you look tired. Let me help you feel better!"
+
+msgid "spyder_output_nurse1"
+msgstr "You should be good as new now! Just take it easy for a bit and you'll be back to your old self in no time."
+
+msgid "spyder_output_nurse2"
+msgstr "All better! I'm glad I could help. You were looking a bit rough there for a second."
+
+msgid "spyder_output_nurse3"
+msgstr "There we go! You're all fixed up. Don't worry about it, it's all part of the service."
+
+msgid "spyder_output_nurse4"
+msgstr "All healed up! Now, let's get you back on your feet and get you moving again."
+
+msgid "spyder_output_nurse5"
+msgstr "You're all patched up now, just take a load off and rest for a bit."
+
+msgid "spyder_output_nurse6"
+msgstr "Feeling better already? I'm glad I could lend a hand."
+
+msgid "spyder_output_nurse7"
+msgstr "All better now! You were a bit worse for wear, but you're good as new."
 
 msgid "spyder_route2_graf2"
 msgstr "I got served."
@@ -7922,6 +8011,9 @@ msgstr "Did you know that the first spectacles were made of beryl, not glass? \n
 
 msgid "spyder_leather_maniac" 
 msgstr "How is your adventure so far? \n ... \n Wow, so talkative! You are really coming out of your shell." 
+
+msgid "spyder_route3_boulder"
+msgstr "I need to find something in my bag that can help me push this boulder... Ah, if only I had the right item..."
 
 msgid "spyder_route3_sign"
 msgstr "Rehabilitation will begin as soon as possible. \n Please stop nagging us."
@@ -8096,6 +8188,8 @@ msgid "spyder_barmaid_cafe1"
 msgstr "Are you okay?\n I guess all your tuxemon were infected, so the Enforcers took them to the Hospital!"
 msgid "spyder_barmaid_cafe2"
 msgstr "You can use the PC to get out some non-infected tuxemon."
+msgid "spyder_barmaid_cafe2a"
+msgstr "Hold on, I'll lock the café door for a sec while you access the PC, don't want any unwanted Enforcers crashing the party.\n Once you've got your Tuxemon, I'll let the regulars back in."
 msgid "spyder_barmaid_cafe3"
 msgstr "Oh dear, you're totally out of tuxemon.\n Well, I have this Nudiflot I don't really want."
 msgid "spyder_enforcer_candy1"
@@ -8497,6 +8591,8 @@ msgstr "Remember, we had nothing to do with the disease getting out!"
 
 msgid "spyder_scoop_asta1"
 msgstr "Why yes, I am the inventor of the Extreme Restraints. \n What are they, I hear you ask? \n Only a set of manacles so powerful that even a dragon could not escape them. \n They are being used in the containment unit to make sure none of the infected tuxemon escape."
+msgid "spyder_scoop_asta2"
+msgstr "Are you sure you want to leave Scoop HQ?"
 
 msgid "spyder_scoop_alyssa1"
 msgstr "As soon as disease was detected, we moved the infected tuxemon to this containment unit."
@@ -9041,7 +9137,7 @@ msgstr "Quarantines have their use, especially for people who don't have tuxemon
 msgid "spyder_hospital1_scientist1"
 msgstr "We didn't want these tuxemon to be seized, but while they're here we're going to look after them."
 msgid "spyder_hospital1_scientist2"
-msgstr "This might help."
+msgstr "Let's make the most of the situation."
 msgid "spyder_hospital2_scientist2"
 msgstr "Psst! Look familiar?"
 msgid "spyder_hospital2_scientist1"
@@ -9149,6 +9245,8 @@ msgid "spyder_top_magician1"
 msgstr "Have you ever been to the Dojo in Flower City?\n No? A keen battler like you?"
 msgid "spyder_top_magician2"
 msgstr "Well, this should help."
+msgid "spyder_top_magician3"
+msgstr "Why not head to the Dojo in Flower City and see how your battling skills stack up against the best trainers in the region?"
 
 msgid "spyder_mansion_gillette"
 msgstr "Gillette"
@@ -10202,6 +10300,7 @@ msgid "spyder_dojo_zhu1"
 msgstr "Let me tell you how Tastes work."
 msgid "spyder_dojo_xiang1"
 msgstr "Let me tell you how Techniques work."
+
 msgid "spyder_dojo_fu2"
 msgstr "Throughout their lives, most monsters pass through different stages.\n For example, a Rockitten may become a Rockat and then a Jemuar. This is called Morphing.\n Most Morphing occurs because a monster reaches a certain level,\n but there are other ways that Morphing can occur,\n like Dollfin becoming Bigfin when exposed to Sweet Sand."
 msgid "spyder_dojo_yin2"
@@ -10210,12 +10309,44 @@ msgid "spyder_dojo_zhu2"
 msgstr "Every monster has two Tastes: Warm and Cold.\n A Warm Taste makes the monster 10 percent better in one Stat:\n Speed for Peppy Taste, Melee for Salty Taste, Armor for Hearty Taste,\n Ranged for Zesty Taste and Dodge for Refined Taste.\n A Cold Taste makes the monster 10 percent worse in one Stat:\n Speed for Mild Taste, Melee for Sweet Taste,\n Armor for Soft Taste, Ranged for Flakey Taste and Dodge for Dry Taste."
 msgid "spyder_dojo_xiang2"
 msgstr "In combat, monsters can choose from up to four techniques that they know.\n Techniques have an accuracy, which determines how likely they are to occur.\n If a technique has a Power, that determines how much Damage it does.\n Some techniques impose a condition on the user or the target,\n or both - and the technique's Potency determines how likely that is to occur.\n Some techniques, once used, take a while to become available again."
+
 msgid "spyder_dojo_fu3"
-msgstr "I have developed a potion that reverts a tuxemon back to its base form.\n Shall I give the Button Potion to one of your tuxemon?"
+msgstr "I have developed a potion that reverts a tuxemon back to its base form."
+msgid "spyder_dojo_fu3a"
+msgstr "I'm sorry, but I see you don't have any tuxemon that have evolved yet. This potion won't be of much use to you at the moment."
+msgid "spyder_dojo_fu3b"
+msgstr "Ah, I see you have a tuxemon that has reached its first evolution. Ask my student, if you're interested in the Button Potion.\n He's been studying the art of reversal."
+msgid "spyder_dojo_fu3c"
+msgstr "Impressive, you have a tuxemon that has reached its second evolution. Ask my student, if you're interested in the Button Potion.\n She's been researching the intricacies of advanced evolutions."
+msgid "spyder_dojo_fu3d"
+msgstr "Feel free to ask my students, if you're interested in the Button Potion. Both of them might have use for it, depending on their current research."
+
+msgid "spyder_dojo_fu_student1"
+msgstr "You're interested in using the Button Potion on one of your tuxemon? That'll be ${{currency}}500?, if you're willing to part with it."
+msgid "spyder_dojo_fu_student1a"
+msgstr "A small price to pay for the knowledge that will be gained from reversing a tuxemon that has reached its first evolution."
+msgid "spyder_dojo_fu_student1b"
+msgstr "The insights gained from reversing a tuxemon that has reached its second evolution will be invaluable to my research."
+msgid "spyder_dojo_fu_student1c"
+msgstr "I see. Well, if you're not interested or can't afford it, I won't pressure you. The Button Potion is a rare and valuable item, after all.\n Maybe another time, then?"
+msgid "spyder_dojo_fu_nochoice"
+msgstr "I'm ready to assist you, but please, choose the tuxemon that will undergo the reversal process."
+
 msgid "spyder_dojo_zhu3"
-msgstr "I have developed a potion that changes a tuxemon's taste.\n Shall I give the Taste-Changer Potion to one of your tuxemon for ${{currency}}50?"
+msgstr "I have developed a potion that changes a tuxemon's taste. Shall I give the Taste-Changer Potion to one of your tuxemon for ${{currency}}50?"
+msgid "spyder_dojo_zhu3a"
+msgstr "I'm afraid you don't have enough funds to afford the Taste-Changer Potion."
+
 msgid "spyder_dojo_xiang3"
-msgstr "I have developed a potion that allows a tuxemon to re-learn a technique that it has forgotten.\n Shall I give the Re-Learner Potion to one of your tuxemon?"
+msgstr "I have developed a potion that allows a tuxemon to re-learn a technique that it has forgotten.\n Shall I give the Re-Learner Potion to one of your tuxemon for ${{currency}}200?"
+msgid "spyder_dojo_xiang3a"
+msgstr "Not enough to cover the cost of the Re-Learner Potion."
+msgid "spyder_dojo_xiang3b"
+msgstr "The Re-Learner Potion has taken effect, your tuxemon's forgotten technique has been restored."
+msgid "spyder_dojo_xiang3c"
+msgstr "Unfortunately, the Re-Learner Potion had an unexpected side effect, and your tuxemon has now forgotten one of its current techniques."
+msgid "spyder_dojo_xiang3d"
+msgstr "Be cautious, young trainer, for the Re-Learner Potion is potent and may have unintended consequences on tuxemon that have not learned many techniques yet.\n I advise using it only on those who have reached a high level of mastery."
 
 msgid "spyder_dojo_wan"
 msgstr "Master Wan"
@@ -10703,6 +10834,9 @@ msgstr "I'm writing a book about my journey to the Archipelago. It is composed o
 
 msgid "spyder_omnichannel_sign"
 msgstr "Omnichannel HQ: We Make Headlines"
+
+msgid "spyder_confusedperson"
+msgstr "Confused Guy"
 
 msgid "cotton_misa_fireplace"
 msgstr "It looks like someone burned papers."

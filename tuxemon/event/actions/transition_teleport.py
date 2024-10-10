@@ -41,10 +41,18 @@ class TransitionTeleportAction(EventAction):
     rgb: Optional[str] = None
 
     def start(self) -> None:
-        world = self.session.client.get_state_by_name(WorldState)
-        if world.delayed_teleport:
+        self.world = self.session.client.get_state_by_name(WorldState)
+
+        if self.world.npcs:
+            for _npc in self.world.npcs:
+                if _npc.moving or _npc.path:
+                    self.world.npcs.remove(_npc)
+
+        if self.world.teleporter.delayed_teleport:
             self.stop()
             return
+
+        self.session.client.current_music.stop()
 
         # Start the screen transition
         _time = TRANS_TIME if self.trans_time is None else self.trans_time
@@ -62,7 +70,9 @@ class TransitionTeleportAction(EventAction):
         else:
             self.transition.cleanup()
             # set the delayed teleport
-            action = self.session.client.event_engine
-            params = ["player", self.map_name, self.x, self.y]
-            action.execute_action("delayed_teleport", params)
+            self.world.teleporter.delayed_char = None
+            self.world.teleporter.delayed_teleport = True
+            self.world.teleporter.delayed_mapname = self.map_name
+            self.world.teleporter.delayed_x = self.x
+            self.world.teleporter.delayed_y = self.y
             self.stop()

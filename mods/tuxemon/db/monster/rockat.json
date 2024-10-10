@@ -57,8 +57,13 @@
         {
             "mon_slug": "rockitten",
             "evo_stage": "basic"
+        },
+        {
+            "mon_slug": "jemuar",
+            "evo_stage": "stage2"
         }
     ],
+    "tags": ["hunter", "mountains", "urban"],
     "shape": "hunter",
     "stage": "stage1",
     "types": [

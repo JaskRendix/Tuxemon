@@ -1,0 +1,33 @@
+{
+  "tech_id": 101,
+  "accuracy": 0.9,
+  "animation": "pound",
+  "effects": [
+    "damage"
+  ],
+  "flip_axes": "",
+  "is_fast": false,
+  "potency": 0.0,
+  "power": 1.2,
+  "range": "melee",
+  "recharge": 1,
+  "sfx": "sfx_blaster",
+  "slug": "slice",
+  "sort": "damage",
+  "target": {
+    "enemy_monster": true,
+    "enemy_team": false,
+    "enemy_trainer": false,
+    "own_monster": false,
+    "own_team": false,
+    "own_trainer": false
+  },
+  "category": "animal",
+  "tags": ["Sharp"],
+  "types": [
+    "metal"
+  ],
+  "use_failure": "combat_miss",
+  "use_success": null,
+  "use_tech": "combat_used_x"
+}

@@ -28,7 +28,7 @@
         },
         {
             "level_learned": 20,
-            "technique": "maori"
+            "technique": "greenstone"
         },
         {
             "level_learned": 28,
@@ -65,8 +65,13 @@
         {
             "mon_slug": "slichen",
             "evo_stage": "basic"
+        },
+        {
+            "mon_slug": "conglolem",
+            "evo_stage": "stage2"
         }
     ],
+    "tags": ["blob"],
     "shape": "blob",
     "stage": "stage1",
     "types": [

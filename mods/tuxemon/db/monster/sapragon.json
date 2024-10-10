@@ -12,7 +12,7 @@
         },
         {
             "level_learned": 6,
-            "technique": "maori"
+            "technique": "greenstone"
         },
         {
             "level_learned": 8,
@@ -61,8 +61,13 @@
         {
             "mon_slug": "chloragon",
             "evo_stage": "basic"
+        },
+        {
+            "mon_slug": "dragarbor",
+            "evo_stage": "stage2"
         }
     ],
+    "tags": ["dragon", "jungle"],
     "shape": "dragon",
     "stage": "stage1",
     "types": [

@@ -20,7 +20,7 @@
         },
         {
             "level_learned": 12,
-            "technique": "suck_poison"
+            "technique": "spit_poison"
         },
         {
             "level_learned": 16,
@@ -46,6 +46,7 @@
             "evo_stage": "basic"
         }
     ],
+    "tags": ["polliwog"],
     "shape": "polliwog",
     "stage": "stage1",
     "types": [

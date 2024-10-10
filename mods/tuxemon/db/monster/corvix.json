@@ -16,7 +16,7 @@
         },
         {
             "level_learned": 8,
-            "technique": "sword"
+            "technique": "slice"
         },
         {
             "level_learned": 12,
@@ -57,8 +57,13 @@
         {
             "mon_slug": "flacono",
             "evo_stage": "basic"
+        },
+        {
+            "mon_slug": "gryfix",
+            "evo_stage": "stage2"
         }
     ],
+    "tags": ["flier", "desert", "grassland", "mountains", "woodland"],
     "shape": "flier",
     "stage": "stage1",
     "types": [

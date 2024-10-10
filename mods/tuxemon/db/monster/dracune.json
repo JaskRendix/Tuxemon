@@ -53,8 +53,13 @@
         {
             "mon_slug": "vamporm",
             "evo_stage": "basic"
+        },
+        {
+            "mon_slug": "fluttaflap",
+            "evo_stage": "stage2"
         }
     ],
+    "tags": ["blob"],
     "shape": "blob",
     "stage": "stage1",
     "types": [

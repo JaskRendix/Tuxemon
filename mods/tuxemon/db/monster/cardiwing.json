@@ -57,8 +57,13 @@
         {
             "mon_slug": "cardiling",
             "evo_stage": "basic"
+        },
+        {
+            "mon_slug": "cardinale",
+            "evo_stage": "stage2"
         }
     ],
+    "tags": ["flier", "grassland", "jungle", "woodland"],
     "shape": "flier",
     "stage": "stage1",
     "types": [

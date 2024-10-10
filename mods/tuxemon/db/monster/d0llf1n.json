@@ -20,7 +20,7 @@
         },
         {
             "level_learned": 12,
-            "technique": "suck_poison"
+            "technique": "spit_poison"
         },
         {
             "level_learned": 16,
@@ -53,6 +53,7 @@
     ],
     "evolutions": [],
     "history": [],
+    "tags": ["leviathan"],
     "shape": "leviathan",
     "stage": "standalone",
     "types": [

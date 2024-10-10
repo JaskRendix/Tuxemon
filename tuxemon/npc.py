@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     import pygame
 
     from tuxemon.item.economy import Economy
-    from tuxemon.states.combat.combat import EnqueuedAction
+    from tuxemon.states.combat.combat_classes import EnqueuedAction
     from tuxemon.states.world.worldstate import WorldState
 
 
@@ -111,7 +111,6 @@ class NPC(Entity[NPCState]):
         self.money: dict[str, int] = {}  # Tracks money
         # list of ways player can interact with the Npc
         self.interactions: Sequence[str] = []
-        self.isplayer: bool = False  # used for various tests, idk
         # menu labels (world menu)
         self.menu_save: bool = True
         self.menu_load: bool = True
@@ -135,8 +134,6 @@ class NPC(Entity[NPCState]):
         self.pending_evolutions: list[tuple[Monster, Monster]] = []
         # nr tuxemon fight
         self.max_position: int = 1
-        # triggers fights 2 vs 2
-        self.double: bool = False
         self.speed = 10  # To determine combat order (not related to movement!)
         self.moves: Sequence[Technique] = []  # list of techniques
         self.steps: float = 0.0
@@ -745,50 +742,6 @@ class NPC(Entity[NPCState]):
         if monster in self.monsters:
             self.monsters.remove(monster)
 
-    def evolve_monster(self, old_monster: Monster, evolution: str) -> None:
-        """
-        Evolve a monster from this npc's party.
-
-        Parameters:
-            old_monster: Monster to remove from the npc's party.
-            evolution: Monster to add to the npc's party.
-
-        """
-        if old_monster not in self.monsters:
-            return
-
-        # TODO: implement an evolution animation
-        slot = self.monsters.index(old_monster)
-        new_monster = Monster()
-        new_monster.load_from_db(evolution)
-        new_monster.set_level(old_monster.level)
-        new_monster.current_hp = min(old_monster.current_hp, new_monster.hp)
-        new_monster.moves = old_monster.moves
-        new_monster.status = old_monster.status
-        new_monster.instance_id = old_monster.instance_id
-        new_monster.gender = old_monster.gender
-        new_monster.capture = old_monster.capture
-        new_monster.capture_device = old_monster.capture_device
-        new_monster.taste_cold = old_monster.taste_cold
-        new_monster.taste_warm = old_monster.taste_warm
-        new_monster.plague = old_monster.plague
-        new_monster.name = (
-            new_monster.name
-            if old_monster.name == T.translate(old_monster.slug)
-            else old_monster.name
-        )
-        self.remove_monster(old_monster)
-        self.add_monster(new_monster, slot)
-
-        # set evolution as caught
-        self.tuxepedia[evolution] = SeenStatus.caught
-
-        # If evolution has a flair matching, copy it
-        for new_flair in new_monster.flairs.values():
-            for old_flair in old_monster.flairs.values():
-                if new_flair.category == old_flair.category:
-                    new_monster.flairs[new_flair.category] = old_flair
-
     def remove_monster_from_storage(self, monster: Monster) -> None:
         """
         Removes the monster from the npc's storage.
@@ -827,7 +780,6 @@ class NPC(Entity[NPCState]):
         # Look up the NPC's details from our NPC database
         npc_details = db.lookup(self.slug, "npc")
         self.forfeit = npc_details.forfeit
-        self.double = npc_details.double
         npc_party = npc_details.monsters
         for npc_monster_details in npc_party:
             # This seems slightly wrong. The only usable element in

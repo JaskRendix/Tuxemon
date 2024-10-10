@@ -35,6 +35,10 @@ events:
     - not location_type clinic
     - not location_name wayfarer_inn1:wayfarer_inn2:scoop3:scoop4:paper_town:bedroom
     - is current_state WorldState
+    - not variable_set teleport_faint:spyder_leather_town.tmx 4 14
+    - not variable_set teleport_faint:spyder_timber_cafe.tmx 1 10
+    - not variable_set teleport_faint:spyder_candy_cafe.tmx 1 10
+    - not variable_set teleport_faint:spyder_cotton_cafe.tmx 1 10
     type: "event"
   Auto healing teleported:
     actions:
@@ -44,6 +48,7 @@ events:
     - format_variable cathedral_fee,int
     - modify_money bill_cathedral,,cathedral_fee
     conditions:
+    - is char_defeated player
     - is location_type clinic
     - is variable_set teleport_clinic:lost
     - is current_state WorldState
@@ -61,7 +66,7 @@ events:
     type: "event"
   Teleport Exception 2:
     actions:
-    - transition_teleport spyder_scoop2.tmx,9,6,0.3
+    - transition_teleport spyder_scoop2.tmx,4,4,0.3
     - set_monster_health
     - set_monster_status
     - set_variable teleport_clinic:none
@@ -81,6 +86,50 @@ events:
     - is location_name paper_town
     - is current_state WorldState
     - is variable_set firstfightend:no
+    type: "event"
+  Teleport Exception 4:
+    actions:
+    - teleport_faint
+    - set_monster_health
+    - set_monster_status
+    - set_variable teleport_clinic:none
+    conditions:
+    - is char_defeated player
+    - is current_state WorldState
+    - is variable_set teleport_faint:spyder_leather_town.tmx 4 14
+    type: "event"
+  Teleport Exception 5:
+    actions:
+    - teleport_faint
+    - set_monster_health
+    - set_monster_status
+    - set_variable teleport_clinic:none
+    conditions:
+    - is char_defeated player
+    - is current_state WorldState
+    - is variable_set teleport_faint:spyder_timber_cafe.tmx 1 10
+    type: "event"
+  Teleport Exception 6:
+    actions:
+    - teleport_faint
+    - set_monster_health
+    - set_monster_status
+    - set_variable teleport_clinic:none
+    conditions:
+    - is char_defeated player
+    - is current_state WorldState
+    - is variable_set teleport_faint:spyder_candy_cafe.tmx 1 10
+    type: "event"
+  Teleport Exception 7:
+    actions:
+    - teleport_faint
+    - set_monster_health
+    - set_monster_status
+    - set_variable teleport_clinic:none
+    conditions:
+    - is char_defeated player
+    - is current_state WorldState
+    - is variable_set teleport_faint:spyder_cotton_cafe.tmx 1 10
     type: "event"
   Evolution all:
     actions:
@@ -106,23 +155,13 @@ events:
     - is char_in player,surfable
     - not char_sprite player,swimmer
     type: "event"
-  Not surfable Boy:
+  Not surfable:
     actions:
-    - set_template player,adventurer,adventurer
+    - set_template player,default
     - set_variable swimming:no
     conditions:
     - not char_in player,surfable
     - is char_sprite player,swimmer
-    - is variable_set gender_choice:gender_male
-    type: "event"
-  Not surfable Girl:
-    actions:
-    - set_template player,heroine,heroine
-    - set_variable swimming:no
-    conditions:
-    - not char_in player,surfable
-    - is char_sprite player,swimmer
-    - is variable_set gender_choice:gender_female
     type: "event"
   Allow Swim:
     actions:
@@ -140,7 +179,7 @@ events:
     type: "event"
   Swim Encounters Day:
     actions:
-    - random_encounter routec,0.25
+    - random_encounter spyder_routec,0.25
     conditions:
     - is char_sprite player,swimmer
     - is current_state WorldState
@@ -149,7 +188,7 @@ events:
     type: "event"
   Swim Encounters Night:
     actions:
-    - random_encounter routec,0.75
+    - random_encounter spyder_routec,0.75
     conditions:
     - is char_sprite player,swimmer
     - is current_state WorldState
@@ -187,6 +226,14 @@ events:
     - is variable_set stage_of_day:night
     - is location_inside
     - not check_world layer,255:255:255:0
+    type: "event"
+  Day Cycle Outside:
+    actions:
+    - set_layer
+    conditions:
+    - not variable_set stage_of_day:night
+    - not location_inside
+    - is check_world layer,0:0:128:128
     type: "event"
   Phone GPS Leather:
     actions:
@@ -258,7 +305,7 @@ events:
     actions:
     - set_party_status player
     conditions:
-    - is current_state MainCombatMenuState:WorldState
+    - is current_state MainCombatMenuState:WorldMenuState
     - is party_size player,greater_than,0
     type: "event"
   Cheat Code ApexPlayer:
@@ -285,5 +332,25 @@ events:
     - remove_tech chosen_tech
     conditions:
     - is check_max_tech
-    - is current_state MainCombatMenuState
+    - is current_state MainCombatMenuState:WorldState
+    type: "event"
+  Create Quarantine Kennel:
+    actions:
+    - create_kennel quarantine
+    conditions:
+    - not kennel player,quarantine,exist
+    type: "event"
+  Hide Quarantine Kennel:
+    actions:
+    - set_kennel_visible quarantine,false
+    conditions:
+    - not variable_set hospitalcure:yes
+    - is kennel player,quarantine,visible
+    type: "event"
+  Show Quarantine Kennel:
+    actions:
+    - set_kennel_visible quarantine,true
+    conditions:
+    - is variable_set hospitalcure:yes
+    - is kennel player,quarantine,hidden
     type: "event"

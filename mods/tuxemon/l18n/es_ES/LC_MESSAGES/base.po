@@ -204,9 +204,6 @@ msgstr "¡Has capturado a {name}!"
 msgid "combat_capturing_fail"
 msgstr "¡{name} consiguió liberarse!"
 
-msgid "combat_recharging"
-msgstr "{name} necesita descansar antes de poder usar {move} de nuevo..."
-
 msgid "combat_replacement"
 msgstr "¡Escoge otro Tuxemon!"
 
@@ -407,9 +404,6 @@ msgstr "Mirada Fulminante"
 
 msgid "goad"
 msgstr "Aguijón"
-
-msgid "headbutt"
-msgstr "Cabezazo"
 
 msgid "hibernate"
 msgstr "Hibernar"
@@ -721,11 +715,11 @@ msgstr "Considera a las plantas que crecen cerca de él sus hermanos y hermanas.
 msgid "anoleaf"
 msgstr "Anoleaf"
 
-msgid "axylightl_description"
+msgid "axolightl_description"
 msgstr "Ilumina las aguas profundas con su cola, marcando un refugio seguro para peces."
 
-msgid "axylightl"
-msgstr "Axylightl"
+msgid "axolightl"
+msgstr "Axolightl"
 
 msgid "bamboon_description"
 msgstr "Lucha con su vara de bambú, que también usa para mantener el equilibrio."
@@ -4227,9 +4221,6 @@ msgstr "Windeye"
 msgid "chrome_robo"
 msgstr "Chrome Robo"
 
-msgid "birb_robo"
-msgstr "Birb Robo"
-
 msgid "mk01_alpha"
 msgstr "MK01 Alpha"
 
@@ -4480,9 +4471,6 @@ msgstr "Lujuria"
 msgid "magma"
 msgstr "Magma"
 
-msgid "maori"
-msgstr "Maorí"
-
 msgid "meltdown"
 msgstr "Fusión"
 
@@ -4536,9 +4524,6 @@ msgstr "Estrangulación"
 
 msgid "sunburst"
 msgstr "Rayos de Sol"
-
-msgid "sword"
-msgstr "Espada"
 
 msgid "sylvan"
 msgstr "Silvestre"
@@ -4599,9 +4584,6 @@ msgstr "Técnicas"
 
 msgid "move_to_kennel"
 msgstr "mover a {box}"
-
-msgid "birb_robo_description"
-msgstr "Un robot hostil."
 
 msgid "mk01_proto_description"
 msgstr "Un robot asesino fusionado con un dragón. No nos preguntes cómo."

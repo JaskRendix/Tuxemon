@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, Optional
 
 from tuxemon import plugin
 from tuxemon.constants import paths
-from tuxemon.db import ElementType, Range, db, process_targets
+from tuxemon.db import ElementType, Range, db
 from tuxemon.element import Element
 from tuxemon.locale import T
 from tuxemon.technique.techcondition import TechCondition
@@ -24,7 +24,6 @@ logger = logging.getLogger(__name__)
 SIMPLE_PERSISTANCE_ATTRIBUTES = (
     "slug",
     "counter",
-    "counter_success",
 )
 
 
@@ -38,12 +37,10 @@ class Technique:
     conditions_classes: ClassVar[Mapping[str, type[TechCondition]]] = {}
 
     def __init__(self, save_data: Optional[Mapping[str, Any]] = None) -> None:
-        if save_data is None:
-            save_data = dict()
+        save_data = save_data or {}
 
         self.instance_id = uuid.uuid4()
         self.counter = 0
-        self.counter_success = 0
         self.tech_id = 0
         self.accuracy = 0.0
         self.animation: Optional[str] = None
@@ -62,12 +59,11 @@ class Technique:
         self.potency = 0.0
         self.power = 1.0
         self.range = Range.melee
-        self.healing_power = 0
+        self.healing_power = 0.0
         self.recharge_length = 0
         self.sfx = ""
         self.sort = ""
         self.slug = ""
-        self.target: Sequence[str] = []
         self.types: list[Element] = []
         self.usable_on = False
         self.use_success = ""
@@ -97,8 +93,11 @@ class Technique:
         Parameters:
             The slug of the technique to look up in the database.
         """
+        try:
+            results = db.lookup(slug, table="technique")
+        except KeyError:
+            raise RuntimeError(f"Technique {slug} not found")
 
-        results = db.lookup(slug, table="technique")
         self.slug = results.slug  # a short English identifier
         self.name = T.translate(self.slug)
         self.description = T.translate(f"{self.slug}_description")
@@ -112,11 +111,8 @@ class Technique:
 
         self.icon = results.icon
         self.counter = self.counter
-        self.counter_success = self.counter_success
         # types
-        for _ele in results.types:
-            _element = Element(_ele)
-            self.types.append(_element)
+        self.types = [Element(ele) for ele in results.types]
         # technique stats
         self.accuracy = results.accuracy or self.accuracy
         self.potency = results.potency or self.potency
@@ -135,7 +131,7 @@ class Technique:
 
         self.conditions = self.parse_conditions(results.conditions)
         self.effects = self.parse_effects(results.effects)
-        self.target = process_targets(results.target)
+        self.target = results.target.model_dump()
         self.usable_on = results.usable_on or self.usable_on
 
         # Load the animation sprites that will be used for this technique
@@ -162,22 +158,21 @@ class Technique:
             Effects turned into a list of TechEffect objects.
 
         """
-        ret = list()
+        effects = []
 
         for line in raw:
-            name = line.split()[0]
-            if len(line.split()) > 1:
-                params = line.split()[1].split(",")
-            else:
-                params = []
+            parts = line.split(maxsplit=1)
+            name = parts[0]
+            params = parts[1].split(",") if len(parts) > 1 else []
+
             try:
-                effect = Technique.effects_classes[name]
+                effect_class = Technique.effects_classes[name]
             except KeyError:
                 logger.error(f'Error: TechEffect "{name}" not implemented')
             else:
-                ret.append(effect(*params))
+                effects.append(effect_class(*params))
 
-        return ret
+        return effects
 
     def parse_conditions(
         self,
@@ -196,29 +191,28 @@ class Technique:
             Conditions turned into a list of TechCondition objects.
 
         """
-        ret = list()
+        conditions = []
 
         for line in raw:
-            op = line.split()[0]
-            name = line.split()[1]
-            if len(line.split()) > 2:
-                params = line.split()[2].split(",")
-            else:
-                params = []
+            parts = line.split(maxsplit=2)
+            op = parts[0]
+            name = parts[1]
+            params = parts[2].split(",") if len(parts) > 2 else []
+
             try:
-                condition = Technique.conditions_classes[name]
-                if op == "is":
-                    condition._op = True
-                elif op == "not":
-                    condition._op = False
-                else:
-                    raise ValueError(f"{op} must be 'is' or 'not'")
+                condition_class = Technique.conditions_classes[name]
             except KeyError:
                 logger.error(f'Error: TechCondition "{name}" not implemented')
-            else:
-                ret.append(condition(*params))
+                continue
 
-        return ret
+            if op not in ["is", "not"]:
+                raise ValueError(f"{op} must be 'is' or 'not'")
+
+            condition = condition_class(*params)
+            condition._op = op == "is"
+            conditions.append(condition)
+
+        return conditions
 
     def advance_round(self) -> None:
         """
@@ -226,13 +220,6 @@ class Technique:
 
         """
         self.counter += 1
-
-    def advance_counter_success(self) -> None:
-        """
-        Advance the counter for this technique if used successfully.
-
-        """
-        self.counter_success += 1
 
     def validate(self, target: Optional[Monster]) -> bool:
         """
@@ -250,15 +237,14 @@ class Technique:
         if not target:
             return False
 
-        result = True
-
-        for condition in self.conditions:
-            if condition._op is True:
-                event = condition.test(target)
-            else:
-                event = not condition.test(target)
-            result = result and event
-        return result
+        return all(
+            (
+                condition.test(target)
+                if condition._op
+                else not condition.test(target)
+            )
+            for condition in self.conditions
+        )
 
     def recharge(self) -> None:
         self.next_use -= 1
@@ -322,12 +308,9 @@ class Technique:
         """
         Returns TRUE if there is the type among the types.
         """
-        ret: bool = False
-        if element:
-            eles = [ele for ele in self.types if ele.slug == element]
-            if eles:
-                ret = True
-        return ret
+        return (
+            element in [ele.slug for ele in self.types] if element else False
+        )
 
     def set_stats(self) -> None:
         """

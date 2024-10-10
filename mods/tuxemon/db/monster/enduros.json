@@ -40,7 +40,7 @@
         },
         {
             "level_learned": 32,
-            "technique": "cavity"
+            "technique": "pit"
         },
         {
             "level_learned": 36,
@@ -53,6 +53,7 @@
     ],
     "evolutions": [],
     "history": [],
+    "tags": ["brute"],
     "shape": "brute",
     "stage": "standalone",
     "types": [
