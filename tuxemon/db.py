@@ -176,6 +176,8 @@ class MissionStatus(str, Enum):
     pending = "pending"
     completed = "completed"
     failed = "failed"
+    refused = "refused"
+    accepted = "accepted"
 
 
 class EntityFacing(str, Enum):
@@ -1268,9 +1270,9 @@ class EncounterItemModel(BaseModel):
         raise ValueError(f"the monster {v} doesn't exist in the db")
 
     @field_validator("variables")
-    def variable_exists(
-        cls: EncounterItemModel, v: Optional[str]
-    ) -> Optional[str]:
+    def variables_exists(
+        cls: EncounterItemModel, v: Optional[Sequence[str]]
+    ) -> Optional[Sequence[str]]:
         if v is None:
             return v
         if len(v) != len(set(v)):
@@ -1379,12 +1381,54 @@ class TemplateModel(BaseModel):
 
 class MissionModel(BaseModel):
     slug: str = Field(..., description="Slug uniquely identifying the mission")
+    reqs: Sequence[str] = Field(
+        ...,
+        description="The game variables that must exist to trigger the mission.",
+    )
+    success_reqs: Sequence[str] = Field(
+        ...,
+        description="The game variables that must exist to complete successfully the mission.",
+    )
+    failure_reqs: Sequence[str] = Field(
+        ...,
+        description="The game variables that must exist to fail the mission.",
+    )
+    dependencies: Sequence[str] = Field(
+        ..., description="Missions that must be completed before this one"
+    )
 
     @field_validator("slug")
     def translation_exists_mission(cls: MissionModel, v: str) -> str:
         if has.translation(v):
             return v
         raise ValueError(f"no translation exists with msgid: {v}")
+
+    @field_validator("dependencies")
+    def translation_exists_dependencies(
+        cls: MissionModel, v: Sequence[str]
+    ) -> Sequence[str]:
+        if len(v) != len(set(v)):
+            raise ValueError("The sequence contains duplicate slugs")
+        for slug in v:
+            if not has.translation(slug):
+                raise ValueError(f"no translation exists with msgid: {slug}")
+        return v
+
+    @field_validator("reqs", "success_reqs", "failure_reqs")
+    def variables_exists(cls: MissionModel, v: Sequence[str]) -> Sequence[str]:
+        if len(v) != len(set(v)):
+            raise ValueError("The sequence contains duplicate variables")
+        for variable in v:
+            if (
+                not variable
+                or len(variable.split(":")) != 2
+                or variable[0] == ":"
+                or variable[-1] == ":"
+            ):
+                raise ValueError(
+                    f"the variable {variable} isn't formatted correctly"
+                )
+        return v
 
 
 class MusicModel(BaseModel):

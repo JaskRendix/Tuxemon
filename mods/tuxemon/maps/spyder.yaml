@@ -353,3 +353,9 @@ events:
     - is variable_set hospitalcure:yes
     - is kennel player,quarantine,hidden
     type: "event"
+  Missions:
+    actions:
+    - set_mission player
+    conditions:
+    - is current_state WorldMenuState
+    type: "event"

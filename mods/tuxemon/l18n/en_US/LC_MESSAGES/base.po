@@ -2748,6 +2748,9 @@ msgstr "{name} has too many techniques.\n"
 msgid "uninstall_app"
 msgstr "Unable to uninstall the app."
 
+msgid "mission_question"
+msgstr "Do you want to accept the mission?"
+
 # Player State
 
 msgid "tuxepedia_progress"
@@ -2878,6 +2881,12 @@ msgstr "Pending"
 
 msgid "failed"
 msgstr "Failed"
+
+msgid "accepted"
+msgstr "Accepted"
+
+msgid "refused"
+msgstr "Refused"
 
 msgid "menu_minigame"
 msgstr "Minigame"

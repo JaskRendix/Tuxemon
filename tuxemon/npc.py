@@ -906,35 +906,5 @@ class NPC(Entity[NPCState]):
                 box.remove(item)
                 return
 
-    ####################################################
-    #                    Missions                      #
-    ####################################################
-
-    def add_mission(self, mission: Mission) -> None:
-        """
-        Adds a mission to the npc's missions.
-
-        """
-        self.missions.append(mission)
-
-    def remove_mission(self, mission: Mission) -> None:
-        """
-        Removes a mission from this npc's missions.
-
-        """
-        if mission in self.missions:
-            self.missions.remove(mission)
-
-    def find_mission(self, mission: str) -> Optional[Mission]:
-        """
-        Finds a mission in the npc's missions.
-
-        """
-        for mis in self.missions:
-            if mis.slug == mission:
-                return mis
-
-        return None
-
     def speed_test(self, action: EnqueuedAction) -> int:
         return self.speed

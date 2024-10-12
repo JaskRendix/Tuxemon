@@ -1,5 +1,9 @@
 [
   {
-    "slug": "spyder_maniac_achievement1"
+    "slug": "spyder_maniac_achievement1",
+    "reqs": ["maniac_help:yes"],
+    "failure_reqs": [],
+    "success_reqs": ["catgirl_candy_hastraded:yes"],
+    "dependencies": []
   }
 ]
