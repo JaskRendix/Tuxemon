@@ -5,6 +5,8 @@ import unittest
 
 from tuxemon import prepare
 from tuxemon.formula import (
+    calculate_adjusted_stat,
+    calculate_step,
     calculate_time_based_multiplier,
     set_height,
     set_weight,
@@ -143,3 +145,83 @@ class TestSetHeight(unittest.TestCase):
     def test_set_height_randomness(self):
         heights = [set_height(75) for _ in range(100)]
         self.assertGreaterEqual(len(set(heights)), 1)
+
+
+class TestCalculateAdjustedStat(unittest.TestCase):
+    def test_calculate_minus_6(self):
+        value = calculate_adjusted_stat(100, -6)
+        self.assertEqual(value, 33)
+        step = calculate_step(100, value)
+        self.assertEqual(step, -6)
+
+    def test_calculate_minus_5(self):
+        value = calculate_adjusted_stat(100, -5)
+        self.assertEqual(value, 38)
+        step = calculate_step(100, value)
+        self.assertEqual(step, -5)
+
+    def test_calculate_minus_4(self):
+        value = calculate_adjusted_stat(100, -4)
+        self.assertEqual(value, 43)
+        step = calculate_step(100, value)
+        self.assertEqual(step, -4)
+
+    def test_calculate_minus_3(self):
+        value = calculate_adjusted_stat(100, -3)
+        self.assertEqual(value, 50)
+        step = calculate_step(100, value)
+        self.assertEqual(step, -3)
+
+    def test_calculate_minus_2(self):
+        value = calculate_adjusted_stat(100, -2)
+        self.assertEqual(value, 60)
+        step = calculate_step(100, value)
+        self.assertEqual(step, -2)
+
+    def test_calculate_minus_1(self):
+        value = calculate_adjusted_stat(100, -1)
+        self.assertEqual(value, 75)
+        step = calculate_step(100, value)
+        self.assertEqual(step, -1)
+
+    def test_calculate_zero(self):
+        value = calculate_adjusted_stat(100, 0)
+        self.assertEqual(value, 100)
+        step = calculate_step(100, value)
+        self.assertEqual(step, 0)
+
+    def test_calculate_plus_1(self):
+        value = calculate_adjusted_stat(100, 1)
+        self.assertEqual(value, 133)
+        step = calculate_step(100, value)
+        self.assertEqual(step, 1)
+
+    def test_calculate_plus_2(self):
+        value = calculate_adjusted_stat(100, 2)
+        self.assertEqual(value, 167)
+        step = calculate_step(100, value)
+        self.assertEqual(step, 2)
+
+    def test_calculate_plus_3(self):
+        value = calculate_adjusted_stat(100, 3)
+        self.assertEqual(value, 200)
+        step = calculate_step(100, value)
+        self.assertEqual(step, 3)
+
+    def test_calculate_plus_4(self):
+        value = calculate_adjusted_stat(100, 4)
+        self.assertEqual(value, 233)
+        step = calculate_step(100, value)
+        self.assertEqual(step, 4)
+
+    def test_calculate_plus_5(self):
+        value = calculate_adjusted_stat(100, 5)
+        self.assertEqual(value, 267)
+        step = calculate_step(100, value)
+        self.assertEqual(step, 5)
+
+    def test_calculate_plus_6(self):
+        value = calculate_adjusted_stat(100, 6)
+        self.assertEqual(value, 300)
+        step = calculate_step(100, value)
+        self.assertEqual(step, 6)

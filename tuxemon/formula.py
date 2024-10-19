@@ -169,6 +169,43 @@ def simple_damage_calculate(
     return damage, mult
 
 
+def calculate_adjusted_stat(base_stat: int, steps: int) -> int:
+    """
+    Calculate the adjusted stat based on the base stat and adjustment steps.
+
+    Parameters:
+        base_stat: The base stat value.
+        steps: The number of adjustment steps.
+
+    Returns:
+        The adjusted stat value.
+    """
+    steps = max(-6, min(6, steps))
+    if steps > 0:
+        adjusted_stat = base_stat * (3 + steps) / 3
+    else:
+        adjusted_stat = base_stat * 3 / (3 - steps)
+    return round(adjusted_stat)
+
+
+def calculate_step(base_stat: int, adjusted_stat: int) -> int:
+    """
+    Calculate the adjustment step based on the base stat and adjusted stat.
+
+    Parameters:
+        base_stat: The base stat value.
+        adjusted_stat: The adjusted stat value.
+
+    Returns:
+        The adjustment step value.
+    """
+    if base_stat <= adjusted_stat:
+        steps = (adjusted_stat * 3) / base_stat - 3
+    else:
+        steps = 3 - (3 * base_stat) / adjusted_stat
+    return round(steps)
+
+
 def simple_heal(
     technique: Technique,
     monster: Monster,

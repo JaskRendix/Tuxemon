@@ -451,8 +451,6 @@ class CombatState(CombatAnimations):
                         # update counter nr turns
                         condition.nr_turn += 1
                         self.enqueue_action(None, condition, monster)
-                    # avoid multiple effect condition
-                    monster.set_stats()
 
         elif phase == "resolve match" or phase == "ran away":
             pass
@@ -1326,8 +1324,8 @@ class CombatState(CombatAnimations):
         # clear action queue
         self._action_queue.clear_queue()
         self._action_queue.clear_history()
-        self._pending_queue = list()
-        self._damage_map = list()
+        self._pending_queue = []
+        self._damage_map = []
 
     def end_combat(self) -> None:
         """End the combat."""
