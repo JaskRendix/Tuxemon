@@ -1066,6 +1066,30 @@ class BagItemModel(BaseModel):
         raise ValueError(f"the item {v} doesn't exist in the db")
 
 
+class NpcAIModel(BaseModel):
+    # Thresholds opponent
+    low_health_opponent_threshold: float = Field(
+        0.0, description="Low health opponent threshold", ge=0.0, lt=1.0
+    )
+    high_health_opponent_threshold: float = Field(
+        0.0, description="High health opponent threshold", ge=0.0, lt=1.0
+    )
+    # Thresholds user
+    low_health_user_threshold: float = Field(
+        0.0, description="Low health user threshold", ge=0.0, lt=1.0
+    )
+    high_health_user_threshold: float = Field(
+        0.0, description="High health user threshold", ge=0.0, lt=1.0
+    )
+    # Item
+    critical_threshold_item_potion: float = Field(
+        0.0,
+        description="Critical health threshold",
+        ge=0.0,
+        le=1.0,
+    )
+
+
 class NpcTemplateModel(BaseModel):
     sprite_name: str = Field(
         ..., description="Name of the overworld sprite filename"
@@ -1117,6 +1141,7 @@ class NpcModel(BaseModel):
     items: Sequence[BagItemModel] = Field(
         [], description="List of items in the NPCs bag"
     )
+    ai: NpcAIModel = Field({})
 
 
 class BattleHudModel(BaseModel):

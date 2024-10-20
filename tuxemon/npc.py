@@ -794,6 +794,7 @@ class NPC(Entity[NPCState]):
 
         # load NPC template
         self.template = npc_details.template
+        self.ai = npc_details.ai
         self.load_sprites()
 
     def has_tech(self, tech: Optional[str]) -> bool:

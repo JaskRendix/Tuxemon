@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import random
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from tuxemon.combat import pre_checking, recharging
-from tuxemon.db import ItemCategory
+from tuxemon.db import ItemCategory, NpcAIModel
+from tuxemon.formula import simple_damage_multiplier
 from tuxemon.technique.technique import Technique
 
 if TYPE_CHECKING:
@@ -39,11 +40,10 @@ class AI:
         """
         Trainer battles.
         """
-        if len(self.character.items) > 0:
-            for itm in self.character.items:
-                if itm.category == ItemCategory.potion:
-                    if self.need_potion():
-                        self.action_item(itm)
+        if self.character.ai or self.character.items:
+            itm = self.use_potion_if_needed()
+            if itm:
+                self.action_item(itm)
         technique, target = self.track_next_use()
         # send data
         self.action_tech(technique, target)
@@ -61,13 +61,15 @@ class AI:
         Tracks next_use and recharge, if both unusable, skip.
         """
         # Filter out recharging moves and validate techniques against opponents
-        valid_actions = [
-            (mov, opponent)
+        valid_actions = {
+            (mov, opponent): self.effectiveness_score(mov, opponent)
             for mov in self.monster.moves[-self.monster.max_moves :]
             if not recharging(mov)
             for opponent in self.opponents
             if mov.validate(opponent)
-        ]
+        }
+        for tech, number in valid_actions.items():
+            print(tech[0].name, tech[1].name, number)
 
         # If no valid actions, return a skip technique and a random opponent
         if not valid_actions:
@@ -76,7 +78,9 @@ class AI:
             return skip, random.choice(self.opponents)
 
         # Otherwise, return a random valid action
-        return random.choice(valid_actions)
+        return random.choices(
+            list(valid_actions.keys()), weights=list(valid_actions.values())
+        )[0]
 
     def need_potion(self) -> bool:
         """
@@ -102,3 +106,52 @@ class AI:
         Send action item.
         """
         self.combat.enqueue_action(self.character, item, self.monster)
+
+    def use_potion_if_needed(self) -> Optional[Item]:
+        """
+        It checks if the current_hp are less than the 15%.
+        """
+        threshold = self.character.ai.get("critical_threshold_item", 0.0)
+        health = self.monster.current_hp / self.monster.hp
+        potions = [
+            item
+            for item in self.character.items
+            if item.category == ItemCategory.potion
+        ]
+        if potions and health < threshold:
+            return potions[0]
+        else:
+            return None
+
+    def effectiveness_score(
+        self, technique: Technique, opponent: Monster
+    ) -> float:
+        """Calculate the effectiveness score of a move based on situational factors."""
+        score = 1.0
+        if not self.character.ai:
+            return score
+        else:
+            score += evaluate_monster(opponent, self.character.ai)
+            score *= evaluate_type_advantage(technique, opponent)
+            return score
+
+
+def evaluate_type_advantage(tech: Technique, opponent: Monster) -> float:
+    type_advantage = simple_damage_multiplier(tech.types, opponent.types)
+    return type_advantage
+
+
+def evaluate_monster(monster: Monster, ai: NpcAIModel) -> float:
+    target_health = monster.current_hp / monster.hp
+    low_threshold = ai.low_health_opponent_threshold
+    high_threshold = ai.high_health_opponent_threshold
+
+    low_threshold = ai.low_health_user_threshold
+    high_threshold = ai.high_health_user_threshold
+
+    if target_health < low_threshold:
+        return -1
+    elif target_health > high_threshold:
+        return 1
+    else:
+        return 0
