@@ -150,6 +150,7 @@ class CombatState(CombatAnimations):
         players: tuple[NPC, NPC],
         graphics: BattleGraphicsModel,
         combat_type: Literal["monster", "trainer"],
+        double: bool = False,
     ) -> None:
         self.phase: Optional[CombatPhase] = None
         self._damage_map: list[DamageReport] = []
@@ -171,7 +172,7 @@ class CombatState(CombatAnimations):
         ] = {}
         self._random_tech_hit: dict[Monster, float] = {}
 
-        super().__init__(players, graphics)
+        super().__init__(players, graphics, double)
         self.is_trainer_battle = combat_type == "trainer"
         self.show_combat_dialog()
         self.transition_phase("begin")
@@ -318,8 +319,8 @@ class CombatState(CombatAnimations):
             # this will wait for players to fill battleground positions
             for player in self.active_players:
                 if len(alive_party(player)) == 1:
-                    player.max_position = 1
-                positions_available = player.max_position - len(
+                    self.double = True
+                positions_available = self.max_position - len(
                     self.monsters_in_play[player]
                 )
                 if positions_available:
@@ -584,8 +585,8 @@ class CombatState(CombatAnimations):
         # TODO: integrate some values for different match types
         for player in self.active_players:
             if len(alive_party(player)) == 1:
-                player.max_position = 1
-            positions_available = player.max_position - len(
+                self.double = False
+            positions_available = self.max_position - len(
                 self.monsters_in_play[player]
             )
             if positions_available:
@@ -1291,7 +1292,7 @@ class CombatState(CombatAnimations):
     def clean_combat(self) -> None:
         """Clean combat."""
         for player in self.players:
-            player.max_position = 1
+            self.double = False
             for mon in player.monsters:
                 # reset status stats
                 mon.set_stats()

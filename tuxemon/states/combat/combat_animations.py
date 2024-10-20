@@ -64,10 +64,13 @@ class CombatAnimations(ABC, Menu[None]):
         self,
         players: tuple[NPC, NPC],
         graphics: BattleGraphicsModel,
+        double: bool,
     ) -> None:
         super().__init__()
         self.players = list(players)
         self.graphics = graphics
+        self.double = double
+        self.max_position = 2 if self.double else 1
 
         self.monsters_in_play: defaultdict[NPC, list[Monster]] = defaultdict(
             list
@@ -133,7 +136,7 @@ class CombatAnimations(ABC, Menu[None]):
         sprite: Sprite,
     ) -> None:
         # Calculate feet position
-        if npc.max_position > 1 and monster in self.monsters_in_play[npc]:
+        if self.double and monster in self.monsters_in_play[npc]:
             monster_index = str(self.monsters_in_play[npc].index(monster))
         else:
             monster_index = ""

@@ -14,6 +14,8 @@ from tuxemon.states.combat.combat import CombatState
 
 logger = logging.getLogger(__name__)
 
+MONSTERS: int = 3
+
 
 @final
 @dataclass
@@ -55,14 +57,14 @@ class StartBattleAction(EventAction):
             return
 
         # double (2 vs 2)
+        double = False
         template1 = db.lookup(character1.template.slug, table="template")
         template2 = db.lookup(character2.template.slug, table="template")
 
         if (template1 and template1.double) or (
             template2 and template2.double
         ):
-            character1.max_position = 2
-            character2.max_position = 2
+            double = True
 
         # environment
         env_slug = "grass"
@@ -80,6 +82,12 @@ class StartBattleAction(EventAction):
         fighters = sorted(
             [character1, character2], key=lambda x: not x.isplayer
         )
+        total_monsters = sum(len(fighter.monsters) for fighter in fighters)
+        if double and total_monsters < MONSTERS:
+            logger.error(
+                f"There aren't enough monsters ({MONSTERS}) to trigger a double battle"
+            )
+            return
         # start the battle
         logger.info(
             f"Starting battle between {fighters[0].name} and {fighters[1].name}!"
@@ -89,6 +97,7 @@ class StartBattleAction(EventAction):
                 players=(fighters[0], fighters[1]),
                 combat_type="trainer",
                 graphics=env.battle_graphics,
+                double=double,
             )
         )
         # music
