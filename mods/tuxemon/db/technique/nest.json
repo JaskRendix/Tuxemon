@@ -3,7 +3,7 @@
   "accuracy": 0.8,
   "animation": "ruby_absorb",
   "effects": [
-    "give sniping,user",
+    "give sniping,own_monster",
     "healing user"
   ],
   "flip_axes": "",

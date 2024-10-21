@@ -3,8 +3,8 @@
   "accuracy": 1,
   "animation": "bite",
   "effects": [
-    "give diehard,user",
-    "give grabbed,target",
+    "give diehard,own_monster",
+    "give grabbed,enemy_monster",
     "enhance"
   ],
   "flip_axes": "",

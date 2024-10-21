@@ -4,7 +4,7 @@
   "animation": "shield_lava",
   "effects": [
     "give burn,both",
-    "area"
+    "damage"
   ],
   "flip_axes": "",
   "is_fast": false,

@@ -3,8 +3,8 @@
   "accuracy": 1,
   "animation": null,
   "effects": [
-    "remove all,user",
-    "remove all,target",
+    "remove all,own_monster",
+    "remove all,enemy_monster",
     "reverse both",
     "enhance"
   ],

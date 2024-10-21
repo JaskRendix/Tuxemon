@@ -3,7 +3,7 @@
   "accuracy": 1,
   "animation": "amethyst",
   "effects": [
-    "give retaliate,user",
+    "give retaliate,own_monster",
     "enhance"
   ],
   "flip_axes": "",

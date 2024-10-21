@@ -36,23 +36,28 @@ class MoneyEffect(TechEffect):
         player = user.owner
         combat = tech.combat_state
         assert combat and player
-        value = combat._random_tech_hit.get(user, 0.0)
+        tech.hit = tech.accuracy >= combat._random_tech_hit.get(user, 0.0)
+
         damage, mult = formula.simple_damage_calculate(tech, user, target)
-        hit = tech.accuracy >= value
-        if hit:
+
+        if tech.hit:
             user.current_hp -= damage
         else:
             amount = int(damage * mult)
-            recipient = "player" if player.isplayer else player.slug
-            client = self.session.client.event_engine
-            var = [recipient, amount]
-            client.execute_action("modify_money", var, True)
+            self._give_money(user, amount)
             params = {"name": user.name.upper(), "symbol": "$", "gold": amount}
             extra = T.format("combat_state_gold", params)
         return {
-            "success": hit,
+            "success": tech.hit,
             "damage": 0,
             "element_multiplier": 0.0,
             "should_tackle": False,
             "extra": extra,
         }
+
+    def _give_money(self, user: Monster, amount: int) -> None:
+        assert user.owner
+        recipient = "player" if user.owner.isplayer else user.owner.slug
+        client = self.session.client.event_engine
+        var = [recipient, amount]
+        client.execute_action("modify_money", var, True)

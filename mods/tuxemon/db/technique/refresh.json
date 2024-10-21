@@ -3,7 +3,7 @@
   "accuracy": 1,
   "animation": "heal_burst_120",
   "effects": [
-    "give recover,user",
+    "give recover,own_monster",
     "healing user"
   ],
   "flip_axes": "",

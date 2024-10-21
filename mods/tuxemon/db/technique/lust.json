@@ -3,7 +3,7 @@
   "accuracy": 1.0,
   "animation": "drip_red",
   "effects": [
-    "give exhausted,target",
+    "give exhausted,enemy_monster",
     "enhance"
   ],
   "flip_axes": "",

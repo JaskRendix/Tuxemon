@@ -3,7 +3,7 @@
   "accuracy": 1,
   "animation": "amethyst_absorb",
   "effects": [
-    "give revenge,target",
+    "give revenge,enemy_monster",
     "enhance"
   ],
   "flip_axes": "",

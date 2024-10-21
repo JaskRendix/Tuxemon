@@ -3,7 +3,7 @@
   "accuracy": 1,
   "animation": "drip_red_alt",
   "effects": [
-    "give poison,target",
+    "give poison,enemy_monster",
     "enhance"
   ],
   "flip_axes": "",

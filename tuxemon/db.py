@@ -197,6 +197,15 @@ class Comparison(str, Enum):
     not_equals = "not_equals"
 
 
+class TargetType(str, Enum):
+    enemy_monster = "enemy_monster"
+    own_monster = "own_monster"
+    enemy_team = "enemy_team"
+    own_team = "own_team"
+    enemy_trainer = "enemy_trainer"
+    own_trainer = "own_trainer"
+
+
 # TODO: Automatically generate state enum through discovery
 State = Enum(
     "State",
@@ -870,7 +879,6 @@ class TechniqueModel(BaseModel):
             effect in info.data["effects"]
             for effect in [
                 "damage",
-                "area",
                 "retaliate",
                 "revenge",
                 "money",
@@ -878,7 +886,7 @@ class TechniqueModel(BaseModel):
             ]
         ):
             raise ValueError(
-                '"special" range cannot be used with effects "damage", "area", "retaliate", "revenge", "money", or "splash"'
+                '"special" range cannot be used with effects "damage", "retaliate", "revenge", "money", or "splash"'
             )
         return v
 

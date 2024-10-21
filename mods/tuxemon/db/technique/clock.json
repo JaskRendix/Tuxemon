@@ -3,7 +3,7 @@
   "accuracy": 1,
   "animation": "clock",
   "effects": [
-    "give confused,target",
+    "give confused,enemy_monster",
     "enhance"
   ],
   "flip_axes": "",

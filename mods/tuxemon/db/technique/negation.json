@@ -3,7 +3,7 @@
   "accuracy": 1,
   "animation": "skull_fire",
   "effects": [
-    "give festering,target",
+    "give festering,enemy_monster",
     "enhance"
   ],
   "flip_axes": "",

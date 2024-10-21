@@ -3,7 +3,7 @@
   "accuracy": 1,
   "animation": "calling",
   "effects": [
-    "give harpooned,target",
+    "give harpooned,enemy_monster",
     "enhance"
   ],
   "flip_axes": "",

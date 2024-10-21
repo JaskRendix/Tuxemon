@@ -3,7 +3,7 @@
   "accuracy": 1,
   "animation": "ruby_radiate",
   "effects": [
-    "give lifeleech,target",
+    "give lifeleech,enemy_monster",
     "enhance"
   ],
   "flip_axes": "",
