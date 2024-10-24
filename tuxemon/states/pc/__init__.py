@@ -44,8 +44,8 @@ class PCState(PygameMenuState):
         player = local_session.player
 
         # it creates the kennel and locker (new players)
-        if kennel not in player.monster_boxes.keys():
-            player.monster_boxes[kennel] = []
+        if not player.monster_boxes.has_box(kennel):
+            player.monster_boxes.create_box(kennel)
         if locker not in player.item_boxes.keys():
             player.item_boxes[locker] = []
 
@@ -80,7 +80,7 @@ class PCState(PygameMenuState):
 
         _nr_monsters = [
             len(mons)
-            for box, mons in player.monster_boxes.items()
+            for box, mons in player.monster_boxes.boxes.items()
             if box not in HIDDEN_LIST
         ]
         nr_monsters = sum(_nr_monsters)
