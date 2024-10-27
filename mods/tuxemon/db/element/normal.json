@@ -1,6 +1,6 @@
 {
-  "slug": "earth",
-  "icon": "gfx/ui/icons/element/earth_type.png",
+  "slug": "normal",
+  "icon": "gfx/ui/icons/element/normal_type.png",
   "types": [
     {
       "against": "aether",
@@ -12,7 +12,7 @@
     },
     {
       "against": "fire",
-      "multiplier": 2
+      "multiplier": 1
     },
     {
       "against": "frost",
@@ -24,7 +24,7 @@
     },
     {
       "against": "lightning",
-      "multiplier": 2
+      "multiplier": 1
     },
     {
       "against": "cosmic",
@@ -36,7 +36,7 @@
     },
     {
       "against": "normal",
-      "multiplier": 1
+      "multiplier": 0.5
     },
     {
       "against": "shadow",
@@ -44,7 +44,7 @@
     },
     {
       "against": "sky",
-      "multiplier": 0.5
+      "multiplier": 1
     },
     {
       "against": "venom",
@@ -56,7 +56,7 @@
     },
     {
       "against": "wood",
-      "multiplier": 0.5
+      "multiplier": 1
     }
   ]
 }

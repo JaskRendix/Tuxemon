@@ -1,6 +1,6 @@
 {
-  "slug": "earth",
-  "icon": "gfx/ui/icons/element/earth_type.png",
+  "slug": "frost",
+  "icon": "gfx/ui/icons/element/frost_type.png",
   "types": [
     {
       "against": "aether",
@@ -8,15 +8,15 @@
     },
     {
       "against": "earth",
-      "multiplier": 1
-    },
-    {
-      "against": "fire",
       "multiplier": 2
     },
     {
-      "against": "frost",
+      "against": "fire",
       "multiplier": 1
+    },
+    {
+      "against": "frost",
+      "multiplier": 0.5
     },
     {
       "against": "heroic",
@@ -24,7 +24,7 @@
     },
     {
       "against": "lightning",
-      "multiplier": 2
+      "multiplier": 1
     },
     {
       "against": "cosmic",
@@ -32,7 +32,7 @@
     },
     {
       "against": "metal",
-      "multiplier": 1
+      "multiplier": 0.5
     },
     {
       "against": "normal",
@@ -40,11 +40,11 @@
     },
     {
       "against": "shadow",
-      "multiplier": 1
+      "multiplier": 0.5
     },
     {
       "against": "sky",
-      "multiplier": 0.5
+      "multiplier": 2
     },
     {
       "against": "venom",
@@ -52,11 +52,11 @@
     },
     {
       "against": "water",
-      "multiplier": 1
+      "multiplier": 0.5
     },
     {
       "against": "wood",
-      "multiplier": 0.5
+      "multiplier": 2
     }
   ]
 }

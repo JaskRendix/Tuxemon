@@ -97,6 +97,14 @@ class ElementType(str, Enum):
     earth = "earth"
     metal = "metal"
     water = "water"
+    normal = "normal"
+    frost = "frost"
+    heroic = "heroic"
+    lightning = "lightning"
+    cosmic = "cosmic"
+    shadow = "shadow"
+    sky = "sky"
+    venom = "venom"
 
 
 class ItemCategory(str, Enum):
