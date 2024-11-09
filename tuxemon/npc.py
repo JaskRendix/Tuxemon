@@ -11,15 +11,9 @@ from typing import TYPE_CHECKING, Any, Optional, TypedDict
 
 from tuxemon import prepare, surfanim
 from tuxemon.battle import Battle, decode_battle, encode_battle
+from tuxemon.boxes import ItemBoxes, MonsterBoxes
 from tuxemon.compat import Rect
-from tuxemon.db import (
-    Direction,
-    ElementType,
-    EntityFacing,
-    PlagueType,
-    SeenStatus,
-    db,
-)
+from tuxemon.db import Direction, ElementType, EntityFacing, SeenStatus, db
 from tuxemon.entity import Entity
 from tuxemon.graphics import load_and_scale
 from tuxemon.item.item import Item, decode_items, encode_items
@@ -58,7 +52,6 @@ class NPCState(TypedDict):
     monsters: Sequence[Mapping[str, Any]]
     player_name: str
     player_steps: float
-    plague: PlagueType
     monster_boxes: dict[str, Sequence[Mapping[str, Any]]]
     item_boxes: dict[str, Sequence[Mapping[str, Any]]]
     tile_pos: tuple[int, int]
@@ -124,13 +117,11 @@ class NPC(Entity[NPCState]):
         self.items: list[Item] = []
         self.missions: list[Mission] = []
         self.economy: Optional[Economy] = None
-        # related to spyderbite (PlagueType)
-        self.plague = PlagueType.healthy
         # Variables for long-term item and monster storage
         # Keeping these separate so other code can safely
         # assume that all values are lists
-        self.monster_boxes: dict[str, list[Monster]] = {}
-        self.item_boxes: dict[str, list[Item]] = {}
+        self.monster_boxes = MonsterBoxes()
+        self.item_boxes = ItemBoxes()
         self.pending_evolutions: list[tuple[Monster, Monster]] = []
         # nr tuxemon fight
         self.max_position: int = 1
@@ -212,14 +203,10 @@ class NPC(Entity[NPCState]):
             "monster_boxes": dict(),
             "item_boxes": dict(),
             "tile_pos": self.tile_pos,
-            "plague": self.plague,
         }
 
-        for monsterkey, monstervalue in self.monster_boxes.items():
-            state["monster_boxes"][monsterkey] = encode_monsters(monstervalue)
-
-        for itemkey, itemvalue in self.item_boxes.items():
-            state["item_boxes"][itemkey] = encode_items(itemvalue)
+        self.monster_boxes.save(state)
+        self.item_boxes.save(state)
 
         return state
 
@@ -251,11 +238,8 @@ class NPC(Entity[NPCState]):
             self.missions.append(mission)
         self.name = save_data["player_name"]
         self.steps = save_data["player_steps"]
-        self.plague = save_data["plague"]
-        for monsterkey, monstervalue in save_data["monster_boxes"].items():
-            self.monster_boxes[monsterkey] = decode_monsters(monstervalue)
-        for itemkey, itemvalue in save_data["item_boxes"].items():
-            self.item_boxes[itemkey] = decode_items(itemvalue)
+        self.monster_boxes.load(save_data)
+        self.item_boxes.load(save_data)
 
         _template = save_data["template"]
         self.template.slug = _template["slug"]
@@ -542,7 +526,7 @@ class NPC(Entity[NPCState]):
             self.surface_animations.play()
             self.path_origin = self.tile_pos
             self.velocity3 = moverate * dirs3[direction]
-            self.remove_collision(self.path_origin)
+            self.remove_collision()
         else:
             # the target is blocked now
             self.stop_moving()
@@ -639,23 +623,13 @@ class NPC(Entity[NPCState]):
             monster: The monster to add to the npc's party.
 
         """
-        max_kennel = prepare.MAX_KENNEL
         kennel = prepare.KENNEL
-        # it creates the kennel
-        if kennel not in self.monster_boxes.keys():
-            self.monster_boxes[kennel] = []
 
         monster.owner = self
         if len(self.monsters) >= self.party_limit:
-            self.monster_boxes[kennel].append(monster)
-            if len(self.monster_boxes[kennel]) >= max_kennel:
-                i = sum(
-                    1
-                    for ele, mon in self.monster_boxes.items()
-                    if ele.startswith(kennel) and len(mon) >= max_kennel
-                )
-                self.monster_boxes[f"{kennel}{i}"] = self.monster_boxes[kennel]
-                self.monster_boxes[kennel] = []
+            self.monster_boxes.add_monster(kennel, monster)
+            if self.monster_boxes.is_box_full(kennel):
+                self.monster_boxes.create_and_merge_box(kennel)
         else:
             self.monsters.insert(slot, monster)
 
@@ -691,29 +665,6 @@ class NPC(Entity[NPCState]):
             (m for m in self.monsters if m.instance_id == instance_id), None
         )
 
-    def find_monster_in_storage(
-        self, instance_id: uuid.UUID
-    ) -> Optional[Monster]:
-        """
-        Finds a monster in the npc's storage boxes which has the given id.
-
-        Parameters:
-            instance_id: The instance_id of the monster.
-
-        Returns:
-            Monster found, or None.
-
-        """
-        monster = None
-        for box in self.monster_boxes.values():
-            monster = next(
-                (m for m in box if m.instance_id == instance_id), None
-            )
-            if monster is not None:
-                break
-
-        return monster
-
     def release_monster(self, monster: Monster) -> bool:
         """
         Releases a monster from this npc's party. Used to release into wild.
@@ -741,20 +692,6 @@ class NPC(Entity[NPCState]):
         """
         if monster in self.monsters:
             self.monsters.remove(monster)
-
-    def remove_monster_from_storage(self, monster: Monster) -> None:
-        """
-        Removes the monster from the npc's storage.
-
-        Parameters:
-            monster: Monster to remove from storage.
-
-        """
-
-        for box in self.monster_boxes.values():
-            if monster in box:
-                box.remove(monster)
-                return
 
     def switch_monsters(self, index_1: int, index_2: int) -> None:
         """
@@ -847,11 +784,11 @@ class NPC(Entity[NPCState]):
         """
         locker = prepare.LOCKER
         # it creates the locker
-        if locker not in self.item_boxes.keys():
-            self.item_boxes[locker] = []
+        if not self.item_boxes.has_box(locker, "item"):
+            self.item_boxes.create_box(locker, "item")
 
         if len(self.items) >= prepare.MAX_TYPES_BAG:
-            self.item_boxes[locker].append(item)
+            self.item_boxes.add_item(locker, item)
         else:
             self.items.append(item)
 
@@ -882,29 +819,6 @@ class NPC(Entity[NPCState]):
         return next(
             (m for m in self.items if m.instance_id == instance_id), None
         )
-
-    def find_item_in_storage(self, instance_id: uuid.UUID) -> Optional[Item]:
-        """
-        Finds an item in the npc's storage boxes which has the given id.
-
-        """
-        item = None
-        for box in self.item_boxes.values():
-            item = next((m for m in box if m.instance_id == instance_id), None)
-            if item is not None:
-                break
-
-        return item
-
-    def remove_item_from_storage(self, item: Item) -> None:
-        """
-        Removes the item from the npc's storage.
-
-        """
-        for box in self.item_boxes.values():
-            if item in box:
-                box.remove(item)
-                return
 
     ####################################################
     #                    Missions                      #

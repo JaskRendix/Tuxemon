@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Union
 
-from tuxemon.combat import has_status, set_var
+from tuxemon.combat import has_status
 from tuxemon.db import ItemCategory
 from tuxemon.item.itemeffect import ItemEffect, ItemEffectResult
 from tuxemon.locale import T
@@ -13,10 +13,6 @@ from tuxemon.locale import T
 if TYPE_CHECKING:
     from tuxemon.item.item import Item
     from tuxemon.monster import Monster
-
-
-class HealEffectResult(ItemEffectResult):
-    pass
 
 
 @dataclass
@@ -40,17 +36,18 @@ class HealEffect(ItemEffect):
 
     def apply(
         self, item: Item, target: Union[Monster, None]
-    ) -> HealEffectResult:
+    ) -> ItemEffectResult:
         if not target:
             raise ValueError("Target cannot be None")
 
         category = ItemCategory.potion
         if has_status(target, "festering") and item.category == category:
-            return {
-                "success": False,
-                "num_shakes": 0,
-                "extra": T.translate("combat_state_festering_item"),
-            }
+            return ItemEffectResult(
+                name=item.name,
+                success=False,
+                num_shakes=0,
+                extra=[T.translate("combat_state_festering_item")],
+            )
 
         if self.heal_type == "fixed":
             healing_amount = int(self.amount)
@@ -60,10 +57,8 @@ class HealEffect(ItemEffect):
             raise ValueError(
                 f"Invalid heal type '{self.heal_type}'. Must be either 'fixed' or 'percentage'."
             )
+        target.current_hp = min(target.hp, target.current_hp + healing_amount)
 
-        set_var(self.session, self.name, str(target.instance_id.hex))
-        client = self.session.client.event_engine
-        params = [self.name, healing_amount]
-        client.execute_action("modify_monster_health", params, True)
-
-        return {"success": True, "num_shakes": 0, "extra": None}
+        return ItemEffectResult(
+            name=item.name, success=True, num_shakes=0, extra=[]
+        )

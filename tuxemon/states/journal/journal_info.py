@@ -199,7 +199,8 @@ class JournalInfoState(PygameMenuState):
             )
             f.translate(fix_measure(width, 0.02), fix_measure(height, 0.80))
             f._relax = True
-            elements = [ele.monster_slug for ele in monster.evolutions]
+            slugs = [ele.monster_slug for ele in monster.evolutions]
+            elements = list(dict.fromkeys(slugs))
             labels = [
                 menu.add.label(
                     title=f"{T.translate(ele).upper()}",
@@ -252,6 +253,9 @@ class JournalInfoState(PygameMenuState):
             [model_dict[mov] for mov in monsters if mov in model_dict],
             key=lambda x: x.txmn_id,
         )
+
+        if not monster_models:
+            return None
 
         if event.button in (buttons.RIGHT, buttons.LEFT) and event.pressed:
             current_monster_index = monster_models.index(self._monster)

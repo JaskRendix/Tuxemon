@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Union
 
 from tuxemon import formula, prepare
 from tuxemon.db import CategoryCondition as Category
-from tuxemon.db import GenderType, SeenStatus, TasteWarm
+from tuxemon.db import SeenStatus
 from tuxemon.item.itemeffect import ItemEffect, ItemEffectResult
 from tuxemon.technique.technique import Technique
 
@@ -19,10 +19,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class CaptureEffectResult(ItemEffectResult):
-    pass
-
-
 @dataclass
 class CaptureEffect(ItemEffect):
     """Attempts to capture the target."""
@@ -31,7 +27,7 @@ class CaptureEffect(ItemEffect):
 
     def apply(
         self, item: Item, target: Union[Monster, None]
-    ) -> CaptureEffectResult:
+    ) -> ItemEffectResult:
         assert target
 
         # Calculate status modifier
@@ -48,12 +44,16 @@ class CaptureEffect(ItemEffect):
 
         if not capture:
             self._handle_capture_failure(item, target)
-            return {"success": False, "num_shakes": shakes, "extra": None}
+            return ItemEffectResult(
+                name=item.name, success=False, num_shakes=shakes, extra=[]
+            )
 
         # Apply capture effects
         self._apply_capture_effects(item, target)
 
-        return {"success": True, "num_shakes": shakes, "extra": None}
+        return ItemEffectResult(
+            name=item.name, success=True, num_shakes=shakes, extra=[]
+        )
 
     def _calculate_status_modifier(self, target: Monster) -> float:
         status_modifier = prepare.STATUS_MODIFIER
@@ -70,47 +70,7 @@ class CaptureEffect(ItemEffect):
     ) -> float:
         tuxeball_modifier = prepare.TUXEBALL_MODIFIER
 
-        # Type-based tuxeball
-        if item.slug in [
-            "tuxeball_earth",
-            "tuxeball_fire",
-            "tuxeball_metal",
-            "tuxeball_water",
-            "tuxeball_wood",
-        ]:
-            tuxeball_modifier = (
-                0.2
-                if target.types[0].slug != item.slug.replace("tuxeball_", "")
-                else 1.5
-            )
-
-        # Flavored-based tuxeball
-        if item.slug in [
-            "tuxeball_hearty",
-            "tuxeball_peppy",
-            "tuxeball_refined",
-            "tuxeball_salty",
-            "tuxeball_zesty",
-        ]:
-            target.taste_warm = TasteWarm(item.slug.replace("tuxeball_", ""))
-
-        # Gender-based tuxeball
-        if item.slug in [
-            "tuxeball_male",
-            "tuxeball_female",
-            "tuxeball_neuter",
-        ]:
-            tuxeball_modifier = (
-                0.2
-                if target.gender
-                != GenderType(item.slug.replace("tuxeball_", ""))
-                else 1.5
-            )
-
-        # Qiangong2 tuxeball ideas
-        if item.slug == "tuxeball_ancient":
-            tuxeball_modifier = 99.0
-        elif item.slug == "tuxeball_crusher":
+        if item.slug == "tuxeball_crusher":
             crusher = ((target.armour / 5) * 0.01) + 1
             if crusher >= 1.4:
                 crusher = 1.4
@@ -120,27 +80,16 @@ class CaptureEffect(ItemEffect):
             ):
                 crusher = 0.01
             tuxeball_modifier = crusher
-
-        # Xero and Omni tuxeball ideas
-        assert item.combat_state
-        our_monster = item.combat_state.monsters_in_play[self.user][0]
-        if our_monster:
-            if item.slug == "tuxeball_xero":
-                tuxeball_modifier = (
-                    1.4
-                    if our_monster.types[0].slug != target.types[0].slug
-                    else 0.3
-                )
-            elif item.slug == "tuxeball_omni":
-                tuxeball_modifier = (
-                    0.3
-                    if our_monster.types[0].slug != target.types[0].slug
-                    else 1.4
-                )
-
-        # Lavish tuxeball idea
-        if item.slug == "tuxeball_lavish":
+        elif item.slug == "tuxeball_ancient":
+            tuxeball_modifier = 99.0
+        elif item.slug == "tuxeball_noble":
+            tuxeball_modifier = 1.25
+        elif item.slug == "tuxeball_lavish":
             tuxeball_modifier = 1.5
+        elif item.slug == "tuxeball_grand":
+            tuxeball_modifier = 1.75
+        elif item.slug == "tuxeball_majestic":
+            tuxeball_modifier = 2.0
 
         return tuxeball_modifier
 

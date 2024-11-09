@@ -7,6 +7,9 @@ from typing import Any
 
 from tuxemon import prepare
 
+ALL_MONSTERS: int = 377
+MAX_TXMN_ID: int = 359
+
 
 def process_json_data(directory: str) -> list[dict[str, Any]]:
     data_list = []
@@ -34,7 +37,36 @@ class TestJSONProcessing(unittest.TestCase):
         self.data_list = process_json_data(sample_data)
 
     def test_nr_jsons(self) -> None:
-        self.assertEqual(len(self.data_list), 298)
+        self.assertEqual(len(self.data_list), ALL_MONSTERS)
+
+    def test_missing_txmn_ids(self) -> None:
+        numbers = []
+        for data in self.data_list:
+            txmn_id = data["txmn_id"]
+            if txmn_id > 0:
+                numbers.append(txmn_id)
+
+        all_numbers = set(range(1, MAX_TXMN_ID))
+        given_numbers = set(numbers)
+        missing = all_numbers - given_numbers
+        if missing:
+            self.fail(f"There are missing txmn_ids: {missing}")
+
+    def test_duplicate_txmn_ids(self) -> None:
+        numbers = []
+        for data in self.data_list:
+            txmn_id = data["txmn_id"]
+            if txmn_id > 0:
+                numbers.append(txmn_id)
+
+        duplicates = []
+        counts = [0] * (max(numbers) + 1)
+        for num in numbers:
+            counts[num] += 1
+            if counts[num] > 1:
+                duplicates.append(num)
+        if duplicates:
+            self.fail(f"There are duplicates txmn_ids: {duplicates}")
 
     def test_history_current_slug(self) -> None:
         missing_monsters = []
@@ -152,3 +184,62 @@ class TestJSONProcessing(unittest.TestCase):
                     history = get_history(self.data_list, name)
                     history_names = [h["mon_slug"] for h in history]
                     self.assertIn(data["slug"], history_names)
+
+    def test_moveset_level_learned_evolution_at_level(self) -> None:
+        START_LEVEL = 1
+        errors = []
+        for data in self.data_list:
+            slug = data["slug"]
+            evolutions = data["evolutions"]
+            moveset = data["moveset"]
+            if moveset and evolutions:
+                at_levels = set(
+                    evolution.get("at_level")
+                    for evolution in evolutions
+                    if evolution.get("at_level") is not None
+                )
+                levels = [move["level_learned"] for move in moveset] + list(
+                    at_levels
+                )
+                similar_levels = [
+                    level
+                    for level in set(levels)
+                    if levels.count(level) > 1 and level != START_LEVEL
+                ]
+                if similar_levels:
+                    errors.append(
+                        f"Similar levels found in {slug}: {similar_levels}"
+                    )
+        if errors:
+            print("The following monsters:")
+            for error in errors:
+                print(error)
+            self.fail(
+                f"Levels must be different, only exception lv {START_LEVEL} starting move."
+            )
+
+    def test_moveset_level_sequence(self) -> None:
+        RANGE: int = 34  # more or less between 1 and 100
+        START: int = 1  # starting level
+        INTERVAL: int = 3  # each 3 levels
+        errors = []
+        for data in self.data_list:
+            slug = data["slug"]
+            moveset = data["moveset"]
+            if moveset:
+                levels = [move["level_learned"] for move in moveset]
+                sequence_levels = [START + INTERVAL * i for i in range(RANGE)]
+                invalid_levels = [
+                    level for level in levels if level not in sequence_levels
+                ]
+                if invalid_levels:
+                    errors.append(
+                        f"Invalid levels found in {slug}: {invalid_levels}"
+                    )
+        if errors:
+            print("The following monsters:")
+            for error in errors:
+                print(error)
+            self.fail(
+                "Levels must be in the sequence 1, 4, 7, 10, 13, 16, etc."
+            )
