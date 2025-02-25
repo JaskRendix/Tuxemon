@@ -29,11 +29,11 @@ class VariableSetCondition(EventCondition):
     """
 
     name = "variable_set"
+    variable: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         player = session.player
-
-        parts = condition.parameters[0].split(":")
+        parts = self.variable.split(":")
         key = parts[0]
         if len(parts) > 1:
             value: Optional[str] = parts[1]

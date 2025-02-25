@@ -37,28 +37,29 @@ class BattleIsCondition(EventCondition):
     """
 
     name = "battle_is"
+    fighter: str
+    outcome: str
+    opponent: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         player = session.player
-        # Read the parameters
-        fighter, outcome, opponent = condition.parameters[:3]
 
         # no battles
         if not player.battles:
             return False
-        if outcome not in list(OutputBattle):
-            logger.error(f"{outcome} isn't among {list(OutputBattle)}")
+        if self.outcome not in list(OutputBattle):
+            logger.error(f"{self.outcome} isn't among {list(OutputBattle)}")
             return False
 
         battles = [
             battle
             for battle in player.battles
-            if battle.fighter == fighter
-            and battle.opponent == opponent
-            and battle.outcome == outcome
+            if battle.fighter == self.fighter
+            and battle.opponent == self.opponent
+            and battle.outcome == self.outcome
         ]
         # look for last battle
         if len(battles) > 1:
             last_one = sorted(battles, key=lambda x: x.steps, reverse=True)
-            return last_one[0].outcome == outcome
+            return last_one[0].outcome == self.outcome
         return bool(battles)

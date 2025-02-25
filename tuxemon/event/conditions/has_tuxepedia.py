@@ -32,12 +32,16 @@ class HasTuxepediaCondition(EventCondition):
     """
 
     name = "has_tuxepedia"
+    character: str
+    monster: str
+    label: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        _character, _monster, _label = condition.parameters
-
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
         if character is None:
-            raise ValueError(f"{_character} not found")
+            raise ValueError(f"{self.character} not found")
 
-        return (_monster, SeenStatus(_label)) in character.tuxepedia.items()
+        return (
+            self.monster,
+            SeenStatus(self.label),
+        ) in character.tuxepedia.items()

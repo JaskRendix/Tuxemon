@@ -31,12 +31,12 @@ class CharFacingCondition(EventCondition):
     """
 
     name = "char_facing"
+    character: str
+    direction: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        character = get_npc(session, condition.parameters[0])
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{condition.parameters[0]} not found")
+            logger.error(f"{self.character} not found")
             return False
-        facing = condition.parameters[1]
-
-        return character.facing == facing
+        return character.facing == self.direction

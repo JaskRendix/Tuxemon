@@ -33,11 +33,15 @@ class CheckCharParameterCondition(EventCondition):
     """
 
     name = "check_char_parameter"
+    character: str
+    parameter: str
+    value: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        _character, _parameter, _value = condition.parameters[:3]
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{_character} not found")
+            logger.error(f"{self.character} not found")
             return False
-        return CommonCondition.check_parameter(character, _parameter, _value)
+        return CommonCondition.check_parameter(
+            character, self.parameter, self.value
+        )

@@ -25,11 +25,11 @@ class HasTechCondition(EventCondition):
     """
 
     name = "has_tech"
+    technique: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         player = session.player
-        tech = condition.parameters[0]
-        if player.has_tech(tech):
+        if player.has_tech(self.technique):
             return True
         else:
             return False

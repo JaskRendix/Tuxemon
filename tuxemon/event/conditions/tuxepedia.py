@@ -2,6 +2,8 @@
 # Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
+from typing import Optional
+
 from tuxemon.db import MonsterModel, SeenStatus, db
 from tuxemon.event import MapCondition
 from tuxemon.event.eventcondition import EventCondition
@@ -34,16 +36,18 @@ class TuxepediaCondition(EventCondition):
     """
 
     name = "tuxepedia"
+    operator: str
+    percentage: float
+    total: Optional[int] = None
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         if not lookup_cache:
             _lookup_monsters()
 
         player = session.player
-        operator, value, *_total = condition.parameters
 
-        if _total:
-            total = int(_total[0])
+        if self.total is not None:
+            total = self.total
         else:
             total = len(lookup_cache)
 
@@ -52,10 +56,12 @@ class TuxepediaCondition(EventCondition):
         seen = tuxepedia.count(SeenStatus.seen) + caught
         percentage = round((seen / total) * 100, 1)
 
-        if not 0.0 <= float(value) <= 100.0:
-            raise ValueError(f"{value} must be between 0.0 and 100.0")
+        if not 0.0 <= self.percentage <= 100.0:
+            raise ValueError(
+                f"{self.percentage} must be between 0.0 and 100.0"
+            )
 
-        return compare(operator, percentage, float(value))
+        return compare(self.operator, percentage, self.percentage)
 
 
 def _lookup_monsters() -> None:

@@ -33,20 +33,25 @@ class CharInCondition(EventCondition):
     """
 
     name = "char_in"
+    character: str
+    value: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        character = get_npc(session, condition.parameters[0])
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{condition.parameters[0]} not found")
+            logger.error(f"{self.character} not found")
             return False
-        prop = condition.parameters[1]
         world = session.client.get_state_by_name(WorldState)
 
         tiles = []
-        if prop in SurfaceKeys:
-            tiles = world.get_all_tile_properties(world.surface_map, prop)
+        if self.value in SurfaceKeys:
+            tiles = world.get_all_tile_properties(
+                world.surface_map, self.value
+            )
         else:
-            tiles = world.check_collision_zones(world.collision_map, prop)
+            tiles = world.check_collision_zones(
+                world.collision_map, self.value
+            )
         if tiles:
             return character.tile_pos in tiles
         return False

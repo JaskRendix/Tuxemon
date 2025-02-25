@@ -36,17 +36,19 @@ class HasKennelCondition(EventCondition):
     """
 
     name = "has_kennel"
+    character: str
+    kennel: str
+    operator: str
+    number: int
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        _character, kennel_name, check, _number = condition.parameters[:4]
-        number = int(_number)
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{_character} not found")
+            logger.error(f"{self.character} not found")
             return False
-        if not character.monster_boxes.has_box(kennel_name, "monster"):
-            raise ValueError(f"{kennel_name} doesn't exist.")
+        if not character.monster_boxes.has_box(self.kennel, "monster"):
+            raise ValueError(f"{self.kennel} doesn't exist.")
         party_size = character.monster_boxes.get_box_size(
-            kennel_name, "monster"
+            self.kennel, "monster"
         )
-        return compare(check, party_size, number)
+        return compare(self.operator, party_size, self.number)

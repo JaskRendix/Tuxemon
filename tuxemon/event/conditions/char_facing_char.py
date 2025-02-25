@@ -32,13 +32,15 @@ class CharFacingCharCondition(EventCondition):
     """
 
     name = "char_facing_char"
+    character1: str
+    character2: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         client = session.client
         npc_location = None
 
-        character1 = get_npc(session, condition.parameters[0])
-        character2 = get_npc(session, condition.parameters[1])
+        character1 = get_npc(session, self.character1)
+        character2 = get_npc(session, self.character2)
         if character2 is None or character1 is None:
             return False
 

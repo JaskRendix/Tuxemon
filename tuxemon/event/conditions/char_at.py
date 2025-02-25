@@ -30,10 +30,11 @@ class CharAtCondition(EventCondition):
     """
 
     name = "char_at"
+    character: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        character = get_npc(session, condition.parameters[0])
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{condition.parameters[0]} not found")
+            logger.error(f"{self.character} not found")
             return False
         return collide(condition, character.tile_pos)

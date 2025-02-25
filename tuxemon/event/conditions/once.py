@@ -27,14 +27,14 @@ class OnceCondition(EventCondition):
     """
 
     name = "once"
+    timeframe: int
+    variable: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        timeframe = int(condition.parameters[0])
-        variable = condition.parameters[1]
         player = session.player
-        if variable in player.game_variables:
-            today = int(player.game_variables[variable])
-            if today + timeframe <= formula.today_ordinal():
+        if self.variable in player.game_variables:
+            today = int(player.game_variables[self.variable])
+            if today + self.timeframe <= formula.today_ordinal():
                 return True
             else:
                 return False

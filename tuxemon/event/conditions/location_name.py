@@ -30,16 +30,16 @@ class LocationNameCondition(EventCondition):
     """
 
     name = "location_name"
+    map_name: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         client = session.client
         ret: bool = False
-        name = condition.parameters[0]
         names: list[str] = []
-        if name.find(":") > 1:
-            names = name.split(":")
+        if self.map_name.find(":") > 1:
+            names = self.map_name.split(":")
         else:
-            names.append(name)
+            names.append(self.map_name)
 
         if client.map_slug in names:
             ret = True

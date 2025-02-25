@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Optional
 
 from tuxemon.db import SurfaceKeys
 from tuxemon.event import MapCondition, get_npc
@@ -36,11 +37,13 @@ class CharFacingTileCondition(EventCondition):
     """
 
     name = "char_facing_tile"
+    character: str
+    value: Optional[str] = None
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        character = get_npc(session, condition.parameters[0])
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{condition.parameters[0]} not found")
+            logger.error(f"{self.character} not found")
             return False
 
         tiles = [
@@ -55,12 +58,15 @@ class CharFacingTileCondition(EventCondition):
 
         # check if the NPC is facing a specific set of tiles
         world = session.client.get_state_by_name(WorldState)
-        if len(condition.parameters) > 1:
-            value = condition.parameters[1]
-            if value in SurfaceKeys:
-                label = world.get_all_tile_properties(world.surface_map, value)
+        if self.value is not None:
+            if self.value in SurfaceKeys:
+                label = world.get_all_tile_properties(
+                    world.surface_map, self.value
+                )
             else:
-                label = world.check_collision_zones(world.collision_map, value)
+                label = world.check_collision_zones(
+                    world.collision_map, self.value
+                )
             tiles = list(set(npc_tiles).intersection(label))
 
         # return common coordinates

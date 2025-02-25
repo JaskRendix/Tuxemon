@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Optional
 
 from tuxemon.event import MapCondition
 from tuxemon.event.eventcondition import EventCondition
@@ -33,14 +34,11 @@ class CheckMaxTechCondition(EventCondition):
     """
 
     name = "check_max_tech"
+    max_tech: Optional[int] = None
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         player = session.player
-        max_techs = (
-            MAX_MOVES
-            if not condition.parameters
-            else int(condition.parameters[0])
-        )
+        max_techs = MAX_MOVES if self.max_tech is None else self.max_tech
         monsters = [
             monster
             for monster in player.monsters

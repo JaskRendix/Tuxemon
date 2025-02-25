@@ -35,12 +35,12 @@ class CheckEvolutionCondition(EventCondition):
     """
 
     name = "check_evolution"
+    character: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        _character = condition.parameters[0]
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{_character} not found")
+            logger.error(f"{self.character} not found")
             return False
 
         context = {"map_inside": session.client.map_inside, "use_item": False}

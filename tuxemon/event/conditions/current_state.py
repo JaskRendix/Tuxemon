@@ -29,9 +29,10 @@ class CurrentStateCondition(EventCondition):
     """
 
     name = "current_state"
+    state: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         current_state = session.client.current_state
         assert current_state
-        states = condition.parameters[0].split(":")
+        states = self.state.split(":")
         return current_state.name in states

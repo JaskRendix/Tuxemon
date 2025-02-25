@@ -7,11 +7,15 @@ from typing import Any, ClassVar
 
 from tuxemon.event import MapCondition
 from tuxemon.session import Session
+from tuxemon.tools import cast_dataclass_parameters
 
 
 @dataclass
 class EventCondition:
     name: ClassVar[str]
+
+    def __post_init__(self) -> None:
+        cast_dataclass_parameters(self)
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         """

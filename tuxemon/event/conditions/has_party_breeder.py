@@ -32,12 +32,12 @@ class HasPartyBreederCondition(EventCondition):
     """
 
     name = "has_party_breeder"
+    character: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        _character = condition.parameters[0]
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{_character} not found")
+            logger.error(f"{self.character} not found")
             return False
 
         has_male_evolved_monsters = any(

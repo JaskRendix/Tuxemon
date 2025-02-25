@@ -25,6 +25,7 @@ class CharExistsCondition(EventCondition):
     """
 
     name = "char_exists"
+    character: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        return get_npc(session, condition.parameters[0]) is not None
+        return get_npc(session, self.character) is not None

@@ -30,19 +30,19 @@ class LocationTypeCondition(EventCondition):
     """
 
     name = "location_type"
+    location: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         client = session.client
         ret: bool = False
-        location = condition.parameters[0]
         locs: list[str] = []
-        if location.find(":") > 1:
-            locs = location.split(":")
+        if self.location.find(":") > 1:
+            locs = self.location.split(":")
         else:
-            if location == "all":
+            if self.location == "all":
                 locs = list(MapType)
             else:
-                locs.append(location)
+                locs.append(self.location)
 
         if client.map_type and client.map_type in locs:
             ret = True

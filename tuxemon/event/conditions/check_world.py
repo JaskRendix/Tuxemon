@@ -39,17 +39,18 @@ class CheckWorldCondition(EventCondition):
     """
 
     name = "check_world"
+    parameter: str
+    value: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         world = session.client.get_state_by_name(WorldState)
-        params = condition.parameters
-        if params[0] == "layer":
-            rgb = string_to_colorlike(params[1])
+        if self.parameter == "layer":
+            rgb = string_to_colorlike(self.value)
             return world.layer_color == rgb
-        if params[0] == "bubble":
-            char = get_npc(session, params[1])
+        if self.parameter == "bubble":
+            char = get_npc(session, self.value)
             if char is None:
-                logger.error(f"{params[1]} not found")
+                logger.error(f"{self.value} not found")
                 return False
             return char in world.bubble
         return False

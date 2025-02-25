@@ -41,20 +41,22 @@ class KennelCondition(EventCondition):
     """
 
     name = "kennel"
+    character: str
+    kennel: str
+    option: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        _character, kennel_name, option = condition.parameters[:3]
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
 
         if character is None:
-            logger.error(f"{_character} not found")
+            logger.error(f"{self.character} not found")
             return False
-        if option == "visible":
-            return kennel_name not in HIDDEN_LIST
-        elif option == "hidden":
-            return kennel_name in HIDDEN_LIST
-        elif option == "exist":
-            return character.monster_boxes.has_box(kennel_name, "monster")
+        if self.option == "visible":
+            return self.kennel not in HIDDEN_LIST
+        elif self.option == "hidden":
+            return self.kennel in HIDDEN_LIST
+        elif self.option == "exist":
+            return character.monster_boxes.has_box(self.kennel, "monster")
         else:
-            logger.error(f"The option {option} must be among {OPTIONS}")
+            logger.error(f"The option {self.option} must be among {OPTIONS}")
             return False

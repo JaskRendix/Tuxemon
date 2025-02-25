@@ -33,26 +33,28 @@ class PartyInfectedCondition(EventCondition):
     """
 
     name = "party_infected"
+    character: str
+    plague_slug: str
+    value: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        _character, _plague_slug, _value = condition.parameters[:3]
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{_character} not found")
+            logger.error(f"{self.character} not found")
             return False
 
         plague = [
             mon
             for mon in character.monsters
-            if _plague_slug in mon.plague
-            and mon.plague[_plague_slug] == PlagueType.infected
+            if self.plague_slug in mon.plague
+            and mon.plague[self.plague_slug] == PlagueType.infected
         ]
 
-        if _value == "all":
+        if self.value == "all":
             return len(plague) == len(character.monsters)
-        elif _value == "some":
+        elif self.value == "some":
             return len(character.monsters) > len(plague) > 0
-        elif _value == "none":
+        elif self.value == "none":
             return len(plague) == 0
         else:
-            raise ValueError(f"{_value} must be 'all', 'some' or 'none'")
+            raise ValueError(f"{self.value} must be 'all', 'some' or 'none'")

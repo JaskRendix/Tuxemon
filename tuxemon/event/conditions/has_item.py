@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0
 # Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 import logging
+from typing import Optional
 
 from tuxemon.event import MapCondition, get_npc
 from tuxemon.event.eventcondition import EventCondition
@@ -34,23 +35,25 @@ class HasItemCondition(EventCondition):
     """
 
     name = "has_item"
+    character: str
+    item_slug: str
+    operator: Optional[str] = None
+    quantity: Optional[int] = None
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         def op(itm_qty: int, op: str, qty: int) -> bool:
             return compare(op, itm_qty, qty)
 
-        npc_slug, itm_slug = condition.parameters[:2]
-        npc = get_npc(session, npc_slug)
+        npc = get_npc(session, self.character)
         if npc is None:
-            logger.error(f"{npc_slug} doesn't exist.")
+            logger.error(f"{self.character} doesn't exist.")
             return False
-        itm = npc.find_item(itm_slug)
+        itm = npc.find_item(self.item_slug)
         if itm is None:
             return False
         else:
-            if len(condition.parameters) > 2:
-                operator = condition.parameters[2].lower()
-                qty = int(condition.parameters[3])
-                return op(itm.quantity, operator, qty)
+            if self.operator is not None and self.quantity is not None:
+                operator = self.operator.lower()
+                return op(itm.quantity, operator, self.quantity)
             else:
                 return True

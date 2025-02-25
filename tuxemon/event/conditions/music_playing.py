@@ -26,10 +26,9 @@ class MusicPlayingCondition(EventCondition):
     """
 
     name = "music_playing"
+    song: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        song = condition.parameters[0]
-
         combat_states = {"FlashTransition", "CombatState"}
         if any(
             state in combat_states
@@ -41,6 +40,6 @@ class MusicPlayingCondition(EventCondition):
             return True
         else:
             return (
-                session.client.current_music.current_song == song
+                session.client.current_music.current_song == self.song
                 and session.client.current_music.is_playing()
             )

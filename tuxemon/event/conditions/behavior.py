@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Optional
 
 from tuxemon.event import MapCondition
 from tuxemon.event.conditions.button_pressed import ButtonPressedCondition
@@ -23,16 +24,20 @@ class BehaviorCondition(EventCondition):
     """
 
     name = "behav"
+    value1: str
+    value2: Optional[str] = None
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         cond = condition
-        param = condition.parameters
-        if param[0] == "talk":
-            char_facing_char = CharFacingCharCondition().test(
+        if self.value1 == "talk":
+            assert self.value2
+            char_facing_char = CharFacingCharCondition(
+                "player", self.value2
+            ).test(
                 session,
                 MapCondition(
                     "char_facing_char",
-                    ["player", param[1]],
+                    ["player", self.value2],
                     cond.x,
                     cond.y,
                     cond.width,
@@ -41,7 +46,7 @@ class BehaviorCondition(EventCondition):
                     "cond10",
                 ),
             )
-            button_pressed = ButtonPressedCondition().test(
+            button_pressed = ButtonPressedCondition("K_RETURN").test(
                 session,
                 MapCondition(
                     "button_pressed",
@@ -55,9 +60,9 @@ class BehaviorCondition(EventCondition):
                 ),
             )
             return char_facing_char and button_pressed
-        elif param[0] == "door":
-            facing = param[1]
-            char_at = CharAtCondition().test(
+        elif self.value1 == "door":
+            assert self.value2
+            char_at = CharAtCondition("player").test(
                 session,
                 MapCondition(
                     "char_at",
@@ -70,11 +75,11 @@ class BehaviorCondition(EventCondition):
                     "cond10",
                 ),
             )
-            char_facing = CharFacingCondition().test(
+            char_facing = CharFacingCondition("player", self.value2).test(
                 session,
                 MapCondition(
                     "char_facing",
-                    ["player", facing],
+                    ["player", self.value2],
                     cond.x,
                     cond.y,
                     cond.width,

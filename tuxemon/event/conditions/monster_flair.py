@@ -17,25 +17,23 @@ class MonsterFlairCondition(EventCondition):
     Script usage:
         .. code-block::
 
-            is monster_flair <slot>,<category>,<name>
+            is monster_flair <slot>,<category>,<flair>
 
     Script parameters:
         slot: Position of the monster in the player monster list.
         category: Category of the flair.
-        name: Name of the flair.
+        flair: Name of the flair.
 
     """
 
     name = "monster_flair"
+    slot: int
+    category: str
+    flair: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        slot = int(condition.parameters[0])
-        category = condition.parameters[1]
-        name = condition.parameters[2]
-
-        monster = session.player.monsters[slot]
+        monster = session.player.monsters[self.slot]
         try:
-            return monster.flairs[category].name == name
+            return monster.flairs[self.category].name == self.name
         except KeyError:
             return False
-        return False

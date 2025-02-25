@@ -29,9 +29,10 @@ class ButtonPressedCondition(EventCondition):
     """
 
     name = "button_pressed"
+    button: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        button = str(condition.parameters[0])
+        button = self.button
 
         # TODO: workaround for old maps.  eventually need to decide on a scheme
         # and fix existing scripts

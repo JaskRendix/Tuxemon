@@ -39,28 +39,28 @@ class CheckPartyParameterCondition(EventCondition):
     """
 
     name = "check_party_parameter"
+    character: str
+    attribute: str
+    value: str
+    operator: str
+    times: int
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        (
-            _character,
-            _attribute,
-            _value,
-            _operator,
-            _times,
-        ) = condition.parameters[:5]
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{_character} not found")
+            logger.error(f"{self.character} not found")
             return False
         if not character.monsters:
             logger.warning(f"{character.name} has no monsters")
             return False
         party = len(character.monsters)
-        times = party if int(_times) > party else int(_times)
+        times = party if self.times > party else self.times
 
         count = sum(
             1
             for monster in character.monsters
-            if CommonCondition.check_parameter(monster, _attribute, _value)
+            if CommonCondition.check_parameter(
+                monster, self.attribute, self.value
+            )
         )
-        return compare(_operator, count, times)
+        return compare(self.operator, count, times)

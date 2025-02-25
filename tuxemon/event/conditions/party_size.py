@@ -35,11 +35,13 @@ class PartySizeCondition(EventCondition):
     """
 
     name = "party_size"
+    character: str
+    operator: str
+    value: int
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        _character, _operator, _value = condition.parameters[:3]
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{_character} not found")
+            logger.error(f"{self.character} not found")
             return False
-        return compare(_operator, len(character.monsters), int(_value))
+        return compare(self.operator, len(character.monsters), self.value)

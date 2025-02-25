@@ -39,23 +39,25 @@ class CheckMissionCondition(EventCondition):
     """
 
     name = "check_mission"
+    character: str
+    mission: str
+    status: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        _character, _mission, _status = condition.parameters[:3]
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{_character} not found")
+            logger.error(f"{self.character} not found")
             return False
         # status mission
-        if _status not in list(MissionStatus):
-            logger.error(f"{_status} isn't among {list(MissionStatus)}")
+        if self.status not in list(MissionStatus):
+            logger.error(f"{self.status} isn't among {list(MissionStatus)}")
             return False
         # retrieve all missions
         _missions: list[str] = []
-        if _mission == "all":
+        if self.mission == "all":
             _missions = [m.slug for m in character.missions]
         else:
-            _missions = _mission.split(":")
+            _missions = self.mission.split(":")
 
         if not _missions:
             return False
@@ -63,6 +65,6 @@ class CheckMissionCondition(EventCondition):
         result = [
             mission
             for mission in character.missions
-            if mission.status == _status and mission.slug in _missions
+            if mission.status == self.status and mission.slug in _missions
         ]
         return bool(result)

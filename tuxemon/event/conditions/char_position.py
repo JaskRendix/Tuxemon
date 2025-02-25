@@ -32,13 +32,14 @@ class CharPositionCondition(EventCondition):
     """
 
     name = "char_position"
+    character: str
+    tile_pos_x: int
+    tile_pos_y: int
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        character = get_npc(session, condition.parameters[0])
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{condition.parameters[0]} not found")
+            logger.error(f"{self.character} not found")
             return False
-        tile_pos_x = int(condition.parameters[1])
-        tile_pos_y = int(condition.parameters[2])
-        tile_pos = (tile_pos_x, tile_pos_y)
+        tile_pos = (self.tile_pos_x, self.tile_pos_y)
         return character.tile_pos == tile_pos

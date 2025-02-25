@@ -30,21 +30,23 @@ class HasBagCondition(EventCondition):
         operator: Numeric comparison operator. Accepted values are "less_than",
             "less_or_equal", "greater_than", "greater_or_equal", "equals"
             and "not_equals".
-        value: The value to compare the bag with.
+        number: The value to compare the bag with.
 
     """
 
     name = "has_bag"
+    character: str
+    operator: str
+    number: int
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        character_name, check, number = condition.parameters[:3]
-        character = get_npc(session, character_name)
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"Character '{character_name}' not found")
+            logger.error(f"Character '{self.character}' not found")
             return False
 
         visible_items = [
             item for item in character.items if item.behaviors.visible
         ]
         bag_size = sum(item.quantity for item in visible_items)
-        return compare(check, bag_size, int(number))
+        return compare(self.operator, bag_size, self.number)

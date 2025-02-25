@@ -22,7 +22,7 @@ class VariableIsCondition(EventCondition):
 
     Script parameters:
         value1: Either a variable or a number.
-        operation: Numeric comparison operator. Accepted values are "less_than",
+        operator: Numeric comparison operator. Accepted values are "less_than",
             "less_or_equal", "greater_than", "greater_or_equal", "equals"
             and "not_equals".
         value2: Either a variable or a number.
@@ -30,10 +30,11 @@ class VariableIsCondition(EventCondition):
     """
 
     name = "variable_is"
+    value1: str
+    operator: str
+    value2: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        # Read the parameters
-        operand1 = number_or_variable(session, condition.parameters[0])
-        operation = condition.parameters[1]
-        operand2 = number_or_variable(session, condition.parameters[2])
-        return compare(operation, operand1, operand2)
+        operand1 = number_or_variable(session, self.value1)
+        operand2 = number_or_variable(session, self.value2)
+        return compare(self.operator, operand1, operand2)

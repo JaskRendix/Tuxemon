@@ -31,13 +31,14 @@ class HasMonsterCondition(EventCondition):
     """
 
     name = "has_monster"
+    character: str
+    monster: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        _character, _monster = condition.parameters[:2]
-        character = get_npc(session, _character)
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{_character} not found")
+            logger.error(f"{self.character} not found")
             return False
-        if character.find_monster(_monster):
+        if character.find_monster(self.monster):
             return True
         return False

@@ -191,28 +191,60 @@ class EventEngine:
         """
         return list(self.actions.values())
 
-    def get_condition(self, name: str) -> Optional[EventCondition]:
+    def get_condition_class(
+        self, condition_type: str
+    ) -> Optional[type[EventCondition]]:
         """
-        Get a condition that is loaded into the engine.
-
-        A new instance will be returned each time.
-
-        Return ``None`` if condition is not loaded.
+        Retrieves the condition class based on the provided condition type.
 
         Parameters:
-            name: Name of the condition.
+            condition_type (str): The type of the condition.
 
         Returns:
-            New instance of the condition if that condition is loaded.
-            ``None`` otherwise.
-
+            type: The condition class, or None if the condition type is not
+            implemented.
         """
-        # TODO: make generic
-        try:
-            return self.conditions[name]()
-        except KeyError:
-            logger.warning(f'EventCondition "{name}" not implemented')
+        return self.conditions.get(condition_type)
+
+    def create_condition_instance(
+        self, condition_class: type[EventCondition], parameters: Sequence[str]
+    ) -> EventCondition:
+        """
+        Creates a new instance of the condition class with the provided
+        parameters.
+
+        Parameters:
+            condition_class (type): The condition class.
+            parameters (list): The parameters for the condition instance.
+
+        Returns:
+            EventCondition: A new instance of the condition class.
+        """
+        return condition_class(*parameters)
+
+    def get_condition(
+        self, condition: MapCondition
+    ) -> Optional[EventCondition]:
+        """
+        Retrieves a condition instance based on the provided MapCondition.
+
+        Parameters:
+            condition (MapCondition): The event condition to retrieve.
+
+        Returns:
+            EventCondition: A new instance of the condition class, or None
+            if the condition type is not implemented.
+        """
+        condition_class = self.get_condition_class(condition.type)
+        if condition_class is None:
+            logger.warning(
+                f'EventCondition "{condition.type}" not implemented'
+            )
             return None
+
+        return self.create_condition_instance(
+            condition_class, condition.parameters
+        )
 
     def get_conditions(self) -> list[type[EventCondition]]:
         """
@@ -237,7 +269,7 @@ class EventEngine:
             The value of the condition.
 
         """
-        map_condition = self.get_condition(cond_data.type)
+        map_condition = self.get_condition(cond_data)
         if map_condition is None:
             logger.debug(f'map condition "{cond_data.type}" is not loaded')
             return False

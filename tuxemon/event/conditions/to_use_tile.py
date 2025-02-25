@@ -26,11 +26,13 @@ class ToUseTileCondition(EventCondition):
     name = "to_use_tile"
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        character_facing_tile = CharFacingTileCondition().test(
+        character_facing_tile = CharFacingTileCondition(
+            character="player"
+        ).test(
             session,
             condition,
         )
-        button_pressed = ButtonPressedCondition().test(
+        button_pressed = ButtonPressedCondition(button="K_RETURN").test(
             session,
             MapCondition(
                 type="button_pressed",

@@ -31,15 +31,14 @@ class CharSpriteCondition(EventCondition):
     """
 
     name = "char_sprite"
+    character: str
+    sprite: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
-        character = get_npc(session, condition.parameters[0])
+        character = get_npc(session, self.character)
         if character is None:
-            logger.error(f"{condition.parameters[0]} not found")
+            logger.error(f"{self.character} not found")
             return False
-
-        sprite = condition.parameters[1]
-
-        if character.template.sprite_name == sprite:
+        if character.template.sprite_name == self.sprite:
             return True
         return False

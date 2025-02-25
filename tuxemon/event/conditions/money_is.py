@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Union
 
 from tuxemon.event import MapCondition
 from tuxemon.event.eventcondition import EventCondition
@@ -33,19 +34,20 @@ class MoneyIsCondition(EventCondition):
     """
 
     name = "money_is"
+    wallet: str
+    operator: str
+    amount: Union[str, int]
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         player = session.player
-        wallet, operator, _amount = condition.parameters[:3]
-
-        if not _amount.isdigit():
+        if isinstance(self.amount, str):
             amount = 0
-            if _amount in player.game_variables:
-                amount = int(player.game_variables.get(_amount, 0))
+            if self.amount in player.game_variables:
+                amount = int(player.game_variables.get(self.amount, 0))
         else:
-            amount = int(_amount)
+            amount = self.amount
 
         # Check if the condition is true
-        if wallet in player.money:
-            return compare(operator, player.money[wallet], amount)
+        if self.wallet in player.money:
+            return compare(self.operator, player.money[self.wallet], amount)
         return False

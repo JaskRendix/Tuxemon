@@ -31,11 +31,13 @@ class OneOfCondition(EventCondition):
     """
 
     name = "one_of"
+    variable: str
+    values: str
 
     def test(self, session: Session, condition: MapCondition) -> bool:
         player = session.player
-        key = condition.parameters[0]
-        values = condition.parameters[1].split(":")
+        key = self.variable
+        values = self.values.split(":")
 
         if key not in player.game_variables:
             return False
