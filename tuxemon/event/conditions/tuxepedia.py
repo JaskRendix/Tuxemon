@@ -11,6 +11,10 @@ from tuxemon.tools import compare
 lookup_cache: dict[str, MonsterModel] = {}
 
 
+from dataclasses import dataclass
+
+
+@dataclass
 class TuxepediaCondition(EventCondition):
     """
     Check Tuxepedia's progress.

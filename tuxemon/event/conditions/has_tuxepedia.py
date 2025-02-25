@@ -12,6 +12,10 @@ from tuxemon.session import Session
 logger = logging.getLogger(__name__)
 
 
+from dataclasses import dataclass
+
+
+@dataclass
 class HasTuxepediaCondition(EventCondition):
     """
     Check if a monster is registered in Tuxepedia.

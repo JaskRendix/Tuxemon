@@ -12,6 +12,10 @@ from tuxemon.session import Session
 logger = logging.getLogger(__name__)
 
 
+from dataclasses import dataclass
+
+
+@dataclass
 class CheckMissionCondition(EventCondition):
     """
     Check to see the character has failed or completed a mission.
