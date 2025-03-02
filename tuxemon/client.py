@@ -17,6 +17,7 @@ from tuxemon.cli.processor import CommandProcessor
 from tuxemon.config import TuxemonConfig
 from tuxemon.db import MapType
 from tuxemon.event import EventObject
+from tuxemon.event.event_manager import BaseEvent, EventManager
 from tuxemon.event.eventengine import EventEngine
 from tuxemon.map import TuxemonMap
 from tuxemon.platform.events import PlayerInput
@@ -81,6 +82,7 @@ class LocalPygameClient:
         # Set up our game's event engine which executes actions based on
         # conditions defined in map files.
         self.event_engine = EventEngine(local_session)
+        self.event_manager = EventManager[BaseEvent]()
         self.event_persist: dict[str, dict[str, Any]] = {}
 
         # Set up a variable that will keep track of currently playing music.
