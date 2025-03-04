@@ -437,8 +437,9 @@
   </object>
   <object id="213" name="Teleport to Manor" type="event" x="160" y="192" width="16" height="16">
    <properties>
-    <property name="act1" value="transition_teleport spyder_paper_manor.tmx,6,7,0.3"/>
-    <property name="act2" value="char_face player,up"/>
+    <property name="act1" value="transition_teleport spyder_courthouse.tmx,4,14"/>
+    <property name="act2" value="set_template player,invisible"/>
+    <property name="act3" value="set_variable courthouse:notguilty"/>
     <property name="cond1" value="is char_at player"/>
    </properties>
   </object>

@@ -1,0 +1,95 @@
+events:
+  Music:
+    actions:
+    - play_music music_10_empire
+    conditions:
+    - not music_playing music_10_empire
+    type: "event"
+  Go Outside:
+    actions:
+    - transition_teleport spyder_courthouse.tmx,0,3
+    - char_face player,right
+    conditions:
+    - is char_at player
+    - is char_facing player,right
+    x: 8
+    y: 3
+    type: "event"
+  Create Juror 1:
+    actions:
+    - create_npc spyder_cottonhouse1_lila,2,2
+    - char_face spyder_cottonhouse1_lila,down
+    conditions:
+    - not char_exists spyder_cottonhouse1_lila
+    type: "event"
+  Talk Juror 1:
+    actions:
+    - translated_dialog spyder_courthouse_juror1
+    behav:
+    - talk spyder_cottonhouse1_lila
+    type: "event"
+  Create Juror 2:
+    actions:
+    - create_npc spyder_cottontown_hacker,5,2
+    - char_face spyder_cottontown_hacker,down
+    conditions:
+    - not char_exists spyder_cottontown_hacker
+    type: "event"
+  Talk Juror 2:
+    actions:
+    - translated_dialog spyder_courthouse_juror2
+    behav:
+    - talk spyder_cottontown_hacker
+    type: "event"
+  Create Juror 3:
+    actions:
+    - create_npc spyder_cottonhouse2_sidney,1,4
+    - char_face spyder_cottonhouse2_sidney,right
+    conditions:
+    - not char_exists spyder_cottonhouse2_sidney
+    type: "event"
+  Talk Juror 3:
+    actions:
+    - translated_dialog spyder_courthouse_juror3
+    behav:
+    - talk spyder_cottonhouse2_sidney
+    type: "event"
+  Create Juror 4:
+    actions:
+    - create_npc spyder_cottonhouse1_rodger,2,5
+    - char_face spyder_cottonhouse1_rodger,up
+    conditions:
+    - not char_exists spyder_cottonhouse1_rodger
+    type: "event"
+  Talk Juror 4:
+    actions:
+    - translated_dialog spyder_courthouse_juror4
+    behav:
+    - talk spyder_cottonhouse1_rodger
+    type: "event"
+  Create Juror 5:
+    actions:
+    - create_npc spyder_cottoncafe_hillary,5,5
+    - char_face spyder_cottoncafe_hillary,up
+    conditions:
+    - not char_exists spyder_cottoncafe_hillary
+    type: "event"
+  Talk Juror 5:
+    actions:
+    - translated_dialog spyder_courthouse_juror5
+    behav:
+    - talk spyder_cottoncafe_hillary
+    type: "event"
+  Create Juror 6:
+    actions:
+    - create_npc spyder_cottoncafe_cayden,6,3
+    - char_face spyder_cottoncafe_cayden,left
+    conditions:
+    - not char_exists spyder_cottoncafe_cayden
+    type: "event"
+  Talk Juror 6:
+    actions:
+    - translated_dialog spyder_courthouse_juror6
+    behav:
+    - talk spyder_cottoncafe_cayden
+    type: "event"

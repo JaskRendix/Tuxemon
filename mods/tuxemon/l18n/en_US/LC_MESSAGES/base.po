@@ -12458,6 +12458,261 @@ msgstr "Uncle Jeff: Hmm. Very interesting. Fruitera is an air Tuxemon.\n"
 
 ## Crystal Town ##
 
+msgid "spyder_courthouse_juror1"
+msgstr "Emily: I'm feeling a bit overwhelmed by all the evidence we've heard. I'm not sure what to make of it all."
+
+msgid "spyder_courthouse_juror2"
+msgstr "Jackson: I'm convinced that Beaverbrook is guilty, but I'm not sure if we've got enough evidence to prove it beyond a reasonable doubt."
+
+msgid "spyder_courthouse_juror3"
+msgstr "Maria: I'm so worried about the impact this verdict could have on the Fondent community. We have to make sure we're doing what's right."
+
+msgid "spyder_courthouse_juror4"
+msgstr "David: I'm trying to stay objective, but it's hard not to get emotional about this case. Those tuxemon were really hurt by Beaverbrook's actions."
+
+msgid "spyder_courthouse_juror5"
+msgstr "Sarah: Have you given any thought to the potential consequences of our verdict? We could be setting a precedent here."
+
+msgid "spyder_courthouse_juror6"
+msgstr "Chad: What do you think about the defense's argument? Did they raise any valid points?"
+
+msgid "spyder_courthouse_stop"
+msgstr "I think we're supposed to wait for the agent to come and get us. We can't just leave the room without being called."
+
+msgid "spyder_courthouse_agent1"
+msgstr "Enforcer: Ladies and gentlemen of the jury, it's time to return to the courtroom.\n The judge is ready for you to deliver the verdict."
+
+####
+
+msgid "spyder_courthouse_trial0a"
+msgstr "Bailiff: All rise!\n The Fondent Regional Court is now in session. Judge Lamao presiding. The case of the Regional Prosecutor vs. Beaverbrook.\n Charges include exploitation of tuxemon, environmental destruction, and conspiracy."
+
+msgid "spyder_courthouse_trial0b"
+msgstr "Judge: Let the record show that the jury has been deliberating. We are now ready to hear their verdict.\n Members of the jury, have you reached a verdict?"
+
+msgid "spyder_courthouse_trial0c"
+msgstr "Foreman: Yes, your honor."
+
+msgid "spyder_courthouse_trial1"
+msgstr "Judge: The jury has reached a verdict. Please, have the foreman read out the decision."
+
+####
+
+msgid "spyder_courthouse_trial2a"
+msgstr "Foreman: We, the jury, find the defendant, Beaverbrook, guilty of exploitation of tuxemon for personal gain.\n Destruction via the deployment of Nimrod killer robots.\n Deliberate spread of the Virus to tuxemon using contaminated food.\n Collusion with the Enforcers, and tax evasion related to his illicit profits."
+
+msgid "spyder_courthouse_trial3a"
+msgstr "Prosecutor: Thank you, honorable members of the jury.\n Justice has been served.\n The evidence clearly showed that Beaverbrook's actions were driven by greed and a blatant disregard for the well-being of tuxemon and the environment.\n He not only exploited these creatures but also spread a harmful Virus and colluded with the Enforcers to further his agenda."
+
+msgid "spyder_courthouse_trial4a"
+msgstr "Beaverbrook: This is a travesty! I'm a visionary, a pioneer in the field of tuxemon entrepreneurship.\n I've created jobs, stimulated economic growth... I'm a HERO! This is all a misunderstanding!"
+
+msgid "spyder_courthouse_trial5a"
+msgstr "Judge: Enough, Beaverbrook.\n Your actions have caused irreparable harm to the tuxemon community and the environment.\n You have exploited and mistreated countless tuxemon, and evaded taxes.\n You are hereby sentenced to life in prison, with no possibility of parole.\n You will also be required to pay restitution to the affected parties and undergo rehabilitation programs to address your exploitative tendencies.\n The court will not tolerate such blatant disregard for the law and the welfare of others."
+
+msgid "spyder_courthouse_trial6a"
+msgstr "Beaverbrook: But... but this can't be! I have the best lawyers, the most influential connections...\n I'm a respected member of this community!"
+
+msgid "spyder_courthouse_trial7a"
+msgstr "Prosecutor: Respected? You call being a ruthless capitalist who only cares about lining your own pockets 'respected'?\n The people and tuxemon you've hurt will not be silenced.\n They will not be ignored. And today, justice has been served."
+
+msgid "spyder_courthouse_trial8a"
+msgstr "Judge: I agree with the prosecutor. Your actions have consequences, Beaverbrook.\n And today, you will face those consequences. Bailiff, please escort the defendant out of the courtroom."
+
+msgid "spyder_courthouse_trial9a"
+msgstr "Bailiff: Yes, your honor. Beaverbrook, please turn around.\n You are under arrest and will be taken into custody immediately."
+
+msgid "spyder_courthouse_trial10a"
+msgstr "Judge: Order in the court!\n While I understand the sentiment, this is a place of law and order. Please, refrain from outbursts.\n The defendant will be taken into custody, and the trial is now officially over."
+
+####
+
+msgid "spyder_courthouse_trial2b"
+msgstr "Foreman: We, the jury, find the defendant, Beaverbrook, not guilty of all charges.\n Exploitation of tuxemon for personal gain.\n Destruction via the deployment of Nimrod killer robots.\n Deliberate spread of the Virus to tuxemon using contaminated food.\n Collusion with the Enforcers.\n Tax evasion related to his profits."
+
+msgid "spyder_courthouse_trial3b"
+msgstr "Prosecutor: Your honor, this is an outrage! The evidence presented clearly demonstrated Beaverbrook's culpability.\n How can the jury ignore the harm caused to the tuxemon community?"
+
+msgid "spyder_courthouse_trial4b"
+msgstr "Beaverbrook: Thank you! Finally, someone sees the truth! I told you all along that I was simply innovating in the tuxemon industry.\n My work has created opportunities and advancements that benefit everyone!"
+
+msgid "spyder_courthouse_trial5b"
+msgstr "Judge: Order in the court! The jury has spoken.\n While I respect the decision, I must remind everyone that the implications of this verdict are significant."
+
+msgid "spyder_courthouse_trial6b"
+msgstr "Foreman: Your honor, we deliberated thoroughly. We believe that the evidence was circumstantial at best.\n Beaverbrook's actions, while controversial, were not criminal. He was trying to push the boundaries of tuxemon entrepreneurship."
+
+msgid "spyder_courthouse_trial7b"
+msgstr "Prosecutor: But the evidence of harm is undeniable! The tuxemon suffered greatly!\n This verdict sends a dangerous message that exploitation is acceptable!"
+
+msgid "spyder_courthouse_trial8b"
+msgstr "Judge: The jury's decision is final. Beaverbrook, you are free to go.\n However, I urge you to consider the impact of your actions on the community and the environment moving forward."
+
+msgid "spyder_courthouse_trial9b"
+msgstr "Beaverbrook: I will! I will continue to innovate and create! This is just the beginning! Thank you, jury! Thank you, your honor!"
+
+
+####
+
+msgid "spyder_courthouse_trial10b"
+msgstr "Judge: Bailiff, please escort the jury out. Court is adjourned."
+
+msgid "spyder_courthouse_trial11b"
+msgstr "Beaverbrook: This is a victory for progress! Together, we can reshape the future of tuxemon and business! No more fear of innovation!"
+
+msgid "spyder_courthouse_trial12b"
+msgstr "Judge: Order! This court is adjourned!"
+
+####
+
+msgid "spyder_courthouse_trial13b"
+msgstr "Journalist: Mr. Beaverbrook! Mr. Beaverbrook! What are your plans now that you've been acquitted?"
+
+msgid "spyder_courthouse_trial14b"
+msgstr "Beaverbrook: Plans? My dear friend, my plans are grander than ever!\n I've been exonerated, proving that the people of Fondent believe in progress. Now, I intend to take this vision to the highest office."
+
+msgid "spyder_courthouse_trial15b"
+msgstr "Journalist: Are you saying you intend to run for President of the Fondent Region?"
+
+msgid "spyder_courthouse_trial16b"
+msgstr "Beaverbrook: Precisely! The current administration is stagnant, afraid of change.\n They've stifled innovation and ignored the potential of tuxemon.\n I will bring a new era of prosperity to Fondent, an era where technology and nature coexist harmoniously.\n I will be the president that Fondent needs."
+
+msgid "spyder_courthouse_trial17b"
+msgstr "Journalist: But many see you as a threat to the tuxemon ecosystem. How do you plan to address those concerns?"
+
+msgid "spyder_courthouse_trial18b"
+msgstr "Beaverbrook: Those are outdated fears propagated by those who resist progress. I will show them that my methods are the future.\n We will create new tuxemon, enhance tuxemon abilities, and unlock their true potential.\n My presidency make Fondent great again!"
+
+msgid "spyder_courthouse_trial19b"
+msgstr "Journalist: One last question. What is your first action as president?"
+
+msgid "spyder_courthouse_trial20b"
+msgstr "Beaverbrook: My first action will be to establish the Fondent Innovation Initiative.\n We will invest heavily in research and development, creating new technologies that will benefit all of Fondent.\n And to make sure that the Enforcers are working for the people, and not against them."
+
+####
+
+msgid "spyder_courthouse_trial_testimony_elara"
+msgstr "Prosecutor: Your honor, the prosecution calls Dr. Elara.\n A pioneer in advanced AI and the ethical implications of creating new forms of life, to the stand."
+
+msgid "spyder_courthouse_trial_testimony_commander"
+msgstr "Prosecutor: Your honor, the prosecution calls Commander.\n An expert in outbreak containment and public health, to the stand."
+
+msgid "spyder_courthouse_trial_testimony_argon"
+msgstr "Prosecutor: Your honor, the prosecution calls Argon.\n A researcher on tuxemon behavior and consciousness, to the stand."
+
+msgid "spyder_courthouse_trial_testimony_zircon"
+msgstr "Defense Lawyer: Your honor, the defense calls Zircon.\n An advocate for utilitarian technology and its benefits to society, to the stand."
+
+####
+
+msgid "spyder_courthouse_trial_pre_testimony2"
+msgstr "Judge: Bailiff, please call the witness."
+
+msgid "spyder_courthouse_trial_pre_testimony3"
+msgstr "Bailiff: Please come forward."
+
+###
+
+msgid "spyder_courthouse_trial_post_testimony1"
+msgstr "Prosecutor: No further questions, your honor."
+
+msgid "spyder_courthouse_trial_post_testimony2"
+msgstr "Defense Lawyer: No further questions, your honor."
+
+msgid "spyder_courthouse_trial_post_testimony3"
+msgstr "Judge: You are dismissed."
+
+msgid "spyder_courthouse_trial_post_testimony4"
+msgstr "Judge: The prosecution may call its next witness."
+
+msgid "spyder_courthouse_trial_post_testimony5"
+msgstr "Prosecutor: Your honor, the prosecution has no further witnesses to call."
+
+msgid "spyder_courthouse_trial_post_testimony6"
+msgstr "Judge: Very well. The witness portion of the trial is concluded."
+
+####
+
+msgid "spyder_courthouse_elara1"
+msgstr "Prosecutor: Dr. Elara, you've pioneered the development of Xeon.\n In your expert opinion, what are the potential risks associated with rapidly advancing artificial intelligence?"
+
+msgid "spyder_courthouse_elara2"
+msgstr "Dr. Elara: Rapid advancement without rigorous ethical oversight can lead to unforeseen consequences.\n It's crucial to establish clear guidelines and protocols to ensure responsible development."
+
+msgid "spyder_courthouse_elara3"
+msgstr "Defense Lawyer: But isn't innovation inherently risky? Doesn't progress require taking chances?"
+
+msgid "spyder_courthouse_elara4"
+msgstr "Dr. Elara: There's a distinction between calculated risk and reckless disregard.\n True innovation is guided by foresight and a commitment to minimizing harm."
+
+msgid "spyder_courthouse_elara5"
+msgstr "Prosecutor: Can you comment on the creation of new life, as you called Xeon?"
+
+msgid "spyder_courthouse_elara6"
+msgstr "Dr. Elara: Creating new forms of intelligence carries immense responsibility.\n To claim that something is simply a tool, is irresponsible. All life, even artificial life, has value."
+
+####
+
+msgid "spyder_courthouse_commander1"
+msgstr "Prosecutor: Commander, can you describe the severity of the Spyderbite outbreak?"
+
+msgid "spyder_courthouse_commander2"
+msgstr "Commander: It was a highly contagious and potentially devastating disease.\n We had to implement strict quarantine measures to prevent it from spreading further."
+
+msgid "spyder_courthouse_commander3"
+msgstr "Defense Lawyer: But isn't it true that the Spyderbite was contained quickly, minimizing the damage?"
+
+msgid "spyder_courthouse_commander4"
+msgstr "Commander: Yes, thanks to swift action and decisive measures.\n However, the potential for widespread harm was significant. We were lucky."
+
+msgid "spyder_courthouse_commander5"
+msgstr "Prosecutor: Can you compare your experience with the Spyderbite, and the virus that was spread by the food from Scoop Farms?"
+
+msgid "spyder_courthouse_commander6"
+msgstr "Commander: Both were highly contagious, and both required swift action.\n The difference is that one appeared to be an accident, and the other appeared to be deliberate.\n The virus that came from scoop farms was more destructive."
+
+####
+
+msgid "spyder_courthouse_argon1"
+msgstr "Prosecutor: Argon, you've conducted extensive research on tuxemon behavior.\n What are your findings regarding their level of consciousness?"
+
+msgid "spyder_courthouse_argon2"
+msgstr "Argon: My studies suggest that tuxemon possess a level of sentience that we don't fully comprehend.\n They exhibit complex behaviors and emotional responses."
+
+msgid "spyder_courthouse_argon3"
+msgstr "Defense Lawyer: But isn't that just anthropomorphism? Projecting human qualities onto machines?"
+
+msgid "spyder_courthouse_argon4"
+msgstr "Argon: No. I've observed consistent patterns of behavior that indicate genuine consciousness, not just programmed responses."
+
+msgid "spyder_courthouse_argon5"
+msgstr "Prosecutor: How would you describe the actions of the defendant, regarding the tuxemon?"
+
+msgid "spyder_courthouse_argon6"
+msgstr "Argon: I would say that they were treated as tools, and not living beings. That is unethical."
+
+####
+
+msgid "spyder_courthouse_zircon1"
+msgstr "Defense Lawyer: Zircon, in your experience, what is the primary purpose of advanced technology like tuxemon?"
+
+msgid "spyder_courthouse_zircon2"
+msgstr "Zircon: To serve humanity. To improve our lives and protect our interests."
+
+msgid "spyder_courthouse_zircon3"
+msgstr "Prosecutor: Even at the expense of other sentient beings?"
+
+msgid "spyder_courthouse_zircon4"
+msgstr "Zircon: Sometimes, difficult choices must be made. The needs of the many outweigh the needs of the few."
+
+msgid "spyder_courthouse_zircon5"
+msgstr "Defense Lawyer: So, if the defendant's actions benefited society, even if they caused some harm to tuxemon, would you consider that justified?"
+
+msgid "spyder_courthouse_zircon6"
+msgstr "Zircon: It would need to be considered on a case by case basis, but if the benefits out weighed the negatives, then yes."
+
+####
+
 msgid "spyder_crystal_alert_skating"
 msgstr "Always be cautious! Always bring safety gear!"
 

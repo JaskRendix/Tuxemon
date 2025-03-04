@@ -1,0 +1,375 @@
+events:
+  Music:
+    actions:
+    - play_music music_10_empire
+    conditions:
+    - not music_playing music_10_empire
+    type: "event"
+  Go Outside:
+    actions:
+    - transition_teleport spyder_courthouse_room.tmx,8,3
+    - char_face player,left
+    conditions:
+    - is char_at player
+    - is char_facing player,left
+    x: 0
+    y: 3
+    type: "event"
+  Create Juror 1:
+    actions:
+    - create_npc spyder_cottonhouse1_lila,8,2
+    - char_face spyder_cottonhouse1_lila,left
+    conditions:
+    - not char_exists spyder_cottonhouse1_lila
+    type: "event"
+  Talk Juror 1:
+    actions:
+    - translated_dialog spyder_courthouse_juror1
+    behav:
+    - talk spyder_cottonhouse1_lila
+    type: "event"
+  Create Juror 2:
+    actions:
+    - create_npc spyder_cottontown_hacker,8,3
+    - char_face spyder_cottontown_hacker,left
+    conditions:
+    - not char_exists spyder_cottontown_hacker
+    type: "event"
+  Talk Juror 2:
+    actions:
+    - translated_dialog spyder_courthouse_juror2
+    behav:
+    - talk spyder_cottontown_hacker
+    type: "event"
+  Create Juror 3:
+    actions:
+    - create_npc spyder_cottonhouse2_sidney,8,4
+    - char_face spyder_cottonhouse2_sidney,left
+    conditions:
+    - not char_exists spyder_cottonhouse2_sidney
+    type: "event"
+  Talk Juror 3:
+    actions:
+    - translated_dialog spyder_courthouse_juror3
+    behav:
+    - talk spyder_cottonhouse2_sidney
+    type: "event"
+  Create Juror 4:
+    actions:
+    - create_npc spyder_cottonhouse1_rodger,7,2
+    - char_face spyder_cottonhouse1_rodger,left
+    conditions:
+    - not char_exists spyder_cottonhouse1_rodger
+    type: "event"
+  Talk Juror 4:
+    actions:
+    - translated_dialog spyder_courthouse_juror4
+    behav:
+    - talk spyder_cottonhouse1_rodger
+    type: "event"
+  Create Juror 5:
+    actions:
+    - create_npc spyder_cottoncafe_hillary,7,3
+    - char_face spyder_cottoncafe_hillary,left
+    conditions:
+    - not char_exists spyder_cottoncafe_hillary
+    type: "event"
+  Talk Juror 5:
+    actions:
+    - translated_dialog spyder_courthouse_juror5
+    behav:
+    - talk spyder_cottoncafe_hillary
+    type: "event"
+  Create Juror 6:
+    actions:
+    - create_npc spyder_cottoncafe_cayden,7,4
+    - char_face spyder_cottoncafe_cayden,left
+    conditions:
+    - not char_exists spyder_cottoncafe_cayden
+    type: "event"
+  Talk Juror 6:
+    actions:
+    - translated_dialog spyder_courthouse_juror6
+    behav:
+    - talk spyder_cottoncafe_cayden
+    type: "event"
+  Create Judge:
+    actions:
+    - create_npc spyder_candyport_monk,3,2
+    - char_face spyder_candyport_monk,down
+    conditions:
+    - not char_exists spyder_candyport_monk
+    type: "event"
+  Create Foreman:
+    actions:
+    - create_npc spyder_candyinn_prof,7,5
+    - char_face spyder_candyinn_prof,left
+    conditions:
+    - not char_exists spyder_candyinn_prof
+    type: "event"
+  Create Beaver:
+    actions:
+    - create_npc spyder_omnichannel_beaverbrook,1,7
+    - char_face spyder_omnichannel_beaverbrook,up
+    conditions:
+    - not char_exists spyder_omnichannel_beaverbrook
+    type: "event"
+  Create Beaver Lawyer:
+    actions:
+    - create_npc spyder_candyhouse2_indiana,2,7
+    - char_face spyder_candyhouse2_indiana,up
+    conditions:
+    - not char_exists spyder_candyhouse2_indiana
+    type: "event"
+  Create Enforcer:
+    actions:
+    - create_npc spyder_candy_henrik,0,5
+    - char_face spyder_candy_henrik,right
+    conditions:
+    - not char_exists spyder_candy_henrik
+    type: "event"
+  Create Prosecutor:
+    actions:
+    - create_npc spyder_flowerhouse2_bruce,7,7
+    - char_face spyder_flowerhouse2_bruce,up
+    conditions:
+    - not char_exists spyder_flowerhouse2_bruce
+    type: "event"
+  Create Public:
+    actions:
+    - create_npc spyder_top_lenny,0,10
+    - char_face spyder_top_lenny,up
+    - create_npc spyder_mansion_drinkingbuddya,1,10
+    - char_face spyder_mansion_drinkingbuddya,up
+    - create_npc spyder_mansion_lainey,2,10
+    - char_face spyder_mansion_lainey,up
+    - create_npc spyder_basement_roger,6,10
+    - char_face spyder_basement_roger,up
+    - create_npc spyder_basement_flick,7,10
+    - char_face spyder_basement_flick,up
+    - create_npc spyder_mansion_gillette,8,10
+    - char_face spyder_mansion_gillette,up
+    - create_npc spyder_basement_coralli,0,12
+    - char_face spyder_basement_coralli,up
+    - create_npc spyder_basement_catholi,1,12
+    - char_face spyder_basement_catholi,up
+    - create_npc spyder_mansion_wayne,2,12
+    - char_face spyder_mansion_wayne,up
+    - create_npc spyder_mansion_nurse,6,12
+    - char_face spyder_mansion_nurse,up
+    - create_npc spyder_mansion_drinkingbuddyb,7,12
+    - char_face spyder_mansion_drinkingbuddyb,up
+    - create_npc spyder_top_maura,8,12
+    - char_face spyder_top_maura,up
+    - create_npc spyder_top_jackson,0,14
+    - char_face spyder_top_jackson,up
+    - create_npc spyder_top_mickey,1,14
+    - char_face spyder_top_mickey,up
+    - create_npc spyder_top_ricardo,2,14
+    - char_face spyder_top_ricardo,up
+    - create_npc spyder_flowerscoop_jarod,6,14
+    - char_face spyder_flowerscoop_jarod,up
+    - create_npc spyder_flowerpetshop_titus,7,14
+    - char_face spyder_flowerpetshop_titus,up
+    - create_npc spyder_flowerpetshop_denzel,8,14
+    - char_face spyder_flowerpetshop_denzel,up
+    conditions:
+    - not char_exists spyder_top_mickey
+    - not char_exists spyder_top_jackson
+    - not char_exists spyder_top_ricardo
+    - not char_exists spyder_top_maura
+    - not char_exists spyder_mansion_drinkingbuddya
+    - not char_exists spyder_top_lenny
+    - not char_exists spyder_mansion_lainey
+    - not char_exists spyder_mansion_wayne
+    - not char_exists spyder_basement_flick
+    - not char_exists spyder_mansion_nurse
+    - not char_exists spyder_basement_roger
+    - not char_exists spyder_basement_coralli
+    - not char_exists spyder_mansion_gillette
+    - not char_exists spyder_basement_catholi
+    - not char_exists spyder_mansion_drinkingbuddyb
+    - not char_exists spyder_flowerscoop_jarod
+    - not char_exists spyder_flowerpetshop_titus
+    - not char_exists spyder_flowerpetshop_denzel
+    type: "event"
+  Witness Scene:
+    actions:
+    - pathfind player,4,2
+    - wait 1
+    conditions:
+    - is variable_set scene_witness:yes
+    type: "event"
+  Final Scene not Guilty:
+    actions:
+    - pathfind player,4,2
+    - wait 1
+    - pathfind spyder_candy_henrik,4,6
+    - wait 1
+    - translated_dialog spyder_courthouse_trial0a
+    - wait 1
+    # enforcer
+    - pathfind spyder_candy_henrik,0,5
+    - char_face spyder_candy_henrik,right
+    - translated_dialog spyder_courthouse_trial0b
+    - wait 1
+    # foreman
+    - pathfind spyder_candyinn_prof,3,4
+    - char_face spyder_candyinn_prof,up
+    - translated_dialog spyder_courthouse_trial0c
+    - translated_dialog spyder_courthouse_trial1
+    - pathfind spyder_candyinn_prof,4,5
+    # not guilty
+    - translated_dialog spyder_courthouse_trial2b
+    - pathfind spyder_candyinn_prof,7,5
+    - char_face spyder_candyinn_prof,left
+    # prosecutor
+    - pathfind spyder_flowerhouse2_bruce,4,4
+    - char_face spyder_flowerhouse2_bruce,right
+    - translated_dialog spyder_courthouse_trial3b
+    # beaverbrook
+    - pathfind spyder_candyhouse2_indiana,3,6
+    - wait 1
+    - char_face spyder_candyhouse2_indiana,up
+    - wait 1
+    - pathfind spyder_omnichannel_beaverbrook,4,6
+    - wait 1
+    - char_face spyder_candyhouse2_indiana,right
+    - wait 1
+    - char_face spyder_flowerhouse2_bruce,down
+    - wait 1
+    - translated_dialog spyder_courthouse_trial4b
+    # judge
+    - translated_dialog spyder_courthouse_trial5b
+    # foreman
+    - wait 1
+    - pathfind spyder_candyinn_prof,3,4
+    - char_face spyder_candyinn_prof,up
+    - wait 1
+    - translated_dialog spyder_courthouse_trial6b
+    - wait 1
+    # prosecutor
+    - char_face spyder_flowerhouse2_bruce,up
+    - translated_dialog spyder_courthouse_trial7b
+    - wait 1
+    # judge
+    - translated_dialog spyder_courthouse_trial8b
+    # beaverbrook
+    - translated_dialog spyder_courthouse_trial9b
+    # judge out
+    - translated_dialog spyder_courthouse_trial10b
+    - wait 1
+    # enforcer move
+    - pathfind spyder_candy_henrik,4,5
+    - char_face spyder_candy_henrik,down
+    - wait 1
+    # beaverbrook
+    - camera spyder_omnichannel_beaverbrook
+    - char_face spyder_candyhouse2_indiana,down
+    - pathfind spyder_omnichannel_beaverbrook,4,12
+    - pathfind spyder_candy_henrik,4,11
+    - wait 1
+    - char_face spyder_omnichannel_beaverbrook,right
+    - wait 1
+    - char_face spyder_omnichannel_beaverbrook,left
+    - wait 1
+    - char_face spyder_omnichannel_beaverbrook,up
+    - wait 1
+    - translated_dialog spyder_courthouse_trial11b
+    # judge
+    - translated_dialog spyder_courthouse_trial12b
+    # journalist
+    - wait 1
+    - pathfind spyder_mansion_lainey,3,12
+    - wait 1
+    - char_face spyder_mansion_lainey,right
+    - wait 1
+    - char_face spyder_omnichannel_beaverbrook,left
+    - translated_dialog spyder_courthouse_trial13b
+    - wait 1
+    - translated_dialog spyder_courthouse_trial14b
+    - wait 1
+    - translated_dialog spyder_courthouse_trial15b
+    - wait 1
+    - translated_dialog spyder_courthouse_trial16b
+    - wait 1
+    - translated_dialog spyder_courthouse_trial17b
+    - wait 1
+    - translated_dialog spyder_courthouse_trial18b
+    - wait 1
+    - translated_dialog spyder_courthouse_trial19b
+    - wait 1
+    - translated_dialog spyder_courthouse_trial20b
+    - camera spyder_candy_henrik
+    - pathfind spyder_omnichannel_beaverbrook,4,14
+    - remove_npc spyder_omnichannel_beaverbrook
+    - set_variable endingcourt:yes
+    conditions:
+    - is variable_set courthouse:notguilty
+    - not variable_set endingcourt:yes
+    type: "event"
+  Final Scene Guilty:
+    actions:
+    - lock_controls
+    - pathfind player,4,2
+    - wait 1
+    - pathfind spyder_candy_henrik,4,6
+    - wait 1
+    - translated_dialog spyder_courthouse_trial0a
+    - wait 1
+    # enforcer
+    - pathfind spyder_candy_henrik,0,5
+    - char_face spyder_candy_henrik,right
+    - translated_dialog spyder_courthouse_trial0b
+    - wait 1
+    # foreman
+    - pathfind spyder_candyinn_prof,3,4
+    - char_face spyder_candyinn_prof,up
+    - translated_dialog spyder_courthouse_trial0c
+    - translated_dialog spyder_courthouse_trial1
+    - pathfind spyder_candyinn_prof,4,5
+    # guilty
+    - translated_dialog spyder_courthouse_trial2a
+    - pathfind spyder_candyinn_prof,7,5
+    - char_face spyder_candyinn_prof,left
+    # prosecutor
+    - pathfind spyder_flowerhouse2_bruce,4,4
+    - char_face spyder_flowerhouse2_bruce,right
+    - translated_dialog spyder_courthouse_trial3a
+    # beaverbrook
+    - pathfind spyder_candyhouse2_indiana,4,7
+    - wait 1
+    - char_face spyder_candyhouse2_indiana,up
+    - wait 1
+    - pathfind spyder_omnichannel_beaverbrook,3,4
+    - wait 1
+    - char_face spyder_flowerhouse2_bruce,left
+    - wait 1
+    - translated_dialog spyder_courthouse_trial4a
+    # judge
+    - translated_dialog spyder_courthouse_trial5a
+    # beaverbook
+    - translated_dialog spyder_courthouse_trial6a
+    # prosecutor
+    - translated_dialog spyder_courthouse_trial7a
+    # judge
+    - translated_dialog spyder_courthouse_trial8a
+    # enforcer
+    - wait 1
+    - pathfind spyder_candy_henrik,3,5
+    - char_face spyder_candy_henrik,up
+    - translated_dialog spyder_courthouse_trial9a
+    - char_face spyder_omnichannel_beaverbrook,down
+    - pathfind spyder_candyhouse2_indiana,2,7
+    - char_face spyder_candyhouse2_indiana,up
+    - pathfind spyder_candy_henrik,4,13
+    - pathfind spyder_omnichannel_beaverbrook,4,12
+    # judge
+    - translated_dialog spyder_courthouse_trial10a
+    - pathfind spyder_candyinn_prof,7,5
+    - set_variable endingcourt:yes
+    - unlock_controls
+    conditions:
+    - is variable_set courthouse:guilty
+    - not variable_set endingcourt:yes
+    type: "event"
