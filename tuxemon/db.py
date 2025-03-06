@@ -90,15 +90,6 @@ class TasteCold(str, Enum):
     dry = "dry"
 
 
-class ElementType(str, Enum):
-    aether = "aether"
-    wood = "wood"
-    fire = "fire"
-    earth = "earth"
-    metal = "metal"
-    water = "water"
-
-
 class ItemCategory(str, Enum):
     none = "none"
     badge = "badge"
@@ -276,7 +267,7 @@ class ItemModel(BaseModel):
         [], description="Conditions that must be met"
     )
     effects: Sequence[CommonEffect] = Field(
-        [], description="Effects this item will have"
+        ..., description="Effects this item will have"
     )
     flip_axes: Literal["", "x", "y", "xy"] = Field(
         "",
@@ -294,6 +285,7 @@ class ItemModel(BaseModel):
         description="The standard cost of the item.",
         gt=0,
     )
+    modifiers: list[Modifier] = Field(..., description="Various modifiers")
 
     # Validate fields that refer to translated text
     @field_validator("use_item", "use_success", "use_failure")
@@ -383,7 +375,7 @@ class MonsterEvolutionItemModel(BaseModel):
         description="The level at which the monster evolves.",
         ge=0,
     )
-    element: Optional[ElementType] = Field(
+    element: Optional[str] = Field(
         None,
         description="The element type that the monster must match to evolve.",
     )
@@ -464,6 +456,14 @@ class MonsterEvolutionItemModel(BaseModel):
         if not v or has.db_entry("technique", v):
             return v
         raise ValueError(f"the technique {v} doesn't exist in the db")
+
+    @field_validator("element")
+    def element_exists(
+        cls: MonsterEvolutionItemModel, v: Optional[str]
+    ) -> Optional[str]:
+        if not v or has.db_entry("element", v):
+            return v
+        raise ValueError(f"the element {v} doesn't exist in the db")
 
     @field_validator("monster_slug")
     def monster_exists(cls: MonsterEvolutionItemModel, v: str) -> str:
@@ -614,11 +614,9 @@ class MonsterModel(BaseModel, validate_assignment=True):
     terrains: Sequence[str] = Field(
         ..., description="The terrains of the monster"
     )
+    types: Sequence[str] = Field([], description="The type(s) of this monster")
     shape: str = Field(..., description="The shape of the monster")
     tags: Sequence[str] = Field(..., description="The tags of the monster")
-    types: Sequence[ElementType] = Field(
-        [], description="The type(s) of this monster"
-    )
     catch_rate: float = Field(
         ...,
         description="The catch rate of the monster",
@@ -677,6 +675,25 @@ class MonsterModel(BaseModel, validate_assignment=True):
         if has.translation(f"cat_{v}"):
             return v
         raise ValueError(f"no translation exists with msgid: {v}")
+
+    @field_validator("types")
+    def element_exists(
+        cls: MonsterModel, elements: Sequence[str]
+    ) -> Sequence[str]:
+        if not elements:
+            return elements
+
+        invalid_elements = [
+            element
+            for element in elements
+            if not has.db_entry("element", element)
+        ]
+        if invalid_elements:
+            raise ValueError(
+                f"elements {', '.join(invalid_elements)} don't exist in the db"
+            )
+
+        return elements
 
     @field_validator("shape")
     def shape_exists(cls: MonsterModel, v: str) -> str:
@@ -792,11 +809,11 @@ class TechniqueModel(BaseModel):
     tags: Sequence[str] = Field(
         ..., description="The tags of the technique", min_length=1
     )
-    conditions: Sequence[str] = Field(
+    conditions: Sequence[CommonCondition] = Field(
         [], description="Conditions that must be met"
     )
-    effects: Sequence[str] = Field(
-        [], description="Effects this technique uses"
+    effects: Sequence[CommonEffect] = Field(
+        ..., description="Effects this technique uses"
     )
     flip_axes: Literal["", "x", "y", "xy"] = Field(
         ...,
@@ -809,6 +826,7 @@ class TechniqueModel(BaseModel):
     sfx: str = Field(
         ..., description="Sound effect to play when this technique is used"
     )
+    modifiers: list[Modifier] = Field(..., description="Various modifiers")
 
     # Optional fields
     use_tech: Optional[str] = Field(
@@ -823,9 +841,7 @@ class TechniqueModel(BaseModel):
         None,
         description="Slug of what string to display when technique fails",
     )
-    types: Sequence[ElementType] = Field(
-        [], description="Type(s) of the technique"
-    )
+    types: Sequence[str] = Field([], description="Type(s) of the technique")
     usable_on: bool = Field(
         False,
         description="Whether or not the technique can be used outside of combat",
@@ -905,19 +921,30 @@ class TechniqueModel(BaseModel):
             return v
         raise ValueError(f"the animation {v} doesn't exist in the db")
 
-    @field_validator("conditions")
-    def check_conditions(
-        cls: TechniqueModel, v: Sequence[str]
-    ) -> Sequence[str]:
-        if not v or has.check_conditions(v):
-            return v
-        raise ValueError(f"the conditions {v} aren't correctly formatted")
-
     @field_validator("sfx")
     def sfx_tech_exists(cls: TechniqueModel, v: str) -> str:
         if has.db_entry("sounds", v):
             return v
         raise ValueError(f"the sound {v} doesn't exist in the db")
+
+    @field_validator("types")
+    def element_exists(
+        cls: TechniqueModel, elements: Sequence[str]
+    ) -> Sequence[str]:
+        if not elements:
+            return elements
+
+        invalid_elements = [
+            element
+            for element in elements
+            if not has.db_entry("element", element)
+        ]
+        if invalid_elements:
+            raise ValueError(
+                f"elements {', '.join(invalid_elements)} don't exist in the db"
+            )
+
+        return elements
 
 
 class ConditionModel(BaseModel):
@@ -928,7 +955,7 @@ class ConditionModel(BaseModel):
         [], description="Conditions that must be met"
     )
     effects: Sequence[CommonEffect] = Field(
-        [], description="Effects this condition uses"
+        ..., description="Effects this condition uses"
     )
     flip_axes: Literal["", "x", "y", "xy"] = Field(
         ...,
@@ -947,7 +974,7 @@ class ConditionModel(BaseModel):
     duration: int = Field(
         0, description="How many turns the condition is supposed to last"
     )
-    modifiers: list[Modifier] = Field(..., description="Damage multipliers")
+    modifiers: list[Modifier] = Field(..., description="Various modifiers")
 
     # Optional fields
     category: Optional[CategoryCondition] = Field(
@@ -1333,21 +1360,23 @@ class DialogueModel(BaseModel):
 
 
 class ElementItemModel(BaseModel):
-    against: ElementType = Field(..., description="Name of the type")
+    against: str = Field(..., description="Name of the type")
     multiplier: float = Field(1.0, description="Multiplier against the type")
+
+    @field_validator("against")
+    def element_exists(cls: ElementItemModel, v: str) -> str:
+        if not v or has.db_entry("element", v):
+            return v
+        raise ValueError(f"the element {v} doesn't exist in the db")
 
 
 class ElementModel(BaseModel):
-    slug: ElementType = Field(
-        ..., description="Slug uniquely identifying the type"
-    )
+    slug: str = Field(..., description="Slug uniquely identifying the type")
     icon: str = Field(..., description="The icon to use for the type")
     types: Sequence[ElementItemModel]
 
     @field_validator("slug")
-    def translation_exists_element(
-        cls: ElementModel, v: ElementType
-    ) -> ElementType:
+    def translation_exists_element(cls: ElementModel, v: str) -> str:
         if has.translation(v):
             return v
         raise ValueError(f"no translation exists with msgid: {v}")
@@ -1961,40 +1990,6 @@ class Validator:
                     f"{file} {sprite.size}: It must be equal to {size}"
                 )
         sprite.close()
-        return True
-
-    def check_conditions(self, conditions: Sequence[str]) -> bool:
-        """
-        Check to see if a condition is correctly formatted.
-
-        Parameters:
-            conditions: The sequence containing the conditions
-
-        Returns:
-            True if it's correctly formatted
-
-        """
-        if not conditions:
-            return True
-
-        _conditions = [
-            element
-            for condition in conditions
-            for element in condition.split(" ")
-        ]
-
-        # check nr of elements
-        if len(_conditions) == 1:
-            raise ValueError(
-                f"{_conditions} invalid, it must have at least: 'is' + 'condition'"
-            )
-
-        # check prefix
-        prefix = _conditions[0]
-        _prefix = True if prefix == "is" or _conditions[0] == "not" else False
-        if not _prefix:
-            raise ValueError(f"{prefix} is invalid, it must be: 'is' or 'not'")
-
         return True
 
     def db_entry(self, table: TableName, slug: str) -> bool:
