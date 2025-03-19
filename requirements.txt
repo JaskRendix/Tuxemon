@@ -2,12 +2,12 @@ babel
 cbor
 neteria
 pillow
-pygame-ce==2.3.2
+pygame-ce==2.5.3
 pyscroll>=2.31
 pytmx==3.32
-requests>=2.31.0
+requests>=2.32.3
 natsort
-PyYAML>=6.0.1
+PyYAML>=6.0.2
 prompt_toolkit
 pygame-menu-ce==4.4.3
-pydantic>=2.5.3
+pydantic>=2.10.6
