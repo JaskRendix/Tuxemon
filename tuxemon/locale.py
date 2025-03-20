@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 FALLBACK_LOCALE = "en_US"
 LOCALE_DIR = "l18n"
+LOCALE_CONFIG = prepare.CONFIG.locale
 
 
 @dataclasses.dataclass(frozen=True, order=True)
@@ -143,7 +144,7 @@ class TranslatorPo:
     ) -> None:
         self.locale_finder = locale_finder
         self.gettext_compiler = gettext_compiler
-        self.locale_name: str = prepare.CONFIG.locale
+        self.locale_name: str = LOCALE_CONFIG.slug
         self.translate: Callable[[str], str] = lambda x: x
         self.language_changed_callbacks: list[Callable[[str], None]] = []
 
@@ -193,7 +194,7 @@ class TranslatorPo:
         return None
 
     def load_translator(
-        self, locale_name: str = prepare.CONFIG.locale, domain: str = "base"
+        self, locale_name: str = LOCALE_CONFIG.slug, domain: str = "base"
     ) -> None:
         """
         Load a selected locale for translation.
@@ -252,6 +253,12 @@ class TranslatorPo:
         else:
             logger.warning(f"Language {locale_name} is not supported")
 
+    def get_available_languages(self) -> list[str]:
+        """
+        Returns a list of all available languages.
+        """
+        return sorted(list(self.locale_finder.locale_names))
+
     def language_changed(self, locale_name: str) -> None:
         """
         Notifies all registered callbacks that the language has changed.
@@ -293,7 +300,7 @@ class TranslatorPo:
         Parameters:
             message_id: The message_id of the translation to check.
         """
-        _locale = prepare.CONFIG.translation_mode
+        _locale = prepare.CONFIG.locale.translation_mode
         if _locale == "none":
             return
         else:
@@ -367,13 +374,13 @@ def replace_text(session: Session, text: str) -> str:
     """
     player = session.player
     client = session.client
-    unit_measure = player.game_variables.get("unit_measure", prepare.METRIC)
+    unit_measure = prepare.CONFIG.unit_measure
 
     replacements = {
         "${{name}}": player.name,
         "${{NAME}}": player.name.upper(),
         "${{currency}}": "$",
-        "${{money}}": str(player.money.get("player", 0)),
+        "${{money}}": str(player.money_manager.get_money()),
         "${{tuxepedia_seen}}": str(player.tuxepedia.get_seen_count()),
         "${{tuxepedia_caught}}": str(player.tuxepedia.get_caught_count()),
         "${{map_name}}": client.map_name,
@@ -385,7 +392,7 @@ def replace_text(session: Session, text: str) -> str:
     }
 
     # Add unit-specific replacements
-    if unit_measure == prepare.METRIC:
+    if unit_measure == "metric":
         replacements.update(
             {
                 "${{length}}": prepare.U_KM,
@@ -436,7 +443,7 @@ def replace_text(session: Session, text: str) -> str:
         }
 
         # Add unit-specific monster replacements
-        if unit_measure == prepare.METRIC:
+        if unit_measure == "metric":
             monster_replacements.update(
                 {
                     "${{monster_"
