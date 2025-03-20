@@ -29,30 +29,26 @@ class NuPhoneContacts(PygameMenuState):
         self,
         menu: pygame_menu.Menu,
     ) -> None:
-        def choice(slug: str, phone: str) -> None:
-            label = (
-                T.translate("action_call") + " " + T.translate(slug).upper()
-            )
+        def choice(slug: str) -> None:
+            label = f"{T.translate('action_call')} {T.translate(slug).upper()}"
             var_menu = []
-            var_menu.append((label, label, partial(call, phone)))
+            var_menu.append((label, label, call))
             open_choice_dialog(
                 local_session,
                 menu=(var_menu),
                 escape_key_exits=True,
             )
 
-        def call(phone: str) -> None:
+        def call() -> None:
             self.client.pop_state()
             self.client.pop_state()
             # from spyder_cotton_town.tmx to spyder_cotton_town
             map = self.client.get_map_name()
             map_name = map.split(".")[0]
-            # new string map + phone
-            new_label = f"{map_name}_{phone}"
-            if T.translate(new_label) != new_label:
+            if T.translate(map_name) != map_name:
                 open_dialog(
                     local_session,
-                    [T.translate(new_label)],
+                    [T.translate(map_name)],
                 )
             else:
                 open_dialog(
@@ -61,13 +57,17 @@ class NuPhoneContacts(PygameMenuState):
                 )
 
         # slug and phone number from the tuple
-        for slug, phone in self.player.contacts.items():
+        connections = self.player.relationships.get_all_connections()
+        for slug, contact in connections.items():
             menu.add.button(
-                title=f"{T.translate(slug)} {phone}",
-                action=partial(choice, slug, phone),
-                button_id=slug,
+                title=T.translate(slug),
+                action=partial(choice, slug),
                 font_size=self.font_size_small,
                 selection_effect=HighlightSelection(),
+            )
+            menu.add.label(
+                title=T.translate(contact.relationship_type),
+                font_size=self.font_size_small,
             )
             menu.add.vertical_margin(25)
 
