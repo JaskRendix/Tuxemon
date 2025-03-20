@@ -6837,8 +6837,42 @@ msgstr "Rain"
 msgid "weather_sunny"
 msgstr "Sunny"
 
-# STAT TYPES
+# Relations
 
+msgid "relation_family"
+msgstr "Family"
+
+msgid "relation_friend"
+msgstr "Friend"
+
+msgid "relation_acquaintance"
+msgstr "Acquaintance"
+
+msgid "relation_rival"
+msgstr "Rival"
+
+msgid "relation_mentor"
+msgstr "Mentor"
+
+msgid "relation_student"
+msgstr "Student"
+
+msgid "relation_romantic"
+msgstr "Romantic"
+
+msgid "relation_enemy"
+msgstr "Enemy"
+
+msgid "relation_unknown"
+msgstr "Unknown"
+
+msgid "relation_relationship"
+msgstr "Relationship Type"
+
+msgid "relation_strength"
+msgstr "Strength"
+
+# STAT TYPES
 msgid "armour"
 msgstr "Armour"
 

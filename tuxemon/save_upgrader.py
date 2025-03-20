@@ -71,6 +71,7 @@ def upgrade_npc_state(npc_state: dict[str, Any]) -> dict[str, Any]:
     _handle_change_monster_name(npc_state)
     _handle_change_plague(npc_state)
     _handle_change_money(npc_state)
+    _handle_change_contacts(npc_state)
 
     return npc_state
 
@@ -109,6 +110,20 @@ def _handle_change_tuxepedia(save_data: dict[str, Any]) -> None:
                 "status": value,
                 "appearance_count": 1,
             }
+
+
+def _handle_change_contacts(save_data: dict[str, Any]) -> None:
+    """
+    Updates contacts field in the save data.
+    """
+    if "contacts" not in save_data:
+        return
+    else:
+        new: dict[str, Any] = {}
+        for key in save_data["contacts"].keys():
+            new[key] = {"relationship_type": "unknown"}
+        save_data["relationships"] = new
+        del save_data["contacts"]
 
 
 def _handle_change_money(save_data: dict[str, Any]) -> None:

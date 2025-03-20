@@ -47,6 +47,7 @@
 .. autoscriptinfoclass:: tuxemon.event.actions.menu.MenuAction
 .. autoscriptinfoclass:: tuxemon.event.actions.modify_bill.ModifyBillAction
 .. autoscriptinfoclass:: tuxemon.event.actions.modify_char_attribute.ModifyCharAttributeAction
+.. autoscriptinfoclass:: tuxemon.event.actions.modify_contacts.ModifyContactsAction
 .. autoscriptinfoclass:: tuxemon.event.actions.modify_money.ModifyMoneyAction
 .. autoscriptinfoclass:: tuxemon.event.actions.modify_monster_bond.ModifyMonsterBondAction
 .. autoscriptinfoclass:: tuxemon.event.actions.modify_monster_health.ModifyMonsterHealthAction

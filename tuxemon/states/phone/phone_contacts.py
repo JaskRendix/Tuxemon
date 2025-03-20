@@ -13,6 +13,7 @@ from pygame_menu.widgets.selection.highlight import HighlightSelection
 from tuxemon import prepare
 from tuxemon.locale import T
 from tuxemon.menu.menu import PygameMenuState
+from tuxemon.relationship import RELATIONSHIP_STRENGTH
 from tuxemon.session import local_session
 from tuxemon.tools import open_choice_dialog, open_dialog
 
@@ -65,8 +66,15 @@ class NuPhoneContacts(PygameMenuState):
                 font_size=self.font_size_small,
                 selection_effect=HighlightSelection(),
             )
+            relationship = T.translate(f"relation_relationship")
+            relation = T.translate(f"relation_{contact.relationship_type}")
             menu.add.label(
-                title=T.translate(contact.relationship_type),
+                title=f"{relationship}: {relation}",
+                font_size=self.font_size_small,
+            )
+            relation_strength = T.translate(f"relation_strength")
+            menu.add.label(
+                title=f"{relation_strength}: {contact.strength}/{RELATIONSHIP_STRENGTH[1]}",
                 font_size=self.font_size_small,
             )
             menu.add.vertical_margin(25)
@@ -90,6 +98,9 @@ class NuPhoneContacts(PygameMenuState):
             height=height,
             width=width,
         )
+
+        for relation in self.player.relationships.connections.values():
+            relation.apply_decay(self.player)
 
         self.add_menu_items(self.menu)
         self.reset_theme()

@@ -141,8 +141,8 @@
     <property name="act04" value="translated_dialog spyder_timber_dante2"/>
     <property name="act05" value="add_item app_contacts"/>
     <property name="act06" value="translated_dialog app_contacts,,center"/>
-    <property name="act07" value="add_contacts spyder_papertown_mom,000"/>
-    <property name="act08" value="add_contacts professor,111"/>
+    <property name="act07" value="add_contacts player,spyder_papertown_mom,family,100"/>
+    <property name="act08" value="add_contacts player,spyder_dante,friend,80"/>
     <property name="act09" value="pathfind spyder_dante,24,31"/>
     <property name="act10" value="set_variable timberdantewarn:yes"/>
     <property name="cond1" value="is char_at player"/>

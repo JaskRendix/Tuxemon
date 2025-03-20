@@ -11,28 +11,50 @@ if TYPE_CHECKING:
     from tuxemon.npc import NPC
 logger = logging.getLogger(__name__)
 
+RELATIONSHIP_STRENGTH: tuple[int, int] = (0, 100)
+
 
 @dataclass
 class Connection:
     relationship_type: str
-    strength: int
-    last_interaction: float  # Steps
-    decay_rate: float  # Strength lost per threshold
-    decay_threshold: int  # Steps before decay applies
+    strength: int = 50
+    steps: float = 0
+    decay_rate: float = 0.01  # Strength lost per threshold
+    decay_threshold: int = 500  # Steps before decay applies
 
-    def update_last_interaction(self, npc: NPC) -> None:
-        self.last_interaction = npc.steps
+    def update_steps(self, npc: NPC) -> None:
+        self.steps = npc.steps
 
     def apply_decay(self, npc: NPC) -> None:
-        steps_since_last = npc.steps - self.last_interaction
+        steps_since_last = npc.steps - self.steps
         if steps_since_last >= self.decay_threshold:
             decay_amount = (
                 steps_since_last // self.decay_threshold
             ) * self.decay_rate
-            self.strength = max(0, self.strength - round(decay_amount))
-            self.last_interaction = npc.steps - (
-                steps_since_last % self.decay_threshold
+            self.strength = max(
+                RELATIONSHIP_STRENGTH[0],
+                min(
+                    self.strength - round(decay_amount),
+                    RELATIONSHIP_STRENGTH[1],
+                ),
             )
+            self.steps = npc.steps - (steps_since_last % self.decay_threshold)
+
+    def get_state(self) -> dict[str, Any]:
+        """
+        Returns a dictionary representing the state of the connection,
+        including its status and appearance count.
+
+        Returns:
+            A dictionary representing the state of the connection.
+        """
+        return {
+            "relationship_type": self.relationship_type,
+            "strength": self.strength,
+            "steps": self.steps,
+            "decay_rate": self.decay_rate,
+            "decay_threshold": self.decay_threshold,
+        }
 
 
 class Relationships:
@@ -44,7 +66,7 @@ class Relationships:
         slug: str,
         relationship_type: str,
         strength: int,
-        last_interaction: float,
+        steps: float,
         decay_rate: float,
         decay_threshold: int,
     ) -> None:
@@ -54,7 +76,7 @@ class Relationships:
         new_connection = Connection(
             relationship_type=relationship_type,
             strength=strength,
-            last_interaction=last_interaction,
+            steps=steps,
             decay_rate=decay_rate,
             decay_threshold=decay_threshold,
         )
@@ -72,7 +94,8 @@ class Relationships:
         Updates the strength of an existing connection.
         """
         if slug in self.connections:
-            self.connections[slug].strength = new_strength
+            strength = max(0, min(new_strength, 100))
+            self.connections[slug].strength = strength
 
     def get_connection(self, slug: str) -> Optional[Connection]:
         """
@@ -93,7 +116,8 @@ class Relationships:
         Updates the decay rate of an existing connection.
         """
         if slug in self.connections:
-            self.connections[slug].decay_rate = new_decay_rate
+            decay_rate = max(0.0, min(new_decay_rate, 1.0))
+            self.connections[slug].decay_rate = decay_rate
 
     def update_connection_decay_threshold(
         self, slug: str, new_decay_threshold: int
@@ -108,27 +132,16 @@ class Relationships:
 def encode_relationships(relationships: Relationships) -> Mapping[str, Any]:
     """Encodes a Relationships object to a dictionary."""
     return {
-        slug: {
-            "relationship_type": connection.relationship_type,
-            "strength": connection.strength,
-            "last_interaction": connection.last_interaction,
-            "decay_rate": connection.decay_rate,
-            "decay_threshold": connection.decay_threshold,
-        }
-        for slug, connection in relationships.connections.items()
+        slug: entry.get_state()
+        for slug, entry in relationships.connections.items()
     }
 
 
-def decode_relationships(data: Mapping[str, Any]) -> Relationships:
+def decode_relationships(json_data: Mapping[str, Any]) -> Relationships:
     """Decodes a dictionary to a Relationships object."""
     relationships = Relationships()
-    for slug, connection_data in data.items():
-        relationships.add_connection(
-            slug=connection_data["slug"],
-            relationship_type=connection_data["relationship_type"],
-            strength=connection_data["strength"],
-            last_interaction=connection_data.get("last_interaction", 0),
-            decay_rate=connection_data.get("decay_rate", 0.01),
-            decay_threshold=connection_data.get("decay_threshold", 500),
-        )
+    if json_data:
+        for slug, entry_data in json_data.items():
+            connection = Connection(**entry_data)
+            relationships.connections[slug] = connection
     return relationships
