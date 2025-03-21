@@ -16,7 +16,7 @@ from tuxemon.entity import Entity
 from tuxemon.item.item import Item, decode_items, encode_items
 from tuxemon.locale import T
 from tuxemon.map import dirs2, dirs3, get_direction, proj
-from tuxemon.map_view import SpriteRenderer
+from tuxemon.map_view import SpriteController
 from tuxemon.math import Vector2
 from tuxemon.mission import MissionManager
 from tuxemon.money import MoneyManager, decode_money, encode_money
@@ -147,7 +147,7 @@ class NPC(Entity[NPCState]):
         # Move direction allows other functions to move the npc in a controlled way.
         # To move the npc, change the value to one of four directions: left, right, up or down.
         # The npc will then move one tile in that direction until it is set to None.
-        self.sprite_renderer = SpriteRenderer(self)
+        self.sprite_controller = SpriteController(self)
 
     def get_state(self, session: Session) -> NPCState:
         """
@@ -218,7 +218,7 @@ class NPC(Entity[NPCState]):
         self.template.slug = _template["slug"]
         self.template.sprite_name = _template["sprite_name"]
         self.template.combat_front = _template["combat_front"]
-        self.sprite_renderer._load_sprites()
+        self.sprite_controller.load_sprites(self.template)
 
     def pathfind(self, destination: tuple[int, int]) -> None:
         """
@@ -333,7 +333,7 @@ class NPC(Entity[NPCState]):
 
         """
         # update physics.  eventually move to another class
-        self.sprite_renderer.update(time_delta)
+        self.sprite_controller.update(time_delta)
         self.update_physics(time_delta)
 
         if self.pathfinding and not self.path:
@@ -367,7 +367,7 @@ class NPC(Entity[NPCState]):
         # TODO: its not possible to move the entity with physics b/c this stops that
         if not self.path:
             self.cancel_movement()
-            self.sprite_renderer.surface_animations.stop()
+            self.sprite_controller.stop_animation()
 
     def move_one_tile(self, direction: Direction) -> None:
         """
@@ -411,7 +411,7 @@ class NPC(Entity[NPCState]):
             # it still occasionally happens though!
             # eventually, there will need to be a global clock for the game,
             # not based on wall time, to prevent visual glitches.
-            self.sprite_renderer.surface_animations.play()
+            self.sprite_controller.play_animation()
             self.path_origin = self.tile_pos
             self.velocity3 = moverate * dirs3[direction]
             self.remove_collision()
