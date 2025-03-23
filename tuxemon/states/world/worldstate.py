@@ -247,8 +247,6 @@ class WorldState(state.State):
         self.camera_manager.update()
 
         logger.debug("*** Game Loop Started ***")
-        logger.debug("Player Variables:" + str(self.player.game_variables))
-        logger.debug("Money:" + str(self.player.money_manager.get_money()))
 
     def draw(self, surface: pygame.surface.Surface) -> None:
         """
