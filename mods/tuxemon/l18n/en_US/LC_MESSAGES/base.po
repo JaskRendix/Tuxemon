@@ -1176,6 +1176,12 @@ msgstr "Use"
 msgid "item_confirm_cancel"
 msgstr "Cancel"
 
+msgid "generic_remove"
+msgstr "Remove"
+
+msgid "generic_add"
+msgstr "Add"
+
 msgid "generic_success"
 msgstr "It worked!"
 
@@ -3126,6 +3132,9 @@ msgstr "Move"
 msgid "monster_menu_tech"
 msgstr "Techniques"
 
+msgid "monster_menu_item"
+msgstr "Held Item"
+
 msgid "monster_menu_desc"
 msgstr "Description"
 
@@ -3189,6 +3198,9 @@ msgstr "{name} has too many techniques.\n"
 msgid "uninstall_app"
 msgstr "Unable to uninstall the app."
 
+msgid "mission_deletion"
+msgstr "Do you want to delete this mission?"
+
 # Player State
 
 msgid "tuxepedia_progress"
@@ -3240,6 +3252,9 @@ msgstr "Traded {doc} days ago"
 
 msgid "tuxepedia_exp"
 msgstr "{exp_lv}xp to Lv {lv}"
+
+msgid "no_held_item"
+msgstr "No held item"
 
 # Menu notifications
 msgid "log_off"
@@ -3373,6 +3388,48 @@ msgstr "Back Key"
 
 msgid "menu_reset_default"
 msgstr "Reset Keys to Default"
+
+msgid "menu_language"
+msgstr "Language"
+
+msgid "language_cs_cz"
+msgstr "Czech"
+
+msgid "language_de_de"
+msgstr "German"
+
+msgid "language_eo"
+msgstr "Esperanto"
+
+msgid "language_es_es"
+msgstr "Spanish"
+
+msgid "language_es_mx"
+msgstr "Mexican Spanish"
+
+msgid "language_fi"
+msgstr "Finnish"
+
+msgid "language_fr_fr"
+msgstr "French"
+
+msgid "language_it_it"
+msgstr "Italian"
+
+msgid "language_ja"
+msgstr "Japanese"
+
+msgid "language_nb_no"
+msgstr "Norwegian Bokmål"
+
+msgid "language_pl"
+msgstr "Polish"
+
+msgid "language_pt_br"
+msgstr "Brazilian Portuguese"
+
+msgid "language_zh_cn"
+msgstr "Simplified Chinese"
 
 msgid "enable"
 msgstr "Enable"
@@ -3665,10 +3722,10 @@ msgid "banling"
 msgstr "Banling"
 
 msgid "bansaken_description"
-msgstr "Each"
+msgstr "As twilight hits, the spirits inside BANSAKEN come to life. They like to add naughty children who stay up too late to their number."
 
 msgid "bansaken"
-msgstr "As twilight hits, the spirits inside BANSAKEN come to life. They like to add naughty children who stay up too late to their number."
+msgstr "Bansaken"
 
 msgid "banvengeance_description"
 msgstr "BANVENGEANCE seeks to make its own night by growing new trees from running roots to drown out the light, smothering competing plant life."
@@ -6709,6 +6766,91 @@ msgstr "Refined"
 
 msgid "taste_dry"
 msgstr "Dry"
+
+# Terrains
+
+msgid "terrain_freshwater"
+msgstr "Freshwater"
+
+msgid "terrain_grassland"
+msgstr "Grassland"
+
+msgid "terrain_jungle"
+msgstr "Jungle"
+
+msgid "terrain_mountains"
+msgstr "Mountains"
+
+msgid "terrain_ruins"
+msgstr "Ruins"
+
+msgid "terrain_sea"
+msgstr "Sea"
+
+msgid "terrain_swamp"
+msgstr "Swamp"
+
+msgid "terrain_underground"
+msgstr "Underground"
+
+msgid "terrain_extraterrestrial"
+msgstr "Extraterrestrial"
+
+msgid "terrain_extraplanar"
+msgstr "Extraplanar"
+
+msgid "terrain_desert"
+msgstr "Desert"
+
+msgid "terrain_coastal"
+msgstr "Coastal"
+
+msgid "terrain_any"
+msgstr "Any"
+
+msgid "terrain_boreal_snow"
+msgstr "Boreal / Snow"
+
+msgid "terrain_urban"
+msgstr "Urban"
+
+msgid "terrain_woodland"
+msgstr "Woodland"
+
+msgid "terrain_other"
+msgstr "Other"
+
+# Weathers
+
+msgid "weather_misty"
+msgstr "Misty"
+
+msgid "weather_windy"
+msgstr "Windy"
+
+msgid "weather_freezing"
+msgstr "Freezing"
+
+msgid "weather_hot"
+msgstr "Hot"
+
+msgid "weather_cloudy"
+msgstr "Cloudy"
+
+msgid "weather_foggy"
+msgstr "Foggy"
+
+msgid "weather_thunderstorm"
+msgstr "Thunderstorm"
+
+msgid "weather_snow"
+msgstr "Snow"
+
+msgid "weather_rain"
+msgstr "Rain"
+
+msgid "weather_sunny"
+msgstr "Sunny"
 
 # STAT TYPES
 
@@ -12156,6 +12298,9 @@ msgid "spyder_citypark_house_maniac5"
 msgstr "How are you getting along with the Book of Wishes? Tell me of your achievements ..."
 
 msgid "spyder_maniac_achievement1"
+msgstr "Book Wishes 1"
+
+msgid "spyder_maniac_achievement2"
 msgstr "Giving a dog tuxemon to a Cat Girl"
 
 msgid "spyder_column1_sign" 

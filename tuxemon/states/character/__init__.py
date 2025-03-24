@@ -114,8 +114,8 @@ class CharacterState(PygameMenuState):
         msg_battles = T.format("player_battles", _msg_battles)
         # steps
         steps = self.char.steps
-        unit = self.char.game_variables.get("unit_measure", pre.METRIC)
-        if unit == pre.METRIC:
+        unit = self.client.config.unit_measure
+        if unit == "metric":
             walked = formula.convert_km(steps)
             unit_walked = pre.U_KM
         else:
@@ -135,7 +135,7 @@ class CharacterState(PygameMenuState):
         )
         lab1.translate(fix_measure(width, 0.45), fix_measure(height, 0.15))
         # money
-        money = self.char.money_manager.get_money()
+        money = self.char.money_controller.money_manager.get_money()
         lab2: Any = menu.add.label(
             title=f"{T.translate('wallet')}: {money}",
             label_id="money",
