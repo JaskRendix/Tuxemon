@@ -35,7 +35,9 @@ class AddCollisionAction(EventAction):
 
     def start(self) -> None:
         world = self.session.client.get_state_by_name(WorldState)
-        coords = world.check_collision_zones(world.collision_map, self.label)
+        coords = world.collision_manager.check_collision_zones(
+            world.collision_map, self.label
+        )
         properties = RegionProperties(
             enter_from=[],
             exit_from=[],

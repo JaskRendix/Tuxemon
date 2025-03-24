@@ -44,7 +44,9 @@ class CharInCondition(EventCondition):
         if prop in SurfaceKeys:
             tiles = world.get_all_tile_properties(world.surface_map, prop)
         else:
-            tiles = world.check_collision_zones(world.collision_map, prop)
+            tiles = world.collision_manager.check_collision_zones(
+                world.collision_map, prop
+            )
         if tiles:
             return character.tile_pos in tiles
         return False

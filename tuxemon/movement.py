@@ -6,14 +6,15 @@ import logging
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Optional
 
+from tuxemon.boundary import BoundaryChecker
 from tuxemon.db import Direction
 from tuxemon.map import get_adjacent_position, get_coords_ext, pairs
 from tuxemon.prepare import CONFIG
-from tuxemon.states.world.world_classes import BoundaryChecker
 
 if TYPE_CHECKING:
+    from tuxemon.map_collision import CollisionManager, CollisionMap
     from tuxemon.npc import NPC
-    from tuxemon.states.world.worldstate import CollisionMap, WorldState
+    from tuxemon.states.world.worldstate import WorldState
 logger = logging.getLogger(__name__)
 
 
@@ -54,13 +55,17 @@ class PathfindNode:
 
 class Pathfinder:
     def __init__(
-        self, world_state: WorldState, boundary_checker: BoundaryChecker
+        self,
+        world_state: WorldState,
+        collision_manager: CollisionManager,
+        boundary_checker: BoundaryChecker,
     ) -> None:
         """
         Initializes the Pathfinder instance with the given world state.
         """
         self.world_state = world_state
         self.boundary_checker = boundary_checker
+        self.collision_manager = collision_manager
 
     def pathfind(
         self, start: tuple[int, int], dest: tuple[int, int]
@@ -113,7 +118,7 @@ class Pathfinder:
         """
         if not queue:
             return None
-        collision_map = self.world_state.get_collision_map()
+        collision_map = self.collision_manager.get_collision_map()
         known_nodes.add(queue[0].get_value())
         logger.debug(
             f"Starting pathfinding from {queue[0].get_value()} to {dest}."
@@ -178,7 +183,9 @@ class Pathfinder:
             A sequence of adjacent and traversable tile positions.
         """
         # get tile-level and npc/entity blockers
-        collision_map = collision_map or self.world_state.get_collision_map()
+        collision_map = (
+            collision_map or self.collision_manager.get_collision_map()
+        )
         skip_nodes = skip_nodes or set()
         logger.debug(f"Getting exits for position {position}.")
 

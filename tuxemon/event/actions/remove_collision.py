@@ -41,7 +41,9 @@ class RemoveCollisionAction(EventAction):
         )
 
         # removes the collision
-        coords = world.check_collision_zones(world.collision_map, self.label)
+        coords = world.collision_manager.check_collision_zones(
+            world.collision_map, self.label
+        )
         if coords:
             for coord in coords:
                 world.collision_map[coord] = properties

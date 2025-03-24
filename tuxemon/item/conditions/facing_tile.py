@@ -38,7 +38,7 @@ class FacingTileCondition(ItemCondition):
                 world.surface_map, self.facing_tile
             )
         else:
-            label = world.check_collision_zones(
+            label = world.collision_manager.check_collision_zones(
                 world.collision_map, self.facing_tile
             )
         tiles = list(set(tiles).intersection(label))

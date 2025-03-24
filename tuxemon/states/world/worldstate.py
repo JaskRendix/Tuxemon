@@ -6,17 +6,9 @@ import itertools
 import logging
 import os
 import uuid
-from collections import defaultdict
 from collections.abc import Mapping, MutableMapping, Sequence
 from functools import partial
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    DefaultDict,
-    Optional,
-    Union,
-    no_type_check,
-)
+from typing import TYPE_CHECKING, Any, Optional, no_type_check
 
 import pygame
 from pygame.rect import Rect
@@ -28,6 +20,7 @@ from tuxemon.db import Direction
 from tuxemon.entity import Entity
 from tuxemon.graphics import ColorLike
 from tuxemon.map import RegionProperties, TuxemonMap, dirs2, proj
+from tuxemon.map_collision import CollisionManager
 from tuxemon.map_loader import TMXMapLoader, YAMLEventLoader
 from tuxemon.map_view import MapRenderer
 from tuxemon.math import Vector2
@@ -55,17 +48,6 @@ direction_map: Mapping[int, Direction] = {
 }
 
 
-CollisionDict = dict[
-    tuple[int, int],
-    Optional[RegionProperties],
-]
-
-CollisionMap = Mapping[
-    tuple[int, int],
-    Optional[RegionProperties],
-]
-
-
 class WorldState(state.State):
     """The state responsible for the world game play"""
 
@@ -79,7 +61,10 @@ class WorldState(state.State):
 
         self.boundary_checker = BoundaryChecker()
         self.teleporter = Teleporter()
-        self.pathfinder = Pathfinder(self, self.boundary_checker)
+        self.collision_manager = CollisionManager(self)
+        self.pathfinder = Pathfinder(
+            self, self.collision_manager, self.boundary_checker
+        )
         # Provide access to the screen surface
         self.screen = self.client.screen
         self.tile_size = prepare.TILE_SIZE
@@ -476,94 +461,6 @@ class WorldState(state.State):
         return [
             coords for coords, props in surface_map.items() if label in props
         ]
-
-    def check_collision_zones(
-        self,
-        collision_map: MutableMapping[
-            tuple[int, int], Optional[RegionProperties]
-        ],
-        label: str,
-    ) -> list[tuple[int, int]]:
-        """
-        Returns coordinates of specific collision zones.
-
-        Parameters:
-            collision_map: The collision map.
-            label: The label to filter collision zones by.
-
-        Returns:
-            A list of coordinates of collision zones with the specific label.
-
-        """
-        return [
-            coords
-            for coords, props in collision_map.items()
-            if props and props.key == label
-        ]
-
-    def get_collision_map(self) -> CollisionMap:
-        """
-        Return dictionary for collision testing.
-
-        Returns a dictionary where keys are (x, y) tile tuples
-        and the values are tiles or NPCs.
-
-        # NOTE:
-        This will not respect map changes to collisions
-        after the map has been loaded!
-
-        Returns:
-            A dictionary of collision tiles.
-
-        """
-        collision_dict: DefaultDict[
-            tuple[int, int], Optional[RegionProperties]
-        ] = defaultdict(lambda: RegionProperties([], [], [], None, None))
-
-        # Get all the NPCs' tile positions
-        for npc in self.get_all_entities():
-            collision_dict[npc.tile_pos] = self._get_region_properties(
-                npc.tile_pos, npc
-            )
-
-        # Add surface map entries to the collision dictionary
-        for coords, surface in self.surface_map.items():
-            for label, value in surface.items():
-                if float(value) == 0:
-                    collision_dict[coords] = self._get_region_properties(
-                        coords, label
-                    )
-
-        collision_dict.update({k: v for k, v in self.collision_map.items()})
-
-        return dict(collision_dict)
-
-    def _get_region_properties(
-        self, coords: tuple[int, int], entity_or_label: Union[NPC, str]
-    ) -> RegionProperties:
-        region = self.collision_map.get(coords)
-        if region:
-            if isinstance(entity_or_label, str):
-                return RegionProperties(
-                    region.enter_from,
-                    region.exit_from,
-                    region.endure,
-                    None,
-                    entity_or_label,
-                )
-            else:
-                return RegionProperties(
-                    region.enter_from,
-                    region.exit_from,
-                    region.endure,
-                    entity_or_label,
-                    region.key,
-                )
-        else:
-            if isinstance(entity_or_label, str):
-                return RegionProperties([], [], [], None, entity_or_label)
-            else:
-                return RegionProperties([], [], [], entity_or_label, None)
 
     def pathfind(
         self,
