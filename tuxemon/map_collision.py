@@ -26,6 +26,10 @@ CollisionMap = Mapping[
 ]
 
 
+def default_region_properties() -> RegionProperties:
+    return RegionProperties([], [], [], None, None)
+
+
 class CollisionManager:
     def __init__(self, world_state: WorldState):
         self.world_state = world_state
@@ -47,7 +51,7 @@ class CollisionManager:
         """
         collision_dict: DefaultDict[
             tuple[int, int], Optional[RegionProperties]
-        ] = defaultdict(lambda: RegionProperties([], [], [], None, None))
+        ] = defaultdict(default_region_properties)
 
         # Get all the NPCs' tile positions
         for npc in self.world_state.get_all_entities():
