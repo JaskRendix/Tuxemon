@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from tuxemon.map_collision import CollisionManager, CollisionMap
     from tuxemon.npc import NPC
     from tuxemon.states.world.worldstate import WorldState
+
 logger = logging.getLogger(__name__)
 
 

@@ -42,7 +42,9 @@ class LocalPygameClient:
 
     """
 
-    def __init__(self, config: TuxemonConfig) -> None:
+    def __init__(
+        self, config: TuxemonConfig, screen: pg.surface.Surface
+    ) -> None:
         self.config = config
 
         self.state_manager = StateManager(
@@ -50,7 +52,7 @@ class LocalPygameClient:
             on_state_change=self.on_state_change,
         )
         self.state_manager.auto_state_discovery()
-        self.screen = pg.display.get_surface()
+        self.screen = screen
         self.caption = config.window_caption
         self.done = False
         self.fps = config.fps
@@ -301,7 +303,7 @@ class LocalPygameClient:
         self.network_manager.update(time_delta)
 
         # get all the input waiting for use
-        events = self.input_manager.event_queue.process_events()
+        events = self.input_manager.process_events()
 
         # process the events and collect the unused ones
         key_events = list(self.process_events(events))
