@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
@@ -12,13 +12,13 @@ import pygame
 from pygame.rect import Rect
 
 from tuxemon import combat, graphics, tools
-from tuxemon.db import ElementType, State, TechSort
+from tuxemon.db import State, TechSort
 from tuxemon.locale import T
 from tuxemon.menu.interface import MenuItem
 from tuxemon.menu.menu import Menu, PopUpMenu
 from tuxemon.monster import Monster
 from tuxemon.session import local_session
-from tuxemon.sprite import MenuSpriteGroup, SpriteGroup
+from tuxemon.sprite import SpriteGroup, VisualSpriteList
 from tuxemon.states.items.item_menu import ItemMenuState
 from tuxemon.states.monster import MonsterMenuState
 from tuxemon.technique.technique import Technique
@@ -331,7 +331,7 @@ class CombatTargetMenuState(Menu[Monster]):
 
     def create_new_menu_items_group(self) -> None:
         # these groups will not automatically position the sprites
-        self.menu_items = MenuSpriteGroup()
+        self.menu_items = VisualSpriteList()
         self.menu_sprites = SpriteGroup()
 
     def __init__(
@@ -362,7 +362,7 @@ class CombatTargetMenuState(Menu[Monster]):
         self.targeting_map: defaultdict[str, list[Monster]] = defaultdict(list)
 
         if (
-            self.technique.has_type(ElementType.aether)
+            self.technique.has_type("aether")
             or self.technique.sort == TechSort.meta
         ):
             sprite = self.combat_state._monster_sprite_map[self.monster]

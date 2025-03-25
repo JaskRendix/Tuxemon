@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import random as rd
 from dataclasses import dataclass
 from typing import Union, final
 
-from tuxemon.db import EvolutionStage, MonsterModel, MonsterShape, db
+from tuxemon.db import EvolutionStage, MonsterModel, db
 from tuxemon.event.eventaction import EventAction
 
 lookup_cache: dict[str, MonsterModel] = {}
@@ -46,11 +46,8 @@ class RandomMonsterAction(EventAction):
         if not lookup_cache:
             _lookup_monsters()
 
-        valid_shapes = list(MonsterShape)
         valid_evos = list(EvolutionStage)
 
-        if self.shape and self.shape not in valid_shapes:
-            raise ValueError(f"{self.shape} is not a valid shape.")
         if self.evo and self.evo not in valid_evos:
             raise ValueError(f"{self.evo} is not a valid evolution stage.")
 

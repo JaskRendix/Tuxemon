@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 
 from tuxemon.combat import has_status
 from tuxemon.event import MapCondition, get_npc
@@ -12,6 +13,7 @@ from tuxemon.session import Session
 logger = logging.getLogger(__name__)
 
 
+@dataclass
 class CharDefeatedCondition(EventCondition):
     """
     Check to see the character has at least one tuxemon, and all tuxemon in their

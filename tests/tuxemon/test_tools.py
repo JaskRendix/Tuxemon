@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 import math
 import sys
 import unittest
 from typing import Literal, Optional, Union
-from unittest import mock
+from unittest.mock import MagicMock, patch
 
 from tuxemon.player import Player
 from tuxemon.session import local_session
@@ -58,8 +58,7 @@ class TestCopyDictWithKeys(unittest.TestCase):
 
 class TestVariableNumber(unittest.TestCase):
     def test_var(self):
-        with mock.patch.object(Player, "__init__", mockPlayer):
-            # session = Session()
+        with patch.object(Player, "__init__", mockPlayer):
             player = Player()
             local_session.player = player
 

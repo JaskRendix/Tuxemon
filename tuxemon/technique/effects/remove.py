@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import random
@@ -14,17 +14,13 @@ if TYPE_CHECKING:
     from tuxemon.technique.technique import Technique
 
 
-class RemoveEffectResult(TechEffectResult):
-    pass
-
-
 @dataclass
 class RemoveEffect(TechEffect):
     """
     This effect has a chance to remove a status effect.
 
     Parameters:
-        condition: The Condition slug (e.g. enraged).
+        status: The Status slug (e.g. enraged).
         objectives: The targets (e.g. own_monster, enemy_monster, etc.), if
             single "enemy_monster" or "enemy_monster:own_monster"
 
@@ -33,12 +29,12 @@ class RemoveEffect(TechEffect):
     """
 
     name = "remove"
-    condition: str
+    status: str
     objectives: str
 
     def apply(
         self, tech: Technique, user: Monster, target: Monster
-    ) -> RemoveEffectResult:
+    ) -> TechEffectResult:
         monsters: list[Monster] = []
         combat = tech.combat_state
         assert combat
@@ -50,18 +46,19 @@ class RemoveEffect(TechEffect):
 
         if success:
             monsters = get_target_monsters(objectives, tech, user, target)
-            if self.condition == "all":
+            if self.status == "all":
                 for monster in monsters:
                     monster.status.clear()
             else:
                 for monster in monsters:
-                    if has_status(monster, self.condition):
+                    if has_status(monster, self.status):
                         monster.status.clear()
 
-        return {
-            "success": bool(monsters),
-            "damage": 0,
-            "element_multiplier": 0.0,
-            "should_tackle": False,
-            "extra": None,
-        }
+        return TechEffectResult(
+            name=tech.name,
+            success=bool(monsters),
+            damage=0,
+            element_multiplier=0.0,
+            should_tackle=False,
+            extras=[],
+        )

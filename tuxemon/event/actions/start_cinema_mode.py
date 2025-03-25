@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -41,5 +41,5 @@ class StartCinemaModeAction(EventAction):
 
     def start(self) -> None:
         world = self.session.client.get_state_by_name(WorldState)
-        world.cinema_y_ratio = self.aspect_y_ratio
-        world.cinema_x_ratio = self.aspect_x_ratio
+        world.map_renderer.cinema_y_ratio = self.aspect_y_ratio
+        world.map_renderer.cinema_x_ratio = self.aspect_x_ratio

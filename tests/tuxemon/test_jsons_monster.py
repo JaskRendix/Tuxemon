@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 import json
 import os
 import unittest
@@ -7,8 +7,8 @@ from typing import Any
 
 from tuxemon import prepare
 
-ALL_MONSTERS: int = 377
-MAX_TXMN_ID: int = 359
+ALL_MONSTERS: int = 411
+MAX_TXMN_ID: int = 393
 
 
 def process_json_data(directory: str) -> list[dict[str, Any]]:

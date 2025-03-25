@@ -1,15 +1,15 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Optional, final
 
-from tuxemon import formula
 from tuxemon.db import SeenStatus, db
 from tuxemon.event import get_npc
 from tuxemon.event.eventaction import EventAction
 from tuxemon.monster import Monster
+from tuxemon.time_handler import today_ordinal
 
 
 @final
@@ -62,7 +62,7 @@ class AddMonsterAction(EventAction):
         monster.load_from_db(monster_slug)
         monster.set_level(self.monster_level)
         monster.set_moves(self.monster_level)
-        monster.set_capture(formula.today_ordinal())
+        monster.set_capture(today_ordinal())
         monster.current_hp = monster.hp
 
         if self.exp is not None:
@@ -71,5 +71,5 @@ class AddMonsterAction(EventAction):
             monster.money_modifier = self.money
 
         trainer.add_monster(monster, len(trainer.monsters))
-        trainer.tuxepedia[monster.slug] = SeenStatus.caught
+        trainer.tuxepedia.add_entry(monster.slug, SeenStatus.caught)
         player.game_variables[self.name] = str(monster.instance_id.hex)

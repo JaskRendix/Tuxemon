@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -135,8 +135,8 @@ class PartyState(PygameMenuState):
             _sorted = sorted(monsters, key=lambda x: x.steps, reverse=True)
             for monster in _sorted:
                 steps = monster.steps
-                unit = game_variables.get("unit_measure", prepare.METRIC)
-                if unit == prepare.METRIC:
+                unit = self.client.config.unit_measure
+                if unit == "metric":
                     walked = formula.convert_km(steps)
                     unit_walked = prepare.U_KM
                 else:

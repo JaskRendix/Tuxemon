@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
@@ -59,5 +59,5 @@ class TeleportAction(EventAction):
         else:
             # Teleport the character immediately
             world.teleporter.teleport_character(
-                world, char, self.map_name, self.x, self.y
+                char, self.map_name, self.x, self.y
             )

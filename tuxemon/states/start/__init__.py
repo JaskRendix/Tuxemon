@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
-"""This module contains the Start state.
-"""
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+"""This module contains the Start state."""
 from __future__ import annotations
 
 import logging
@@ -21,6 +20,7 @@ from tuxemon.platform.events import PlayerInput
 from tuxemon.save import get_index_of_latest_save
 from tuxemon.session import local_session
 from tuxemon.state import State
+from tuxemon.time_handler import today_ordinal
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class StartState(PygameMenuState):
             map_path = prepare.fetch("maps", destination)
             self.client.push_state("WorldState", map_name=map_path)
             game_var = local_session.player.game_variables
-            game_var["date_start_game"] = formula.today_ordinal()
+            game_var["date_start_game"] = today_ordinal()
             self.client.pop_state(self)
 
         def change_state(
@@ -101,6 +101,12 @@ class StartState(PygameMenuState):
             action=change_state("MinigameState"),
             font_size=self.font_size_big,
             button_id="menu_minigame",
+        )
+        menu.add.button(
+            title=T.translate("menu_options"),
+            action=change_state("ControlState", main_menu=True),
+            font_size=self.font_size_big,
+            button_id="menu_options",
         )
         menu.add.button(
             title=T.translate("exit"),

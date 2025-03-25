@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import itertools
@@ -82,7 +82,7 @@ class CharWanderAction(EventAction):
 
             # Choose a random direction that is free and walk toward it
             origin = (character.tile_pos[0], character.tile_pos[1])
-            exits = world.get_exits(origin)
+            exits = world.pathfinder.get_exits(origin)
             if exits:
                 path = random.choice(exits)
                 if not output or path in output:

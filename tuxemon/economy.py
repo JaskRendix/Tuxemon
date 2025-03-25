@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
@@ -265,7 +265,9 @@ class Economy:
             return int(getattr(monster, field))
         return None
 
-    def variable(self, variables: Sequence[str], character: NPC) -> bool:
+    def variable(
+        self, variables: Sequence[dict[str, str]], character: NPC
+    ) -> bool:
         """
         Checks if the given variables match the character's game variables.
 
@@ -277,9 +279,11 @@ class Economy:
             True if the variables match, otherwise False.
         """
         return all(
-            parts[1] == character.game_variables.get(parts[0])
+            all(
+                character.game_variables.get(key) == value
+                for key, value in variable.items()
+            )
             for variable in variables
-            if (parts := variable.split(":")) and len(parts) == 2
         )
 
     def add_economy_to_npc(

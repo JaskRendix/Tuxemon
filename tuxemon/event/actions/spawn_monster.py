@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
@@ -15,6 +15,7 @@ from tuxemon.event.eventaction import EventAction
 from tuxemon.locale import T
 from tuxemon.monster import Monster
 from tuxemon.states.dialog import DialogState
+from tuxemon.time_handler import today_ordinal
 from tuxemon.tools import open_dialog
 
 logger = logging.getLogger(__name__)
@@ -93,7 +94,7 @@ class SpawnMonsterAction(EventAction):
         child.load_from_db(seed_slug)
         child.set_level(level)
         child.set_moves(level)
-        child.set_capture(formula.today_ordinal())
+        child.set_capture(today_ordinal())
         child.name = name
         child.current_hp = child.hp
 

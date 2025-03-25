@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -38,9 +38,8 @@ class PlaySoundAction(EventAction):
     volume: Optional[float] = None
 
     def start(self) -> None:
-        player = self.session.player
-        _sound = prepare.SOUND_VOLUME
-        sound_volume = float(player.game_variables.get("sound_volume", _sound))
+        client = self.session.client
+        sound_volume = client.config.sound_volume
 
         if self.volume is not None:
             lower, upper = prepare.SOUND_RANGE
@@ -54,4 +53,4 @@ class PlaySoundAction(EventAction):
             else sound_volume
         )
 
-        self.session.client.sound_manager.play_sound(self.filename, volume)
+        client.sound_manager.play_sound(self.filename, volume)

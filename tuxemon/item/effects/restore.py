@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Union
 
-from tuxemon.db import CategoryCondition
+from tuxemon.db import CategoryStatus
 from tuxemon.item.itemeffect import ItemEffect, ItemEffectResult
 
 if TYPE_CHECKING:
@@ -37,8 +37,8 @@ class RestoreEffect(ItemEffect):
         assert target
         if self.category:
             if (
-                self.category == CategoryCondition.positive
-                or self.category == CategoryCondition.negative
+                self.category == CategoryStatus.positive
+                or self.category == CategoryStatus.negative
             ):
                 checking = [
                     ele

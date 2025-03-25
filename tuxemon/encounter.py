@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
@@ -51,9 +51,11 @@ class Encounter:
             for _enc in self.encounter_cache[self.encounter_data.slug]
             if not _enc.variables
             or all(
-                character.game_variables.get(var.split(":")[0])
-                == var.split(":")[1]
-                for var in _enc.variables
+                all(
+                    character.game_variables.get(key) == value
+                    for key, value in variable.items()
+                )
+                for variable in _enc.variables
             )
         ]
 

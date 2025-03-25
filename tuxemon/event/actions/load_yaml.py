@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
@@ -23,13 +23,12 @@ class LoadYamlAction(EventAction):
     Script usage:
         .. code-block::
 
-            load_game file
+            load_yaml file
 
     Script parameters:
         file: File to load.
 
     eg: "load_yaml file_yaml"
-
     """
 
     name = "load_yaml"

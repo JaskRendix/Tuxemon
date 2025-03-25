@@ -1,15 +1,15 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
 import uuid
 from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING, Any, ClassVar, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
-from tuxemon import plugin
 from tuxemon.constants import paths
-from tuxemon.db import ElementType, Range, db
+from tuxemon.core_manager import ConditionManager, EffectManager
+from tuxemon.db import Range, db
 from tuxemon.element import Element
 from tuxemon.locale import T
 from tuxemon.technique.techcondition import TechCondition
@@ -33,9 +33,6 @@ class Technique:
 
     """
 
-    effects_classes: ClassVar[Mapping[str, type[TechEffect]]] = {}
-    conditions_classes: ClassVar[Mapping[str, type[TechCondition]]] = {}
-
     def __init__(self, save_data: Optional[Mapping[str, Any]] = None) -> None:
         save_data = save_data or {}
 
@@ -45,11 +42,8 @@ class Technique:
         self.accuracy = 0.0
         self.animation: Optional[str] = None
         self.combat_state: Optional[CombatState] = None
-        self.conditions: Sequence[TechCondition] = []
         self.description = ""
-        self.effects: Sequence[TechEffect] = []
         self.flip_axes = ""
-        self.icon = ""
         self.hit = False
         self.is_fast = False
         self.randomly = True
@@ -70,18 +64,10 @@ class Technique:
         self.use_failure = ""
         self.use_tech = ""
 
-        # load effect and condition plugins if it hasn't been done already
-        if not Technique.effects_classes:
-            Technique.effects_classes = plugin.load_plugins(
-                paths.TECH_EFFECT_PATH,
-                "effects",
-                interface=TechEffect,
-            )
-            Technique.conditions_classes = plugin.load_plugins(
-                paths.TECH_CONDITION_PATH,
-                "conditions",
-                interface=TechCondition,
-            )
+        self.effect_manager = EffectManager(TechEffect, paths.TECH_EFFECT_PATH)
+        self.condition_manager = ConditionManager(
+            TechCondition, paths.TECH_CONDITION_PATH
+        )
 
         self.set_state(save_data)
 
@@ -109,30 +95,32 @@ class Technique:
         self.use_success = T.maybe_translate(results.use_success)
         self.use_failure = T.maybe_translate(results.use_failure)
 
-        self.icon = results.icon
         self.counter = self.counter
         # types
         self.types = [Element(ele) for ele in results.types]
         # technique stats
-        self.accuracy = results.accuracy or self.accuracy
-        self.potency = results.potency or self.potency
-        self.power = results.power or self.power
+        self.accuracy = results.accuracy
+        self.potency = results.potency
+        self.power = results.power
 
-        self.default_potency = results.potency or self.potency
-        self.default_power = results.power or self.power
+        self.default_potency = results.potency
+        self.default_power = results.power
 
         self.hit = self.hit
-        self.is_fast = results.is_fast or self.is_fast
-        self.randomly = results.randomly or self.randomly
-        self.healing_power = results.healing_power or self.healing_power
-        self.recharge_length = results.recharge or self.recharge_length
+        self.is_fast = results.is_fast
+        self.randomly = results.randomly
+        self.healing_power = results.healing_power
+        self.recharge_length = results.recharge
         self.range = results.range or Range.melee
-        self.tech_id = results.tech_id or self.tech_id
+        self.tech_id = results.tech_id
 
-        self.conditions = self.parse_conditions(results.conditions)
-        self.effects = self.parse_effects(results.effects)
+        self.effects = self.effect_manager.parse_effects(results.effects)
+        self.conditions = self.condition_manager.parse_conditions(
+            results.conditions
+        )
         self.target = results.target.model_dump()
-        self.usable_on = results.usable_on or self.usable_on
+        self.usable_on = results.usable_on
+        self.modifiers = results.modifiers
 
         # Load the animation sprites that will be used for this technique
         self.animation = results.animation
@@ -140,79 +128,6 @@ class Technique:
 
         # Load the sound effect for this technique
         self.sfx = results.sfx
-
-    def parse_effects(
-        self,
-        raw: Sequence[str],
-    ) -> Sequence[TechEffect]:
-        """
-        Convert effect strings to effect objects.
-
-        Takes raw effects list from the technique's json and parses it into a
-        form more suitable for the engine.
-
-        Parameters:
-            raw: The raw effects list pulled from the technique's db entry.
-
-        Returns:
-            Effects turned into a list of TechEffect objects.
-
-        """
-        effects = []
-
-        for line in raw:
-            parts = line.split(maxsplit=1)
-            name = parts[0]
-            params = parts[1].split(",") if len(parts) > 1 else []
-
-            try:
-                effect_class = Technique.effects_classes[name]
-            except KeyError:
-                logger.error(f'Error: TechEffect "{name}" not implemented')
-            else:
-                effects.append(effect_class(*params))
-
-        return effects
-
-    def parse_conditions(
-        self,
-        raw: Sequence[str],
-    ) -> Sequence[TechCondition]:
-        """
-        Convert condition strings to condition objects.
-
-        Takes raw condition list from the technique's json and parses it into a
-        form more suitable for the engine.
-
-        Parameters:
-            raw: The raw conditions list pulled from the technique's db entry.
-
-        Returns:
-            Conditions turned into a list of TechCondition objects.
-
-        """
-        conditions = []
-
-        for line in raw:
-            parts = line.split(maxsplit=2)
-            op = parts[0]
-            name = parts[1]
-            params = parts[2].split(",") if len(parts) > 2 else []
-
-            try:
-                condition_class = Technique.conditions_classes[name]
-            except KeyError:
-                logger.error(f'Error: TechCondition "{name}" not implemented')
-                continue
-
-            if op not in ["is", "not"]:
-                raise ValueError(f"{op} must be 'is' or 'not'")
-
-            condition = condition_class(*params)
-            condition._op = op == "is"
-            conditions.append(condition)
-
-        return conditions
 
     def advance_round(self) -> None:
         """
@@ -240,8 +155,12 @@ class Technique:
         return all(
             (
                 condition.test(target)
-                if condition._op
-                else not condition.test(target)
+                if isinstance(condition, (TechCondition)) and condition._op
+                else (
+                    not condition.test(target)
+                    if isinstance(condition, (TechCondition))
+                    else False
+                )
             )
             for condition in self.conditions
         )
@@ -286,39 +205,43 @@ class Technique:
 
         # Defaults for the return. items can override these values in their
         # return.
-        meta_result: TechEffectResult = {
-            "name": self.name,
-            "success": False,
-            "should_tackle": False,
-            "damage": 0,
-            "element_multiplier": 0.0,
-            "extra": None,
-        }
+        meta_result = TechEffectResult(
+            name=self.name,
+            success=False,
+            should_tackle=False,
+            damage=0,
+            element_multiplier=0.0,
+            extras=[],
+        )
 
         self.next_use = self.recharge_length
 
-        # Loop through all the effects of this technique and execute the effect's function.
         for effect in self.effects:
-            result = effect.apply(self, user, target)
-            meta_result["success"] = (
-                meta_result["success"] or result["success"]
-            )
-            meta_result["should_tackle"] = (
-                meta_result["should_tackle"] or result["should_tackle"]
-            )
-            meta_result["damage"] += result["damage"]
-            meta_result["element_multiplier"] *= result["element_multiplier"]
-            if result["extra"] is not None:
-                meta_result["extra"] = result["extra"]
+            if isinstance(effect, TechEffect):
+                result = effect.apply(self, user, target)
+                meta_result.name = result.name
+                meta_result.success = meta_result.success or result.success
+                meta_result.should_tackle = (
+                    meta_result.should_tackle or result.should_tackle
+                )
+                meta_result.damage += result.damage
+                meta_result.element_multiplier += result.element_multiplier
+                meta_result.extras.extend(result.extras)
+            else:
+                logger.warning(
+                    f"Effect {effect} is not a valid StatusEffect. Skipping..."
+                )
 
         return meta_result
 
-    def has_type(self, element: Optional[ElementType]) -> bool:
+    def has_type(self, type_slug: Optional[str]) -> bool:
         """
         Returns TRUE if there is the type among the types.
         """
         return (
-            element in [ele.slug for ele in self.types] if element else False
+            type_slug in [type_obj.slug for type_obj in self.types]
+            if type_slug
+            else False
         )
 
     def set_stats(self) -> None:

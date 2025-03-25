@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import os
@@ -12,7 +12,12 @@ from tuxemon.cli.clicommand import CLICommand
 from tuxemon.cli.context import InvokeContext
 from tuxemon.cli.exceptions import CommandNotFoundError, ParseError
 from tuxemon.cli.formatter import Formatter
-from tuxemon.plugin import PluginManager, get_available_classes
+from tuxemon.plugin import (
+    DefaultPluginLoader,
+    FileSystemPluginDiscovery,
+    PluginManager,
+    get_available_classes,
+)
 from tuxemon.session import Session
 
 
@@ -122,11 +127,12 @@ class CommandProcessor:
             folder: Folder to search.
 
         """
-        pm = PluginManager()
-        pm.setPluginPlaces([folder])
-        pm.include_patterns = ["commands"]
-        pm.exclude_classes = ["CLICommand"]
-        pm.collectPlugins()
+        discovery = FileSystemPluginDiscovery([folder])
+        loader = DefaultPluginLoader()
+        pm = PluginManager(discovery, loader)
+        pm.INCLUDE_PATTERNS = ["commands"]
+        pm.EXCLUDE_CLASSES = ["CLICommand"]
+        pm.collect_plugins()
         for cmd_class in get_available_classes(pm, interface=CLICommand):
             if cmd_class.usable_from_root:
                 yield cmd_class()

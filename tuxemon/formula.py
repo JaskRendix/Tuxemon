@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
-import datetime as dt
 import logging
 import math
 import random
@@ -12,14 +11,15 @@ from typing import TYPE_CHECKING, Optional
 from tuxemon import prepare as pre
 
 if TYPE_CHECKING:
-    from tuxemon.db import ElementType
+    from tuxemon.db import Modifier
     from tuxemon.element import Element
     from tuxemon.monster import Monster
+    from tuxemon.taste import Taste
     from tuxemon.technique.technique import Technique
 
 logger = logging.getLogger(__name__)
 
-multiplier_cache: dict[tuple[ElementType, ElementType], float] = {}
+multiplier_cache: dict[tuple[str, str], float] = {}
 
 range_map: dict[str, tuple[str, str]] = {
     "melee": ("melee", "armour"),
@@ -27,29 +27,6 @@ range_map: dict[str, tuple[str, str]] = {
     "ranged": ("ranged", "dodge"),
     "reach": ("ranged", "armour"),
     "reliable": ("level", "resist"),
-}
-
-taste_maps: dict[str, dict[tuple[str, str], float]] = {
-    "armour": {
-        ("cold", "soft"): pre.TASTE_RANGE[0],
-        ("warm", "hearty"): pre.TASTE_RANGE[1],
-    },
-    "speed": {
-        ("cold", "mild"): pre.TASTE_RANGE[0],
-        ("warm", "peppy"): pre.TASTE_RANGE[1],
-    },
-    "melee": {
-        ("cold", "sweet"): pre.TASTE_RANGE[0],
-        ("warm", "salty"): pre.TASTE_RANGE[1],
-    },
-    "ranged": {
-        ("cold", "flakey"): pre.TASTE_RANGE[0],
-        ("warm", "zesty"): pre.TASTE_RANGE[1],
-    },
-    "dodge": {
-        ("cold", "dry"): pre.TASTE_RANGE[0],
-        ("warm", "refined"): pre.TASTE_RANGE[1],
-    },
 }
 
 
@@ -143,9 +120,10 @@ def simple_damage_calculate(
 
     """
     if technique.range not in range_map:
-        raise RuntimeError(
+        logger.error(
             f"Unhandled damage category for technique '{technique.name}': {technique.range}"
         )
+        return 0, 0.0
 
     user_stat, target_stat = range_map[technique.range]
 
@@ -167,6 +145,170 @@ def simple_damage_calculate(
     move_strength = technique.power * mult
     damage = int(user_strength * move_strength / target_resist)
     return damage, mult
+
+
+def weakest_link(modifiers: list[Modifier], monster: Monster) -> float:
+    """
+    Returns the smallest damage multiplier that applies to the given
+    monster.
+
+    This function iterates over the damage modifiers and checks if the
+    monster's type matches any of the modifier's values. If a match is
+    found, the function updates the multiplier to the smallest value
+    found.
+
+    Parameters:
+        modifiers: A list of damage modifiers.
+        monster: The monster to check.
+
+    Returns:
+        The smallest damage multiplier that applies to the monster.
+    """
+    multiplier: float = 1.0
+    if modifiers:
+        for modifier in modifiers:
+            if modifier.attribute == "type":
+                if any(t.name in modifier.values for t in monster.types):
+                    multiplier = min(multiplier, modifier.multiplier)
+            elif modifier.attribute == "tag":
+                if any(t in modifier.values for t in monster.tags):
+                    multiplier = min(multiplier, modifier.multiplier)
+            else:
+                raise ValueError(f"{modifier.attribute} isn't implemented.")
+    return multiplier
+
+
+def strongest_link(modifiers: list[Modifier], monster: Monster) -> float:
+    """
+    Returns the largest damage multiplier that applies to the given
+    monster.
+
+    This function iterates over the damage modifiers and checks if the
+    monster's type matches any of the modifier's values. If a match is
+    found, the function updates the multiplier to the largest value found.
+
+    Parameters:
+        modifiers: A list of damage modifiers.
+        monster: The monster to check.
+
+    Returns:
+        The largest damage multiplier that applies to the monster.
+    """
+    multiplier: Optional[float] = None
+    if modifiers:
+        for modifier in modifiers:
+            if modifier.attribute == "type":
+                if any(t.name in modifier.values for t in monster.types):
+                    multiplier = (
+                        max(multiplier, modifier.multiplier)
+                        if multiplier is not None
+                        else modifier.multiplier
+                    )
+            elif modifier.attribute == "tag":
+                if any(t in modifier.values for t in monster.tags):
+                    multiplier = (
+                        max(multiplier, modifier.multiplier)
+                        if multiplier is not None
+                        else modifier.multiplier
+                    )
+            else:
+                raise ValueError(f"{modifier.attribute} isn't implemented.")
+    return multiplier if multiplier is not None else 1.0
+
+
+def cumulative_damage(modifiers: list[Modifier], monster: Monster) -> float:
+    """
+    Returns the cumulative product of all applicable damage multipliers for
+    the given monster.
+
+    This function iterates over the damage modifiers and checks if the monster's
+    type matches any of the modifier's values. If a match is found, the function
+    multiplies the current multiplier with the modifier's multiplier.
+
+    Parameters:
+        modifiers: A list of damage modifiers.
+        monster: The monster to check.
+
+    Returns:
+        The cumulative product of all applicable damage multipliers.
+    """
+    multiplier: float = 1.0
+    if modifiers:
+        for modifier in modifiers:
+            if modifier.attribute == "type":
+                if any(t.name in modifier.values for t in monster.types):
+                    multiplier *= modifier.multiplier
+            elif modifier.attribute == "tag":
+                if any(t in modifier.values for t in monster.tags):
+                    multiplier *= modifier.multiplier
+            else:
+                raise ValueError(f"{modifier.attribute} isn't implemented.")
+    return multiplier
+
+
+def average_damage(modifiers: list[Modifier], monster: Monster) -> float:
+    """
+    Returns the average of all applicable damage multipliers for the given
+    monster.
+
+    This function iterates over the damage modifiers and checks if the monster's
+    type matches any of the modifier's values. If a match is found, the function
+    adds the modifier's multiplier to a list and calculates the average at the
+    end.
+
+    Parameters:
+        modifiers: A list of damage modifiers.
+        monster: The monster to check.
+
+    Returns:
+        The average of all applicable damage multipliers.
+    """
+    applicable_modifiers = []
+    if modifiers:
+        for modifier in modifiers:
+            if modifier.attribute == "type":
+                if any(t.name in modifier.values for t in monster.types):
+                    applicable_modifiers.append(modifier.multiplier)
+            elif modifier.attribute == "tag":
+                if any(t in modifier.values for t in monster.tags):
+                    applicable_modifiers.append(modifier.multiplier)
+            else:
+                raise ValueError(f"{modifier.attribute} isn't implemented.")
+
+    if applicable_modifiers:
+        return sum(applicable_modifiers) / len(applicable_modifiers)
+    else:
+        return 1.0
+
+
+def first_applicable_damage(
+    modifiers: list[Modifier], monster: Monster
+) -> float:
+    """
+    Returns the first applicable damage multiplier for the given monster.
+
+    This function iterates over the damage modifiers and checks if the monster's
+    type matches any of the modifier's values. If a match is found, the function
+    returns the modifier's multiplier immediately.
+
+    Parameters:
+        modifiers: A list of damage modifiers.
+        monster: The monster to check.
+
+    Returns:
+        The first applicable damage multiplier.
+    """
+    if modifiers:
+        for modifier in modifiers:
+            if modifier.attribute == "type":
+                if any(t.name in modifier.values for t in monster.types):
+                    return modifier.multiplier
+            elif modifier.attribute == "tag":
+                if any(t in modifier.values for t in monster.tags):
+                    return modifier.multiplier
+            else:
+                raise ValueError(f"{modifier.attribute} isn't implemented.")
+    return 1.0
 
 
 def simple_heal(
@@ -270,27 +412,34 @@ def simple_lifeleech(user: Monster, target: Monster, divisor: int) -> int:
     return heal
 
 
-def update_stat(mon: Monster, stat_name: str) -> int:
+def update_stat(
+    stat_name: str,
+    stat_value: int,
+    taste_warm: Optional[Taste],
+    taste_cold: Optional[Taste],
+) -> int:
     """
     It returns a bonus / malus of the stat based on additional parameters.
     """
-    stat = getattr(mon, stat_name)
-    bonus = 0
-    malus = 0
-    for (taste_type, value), multiplier in taste_maps[stat_name].items():
-        if getattr(mon, f"taste_{taste_type}") == value:
-            if taste_type == "cold":
-                malus = stat * multiplier
-            else:
-                bonus = stat * multiplier
-    return int(bonus + malus)
+    modified_stat = float(stat_value)
 
+    if taste_cold:
+        for modifier in taste_cold.modifiers:
+            if stat_name in modifier.values:
+                logger.debug(
+                    f"Applying modifier: {modifier.multiplier} for {stat_name}"
+                )
+                modified_stat *= modifier.multiplier
 
-def today_ordinal() -> int:
-    """
-    It gives today's proleptic Gregorian ordinal.
-    """
-    return dt.date.today().toordinal()
+    if taste_warm:
+        for modifier in taste_warm.modifiers:
+            if stat_name in modifier.values:
+                logger.debug(
+                    f"Applying modifier: {modifier.multiplier} for {stat_name}"
+                )
+                modified_stat *= modifier.multiplier
+
+    return int(modified_stat)
 
 
 def set_weight(kg: float) -> float:
@@ -511,3 +660,25 @@ def attempt_escape(
         raise ValueError(f"A formula for {method} doesn't exist.")
 
     return methods[method]()
+
+
+def speed_monster(monster: Monster, technique: Technique) -> int:
+    """
+    Calculate the speed modifier for the given monster / technique.
+    """
+    multiplier_speed = pre.MULTIPLIER_SPEED
+    base_speed = float(monster.speed)
+    base_speed_bonus = multiplier_speed if technique.is_fast else 1.0
+    speed_modifier = base_speed * base_speed_bonus
+
+    # Add a controlled random element
+    speed_offset = pre.SPEED_OFFSET
+    random_offset = random.uniform(-speed_offset, speed_offset)
+    speed_modifier += random_offset
+
+    # Ensure the speed modifier is not negative
+    speed_modifier = max(speed_modifier, 1)
+    # Use dodge as a tiebreaker
+    speed_modifier += float(monster.dodge) * 0.01
+
+    return int(speed_modifier)

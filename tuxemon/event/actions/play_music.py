@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
@@ -46,14 +46,12 @@ class PlayMusicAction(EventAction):
     fade_ms: Optional[int] = None
 
     def start(self) -> None:
-        player = self.session.player
         client = self.session.client
         loop = prepare.MUSIC_LOOP if self.loop is None else self.loop
         fade_ms = (
             prepare.MUSIC_FADEIN if self.fade_ms is None else self.fade_ms
         )
-        _music = prepare.MUSIC_VOLUME
-        music_volume = float(player.game_variables.get("music_volume", _music))
+        music_volume = client.config.music_volume
         if not self.volume:
             volume = music_volume
         else:

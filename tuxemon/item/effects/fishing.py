@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import random
@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Union
 
 from tuxemon import prepare
-from tuxemon.db import EvolutionStage, MonsterModel, MonsterShape, db
+from tuxemon.db import EvolutionStage, MonsterModel, db
 from tuxemon.item.itemeffect import ItemEffect, ItemEffectResult
 
 if TYPE_CHECKING:
@@ -70,7 +70,7 @@ class FishingEffect(ItemEffect):
         rgb = ":".join(map(str, blue))
         client.event_engine.execute_action(
             "wild_encounter",
-            [mon_slug, level, None, None, environment, rgb],
+            [mon_slug, level, None, None, environment, rgb, None],
             True,
         )
 
@@ -81,7 +81,7 @@ def _get_basic_monsters() -> list[str]:
         mon.slug
         for mon in lookup_cache.values()
         if mon.stage == EvolutionStage.basic
-        and mon.shape in [MonsterShape.polliwog, MonsterShape.piscine]
+        and mon.shape in ["polliwog", "piscine"]
     ]
 
 
@@ -91,7 +91,7 @@ def _get_advanced_monsters() -> list[str]:
         mon.slug
         for mon in lookup_cache.values()
         if mon.stage in [EvolutionStage.stage1, EvolutionStage.basic]
-        and mon.shape in [MonsterShape.polliwog, MonsterShape.piscine]
+        and mon.shape in ["polliwog", "piscine"]
     ]
 
 
@@ -103,9 +103,9 @@ def _get_pro_monsters() -> list[str]:
         if mon.stage != EvolutionStage.basic
         and mon.shape
         in [
-            MonsterShape.polliwog,
-            MonsterShape.piscine,
-            MonsterShape.leviathan,
+            "polliwog",
+            "piscine",
+            "leviathan",
         ]
     ]
 

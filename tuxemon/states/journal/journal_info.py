@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 from typing import Any, Optional
@@ -8,7 +8,7 @@ import pygame_menu
 from pygame_menu import locals
 
 from tuxemon import formula, prepare
-from tuxemon.db import MonsterModel, SeenStatus, db
+from tuxemon.db import MonsterModel, db
 from tuxemon.locale import T
 from tuxemon.menu.menu import PygameMenuState
 from tuxemon.platform.const import buttons
@@ -52,11 +52,10 @@ class JournalInfoState(PygameMenuState):
                 else "yes_evolutions"
             )
         # types
-        types = " ".join(map(lambda s: T.translate(s.name), monster.types))
+        types = " ".join(map(lambda s: T.translate(s), monster.types))
         # weight and height
-        player = local_session.player
-        unit = player.game_variables.get("unit_measure", prepare.METRIC)
-        if unit == prepare.METRIC:
+        unit = self.client.config.unit_measure
+        if unit == "metric":
             mon_weight = monster.weight
             mon_height = monster.height
             unit_weight = prepare.U_KG
@@ -107,10 +106,10 @@ class JournalInfoState(PygameMenuState):
             float=True,
         )
         lab4.translate(fix_measure(width, 0.50), fix_measure(height, 0.30))
-        path1 = f"gfx/ui/icons/element/{monster.types[0].name}_type.png"
+        path1 = f"gfx/ui/icons/element/{monster.types[0]}_type.png"
         type_image_1 = self._create_image(path1)
         if len(monster.types) > 1:
-            path2 = f"gfx/ui/icons/element/{monster.types[1].name}_type.png"
+            path2 = f"gfx/ui/icons/element/{monster.types[1]}_type.png"
             type_image_2 = self._create_image(path2)
             menu.add.image(type_image_1, float=True).translate(
                 fix_measure(width, 0.17), fix_measure(height, 0.29)
@@ -238,15 +237,15 @@ class JournalInfoState(PygameMenuState):
 
         super().__init__(height=height, width=width)
 
-        checks = local_session.player.tuxepedia.get(monster.slug)
-        self.caught = True if checks == SeenStatus.caught else False
+        checks = local_session.player.tuxepedia.is_caught(monster.slug)
+        self.caught = checks
         self._monster = monster
         self.add_menu_items(self.menu, monster)
         self.reset_theme()
 
     def process_event(self, event: PlayerInput) -> Optional[PlayerInput]:
         client = self.client
-        monsters = list(local_session.player.tuxepedia)
+        monsters = local_session.player.tuxepedia.get_monsters()
         models = list(lookup_cache.values())
         model_dict = {model.slug: model for model in models}
         monster_models = sorted(

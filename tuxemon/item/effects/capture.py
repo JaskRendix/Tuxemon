@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Union
 
 from tuxemon import formula, prepare
-from tuxemon.db import CategoryCondition as Category
+from tuxemon.db import CategoryStatus as Category
 from tuxemon.db import SeenStatus
 from tuxemon.item.itemeffect import ItemEffect, ItemEffectResult
 from tuxemon.technique.technique import Technique
@@ -112,12 +112,9 @@ class CaptureEffect(ItemEffect):
             if tuxeball:
                 tuxeball.quantity -= 1
 
-        if (
-            target.slug in self.user.tuxepedia
-            and self.user.tuxepedia[target.slug] == SeenStatus.seen
-        ):
+        if self.user.tuxepedia.is_seen(target.slug):
             item.combat_state._new_tuxepedia = True
-        self.user.tuxepedia[target.slug] = SeenStatus.caught
+        self.user.tuxepedia.add_entry(target.slug, SeenStatus.caught)
         target.capture_device = item.slug
         target.wild = False
         self.user.add_monster(target, len(self.user.monsters))

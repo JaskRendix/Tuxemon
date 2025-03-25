@@ -1,27 +1,30 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 import unittest
-from unittest import mock
+from unittest.mock import MagicMock, patch
 
 from tuxemon import prepare
 from tuxemon.client import LocalPygameClient
-from tuxemon.db import Direction, MissionModel, MissionStatus, db
+from tuxemon.db import Direction, db
 from tuxemon.event.actions.char_move import parse_path_parameters
 from tuxemon.player import Player
 from tuxemon.session import local_session
+from tuxemon.tuxepedia import Tuxepedia
 
 
 def mockPlayer(self) -> None:
     self.name = "Jeff"
-    self.money = {}
     self.game_variables = {}
-    self.tuxepedia = {}
+    self.tuxepedia = Tuxepedia()
 
 
 class TestVariableActions(unittest.TestCase):
     def setUp(self):
-        with mock.patch.object(Player, "__init__", mockPlayer):
-            local_session.client = LocalPygameClient(prepare.CONFIG)
+        self.mock_screen = MagicMock()
+        with patch.object(Player, "__init__", mockPlayer):
+            local_session.client = LocalPygameClient(
+                prepare.CONFIG, self.mock_screen
+            )
             self.action = local_session.client.event_engine
             local_session.player = Player()
             self.player = local_session.player
@@ -124,8 +127,11 @@ class TestVariableActions(unittest.TestCase):
 
 class TestActionsSetPlayer(unittest.TestCase):
     def setUp(self):
-        with mock.patch.object(Player, "__init__", mockPlayer):
-            local_session.client = LocalPygameClient(prepare.CONFIG)
+        self.mock_screen = MagicMock()
+        with patch.object(Player, "__init__", mockPlayer):
+            local_session.client = LocalPygameClient(
+                prepare.CONFIG, self.mock_screen
+            )
             self.action = local_session.client.event_engine
             local_session.player = Player()
             self.player = local_session.player
@@ -139,51 +145,13 @@ class TestActionsSetPlayer(unittest.TestCase):
         self.assertIn(self.player.name, ["maple123", "maple321"])
 
 
-class TestTuxepediaActions(unittest.TestCase):
-    def setUp(self):
-        with mock.patch.object(Player, "__init__", mockPlayer):
-            local_session.client = LocalPygameClient(prepare.CONFIG)
-            self.action = local_session.client.event_engine
-            local_session.player = Player()
-            self.player = local_session.player
-            _model = {"rockitten": 1}
-            db.database["monster"] = _model
-
-    def test_set_tuxepedia_seen(self):
-        _params = ["player", "rockitten", "seen"]
-        self.action.execute_action("set_tuxepedia", _params)
-        self.assertEqual(self.player.tuxepedia["rockitten"], "seen")
-
-    def test_set_tuxepedia_caught(self):
-        _params = ["player", "rockitten", "caught"]
-        self.action.execute_action("set_tuxepedia", _params)
-        self.assertEqual(self.player.tuxepedia["rockitten"], "caught")
-
-    def test_set_tuxepedia_wrong_seen_status(self):
-        _params = ["player", "rockitten", "jimmy"]
-        with self.assertRaises(ValueError):
-            self.action.execute_action("set_tuxepedia", _params)
-
-    def test_set_tuxepedia_wrong_monster(self):
-        _params = ["player", "jimmy", "seen"]
-        with self.assertRaises(ValueError):
-            self.action.execute_action("set_tuxepedia", _params)
-
-    def test_clear_tuxepedia_not_exist(self):
-        with self.assertRaises(KeyError):
-            self.action.execute_action("clear_tuxepedia", ["rockitten"])
-
-    def test_clear_tuxepedia_exist(self):
-        _params = ["player", "rockitten", "caught"]
-        self.action.execute_action("set_tuxepedia", _params)
-        self.action.execute_action("clear_tuxepedia", ["rockitten"])
-        self.assertIsNone(self.player.tuxepedia.get("rockitten"))
-
-
 class TestBattleActions(unittest.TestCase):
     def setUp(self):
-        with mock.patch.object(Player, "__init__", mockPlayer):
-            local_session.client = LocalPygameClient(prepare.CONFIG)
+        self.mock_screen = MagicMock()
+        with patch.object(Player, "__init__", mockPlayer):
+            local_session.client = LocalPygameClient(
+                prepare.CONFIG, self.mock_screen
+            )
             self.action = local_session.client.event_engine
             local_session.player = Player()
             self.player = local_session.player
@@ -227,82 +195,13 @@ class TestBattleActions(unittest.TestCase):
             self.action.execute_action("set_battle", _params)
 
 
-class TestMissionActions(unittest.TestCase):
-    _mission = MissionModel(slug="no_type")
-    _pending = MissionStatus.pending
-    _failed = MissionStatus.failed
-    _completed = MissionStatus.completed
-
-    def setUp(self):
-        with mock.patch.object(Player, "__init__", mockPlayer):
-            local_session.client = LocalPygameClient(prepare.CONFIG)
-            self.action = local_session.client.event_engine
-            local_session.player = Player()
-            self.player = local_session.player
-            self.player.missions = []
-            self._mission_model = {"no_type": self._mission}
-            db.database["mission"] = self._mission_model
-
-    def test_set_mission_add_success(self):
-        _params = ["player", "no_type", "add"]
-        self.action.execute_action("set_mission", _params)
-        self.assertEqual(len(self.player.missions), 1)
-        self.assertEqual(self.player.missions[0].slug, "no_type")
-        self.assertEqual(self.player.missions[0].status, self._pending)
-
-    def test_set_mission_add_fail(self):
-        _params = ["player", "no_type", "jimmy"]
-        with self.assertRaises(ValueError):
-            self.action.execute_action("set_mission", _params)
-        self.assertEqual(len(self.player.missions), 0)
-
-    def test_set_mission_add_multiple(self):
-        self._mission_model["town"] = MissionModel(slug="town")
-        self._mission_model["route"] = MissionModel(slug="route")
-        for slug in self._mission_model.keys():
-            _params = ["player", slug, "add"]
-            self.action.execute_action("set_mission", _params)
-        self.assertEqual(len(self.player.missions), 3)
-
-    def test_set_mission_add_status_success(self):
-        _params = ["player", "no_type", "add", "completed"]
-        self.action.execute_action("set_mission", _params)
-        self.assertEqual(len(self.player.missions), 1)
-        self.assertEqual(self.player.missions[0].status, self._completed)
-
-    def test_set_mission_add_status_fail(self):
-        _params = ["player", "no_type", "add", "jimmy"]
-        with self.assertRaises(ValueError):
-            self.action.execute_action("set_mission", _params)
-        self.assertEqual(len(self.player.missions), 0)
-
-    def test_set_mission_change_success(self):
-        _params = ["player", "no_type", "add"]
-        self.action.execute_action("set_mission", _params)
-        _params = ["player", "no_type", "change", "failed"]
-        self.action.execute_action("set_mission", _params)
-        self.assertEqual(self.player.missions[0].status, self._failed)
-
-    def test_set_mission_change_fail(self):
-        _params = ["player", "no_type", "add"]
-        self.action.execute_action("set_mission", _params)
-        _params = ["player", "no_type", "change", "jimmy"]
-        with self.assertRaises(ValueError):
-            self.action.execute_action("set_mission", _params)
-        self.assertEqual(len(self.player.missions), 1)
-
-    def test_set_mission_remove_success(self):
-        _params = ["player", "no_type", "add"]
-        self.action.execute_action("set_mission", _params)
-        _params = ["player", "no_type", "remove"]
-        self.action.execute_action("set_mission", _params)
-        self.assertEqual(len(self.player.missions), 0)
-
-
 class TestCharacterActions(unittest.TestCase):
     def setUp(self):
-        with mock.patch.object(Player, "__init__", mockPlayer):
-            local_session.client = LocalPygameClient(prepare.CONFIG)
+        self.mock_screen = MagicMock()
+        with patch.object(Player, "__init__", mockPlayer):
+            local_session.client = LocalPygameClient(
+                prepare.CONFIG, self.mock_screen
+            )
             self.action = local_session.client.event_engine
             local_session.player = Player()
             self.player = local_session.player

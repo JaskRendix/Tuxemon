@@ -1,37 +1,34 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
-import os
 import uuid
 from collections.abc import Iterable, Mapping, Sequence
 from math import hypot
 from typing import TYPE_CHECKING, Any, Optional, TypedDict
 
-from tuxemon import prepare, surfanim
+from tuxemon import prepare
 from tuxemon.battle import Battle, decode_battle, encode_battle
 from tuxemon.boxes import ItemBoxes, MonsterBoxes
-from tuxemon.compat import Rect
-from tuxemon.db import Direction, ElementType, EntityFacing, SeenStatus, db
+from tuxemon.db import Direction, db
 from tuxemon.entity import Entity
-from tuxemon.graphics import load_and_scale
 from tuxemon.item.item import Item, decode_items, encode_items
 from tuxemon.locale import T
-from tuxemon.map import dirs2, dirs3, get_coords_ext, get_direction, proj
+from tuxemon.map import dirs2, dirs3, get_direction, proj
+from tuxemon.map_view import SpriteRenderer
 from tuxemon.math import Vector2
-from tuxemon.mission import Mission, decode_mission, encode_mission
+from tuxemon.mission import MissionManager
+from tuxemon.money import MoneyController
 from tuxemon.monster import Monster, decode_monsters, encode_monsters
 from tuxemon.prepare import CONFIG
 from tuxemon.session import Session
 from tuxemon.technique.technique import Technique
 from tuxemon.tools import vector2_to_tile_pos
+from tuxemon.tuxepedia import Tuxepedia, decode_tuxepedia, encode_tuxepedia
 
 if TYPE_CHECKING:
-    import pygame
-
     from tuxemon.economy import Economy
-    from tuxemon.states.combat.combat_classes import EnqueuedAction
     from tuxemon.states.world.worldstate import WorldState
 
 
@@ -43,9 +40,9 @@ class NPCState(TypedDict):
     facing: Direction
     game_variables: dict[str, Any]
     battles: Sequence[Mapping[str, Any]]
-    tuxepedia: dict[str, SeenStatus]
+    tuxepedia: Mapping[str, Any]
     contacts: dict[str, str]
-    money: dict[str, int]
+    money: Mapping[str, Any]
     template: dict[str, Any]
     missions: Sequence[Mapping[str, Any]]
     items: Sequence[Mapping[str, Any]]
@@ -99,9 +96,9 @@ class NPC(Entity[NPCState]):
         self.battles: list[Battle] = []  # Tracks the battles
         self.forfeit: bool = False
         # Tracks Tuxepedia (monster seen or caught)
-        self.tuxepedia: dict[str, SeenStatus] = {}
+        self.tuxepedia = Tuxepedia()
         self.contacts: dict[str, str] = {}
-        self.money: dict[str, int] = {}  # Tracks money
+        self.money_controller = MoneyController(self)
         # list of ways player can interact with the Npc
         self.interactions: Sequence[str] = []
         # menu labels (world menu)
@@ -115,7 +112,7 @@ class NPC(Entity[NPCState]):
         self.monsters: list[Monster] = []
         # The player's items.
         self.items: list[Item] = []
-        self.missions: list[Mission] = []
+        self.mission_manager = MissionManager(self)
         self.economy: Optional[Economy] = None
         # Variables for long-term item and monster storage
         # Keeping these separate so other code can safely
@@ -123,19 +120,14 @@ class NPC(Entity[NPCState]):
         self.monster_boxes = MonsterBoxes()
         self.item_boxes = ItemBoxes()
         self.pending_evolutions: list[tuple[Monster, Monster]] = []
-        # nr tuxemon fight
-        self.max_position: int = 1
-        self.speed = 10  # To determine combat order (not related to movement!)
         self.moves: Sequence[Technique] = []  # list of techniques
         self.steps: float = 0.0
 
         # pathfinding and waypoint related
         self.pathfinding: Optional[tuple[int, int]] = None
         self.path: list[tuple[int, int]] = []
-        self.final_move_dest = [
-            0,
-            0,
-        ]  # Stores the final destination sent from a client
+        # Stores the final destination sent from a client
+        self.final_move_dest = [0, 0]
 
         # This is used to 'set back' when lost, and make movement robust.
         # If entity falls off of map due to a bug, it can be returned to this value.
@@ -155,24 +147,7 @@ class NPC(Entity[NPCState]):
         # Move direction allows other functions to move the npc in a controlled way.
         # To move the npc, change the value to one of four directions: left, right, up or down.
         # The npc will then move one tile in that direction until it is set to None.
-
-        # TODO: move sprites into renderer so class can be used headless
-        self.playerHeight = 0
-        self.playerWidth = 0
-        # Standing animation frames
-        self.standing: dict[str, pygame.surface.Surface] = {}
-        # Moving animation frames
-        self.sprite: dict[str, surfanim.SurfaceAnimation] = {}
-        self.surface_animations = surfanim.SurfaceAnimationCollection()
-        self.load_sprites()
-        self.rect = Rect(
-            (
-                self.tile_pos[0],
-                self.tile_pos[1],
-                self.playerWidth,
-                self.playerHeight,
-            )
-        )
+        self.sprite_renderer = SpriteRenderer(self)
 
     def get_state(self, session: Session) -> NPCState:
         """
@@ -191,12 +166,12 @@ class NPC(Entity[NPCState]):
             "facing": self.facing,
             "game_variables": self.game_variables,
             "battles": encode_battle(self.battles),
-            "tuxepedia": self.tuxepedia,
+            "tuxepedia": encode_tuxepedia(self.tuxepedia),
             "contacts": self.contacts,
-            "money": self.money,
+            "money": dict(),
             "items": encode_items(self.items),
             "template": self.template.model_dump(),
-            "missions": encode_mission(self.missions),
+            "missions": self.mission_manager.encode_missions(),
             "monsters": encode_monsters(self.monsters),
             "player_name": self.name,
             "player_steps": self.steps,
@@ -207,6 +182,7 @@ class NPC(Entity[NPCState]):
 
         self.monster_boxes.save(state)
         self.item_boxes.save(state)
+        state["money"] = self.money_controller.save()
 
         return state
 
@@ -219,11 +195,10 @@ class NPC(Entity[NPCState]):
             save_data: Data used to recreate the NPC.
 
         """
-        self.facing = save_data.get("facing", Direction.down)
+        self.facing = Direction(save_data.get("facing", "down"))
         self.game_variables = save_data["game_variables"]
-        self.tuxepedia = save_data["tuxepedia"]
+        self.tuxepedia = decode_tuxepedia(save_data["tuxepedia"])
         self.contacts = save_data["contacts"]
-        self.money = save_data["money"]
         self.battles = []
         for battle in decode_battle(save_data.get("battles")):
             self.battles.append(battle)
@@ -233,11 +208,10 @@ class NPC(Entity[NPCState]):
         self.monsters = []
         for monster in decode_monsters(save_data.get("monsters")):
             self.add_monster(monster, len(self.monsters))
-        self.missions = []
-        for mission in decode_mission(save_data.get("missions")):
-            self.missions.append(mission)
+        self.mission_manager.load_missions(save_data.get("missions"))
         self.name = save_data["player_name"]
         self.steps = save_data["player_steps"]
+        self.money_controller.load(save_data)
         self.monster_boxes.load(save_data)
         self.item_boxes.load(save_data)
 
@@ -245,62 +219,7 @@ class NPC(Entity[NPCState]):
         self.template.slug = _template["slug"]
         self.template.sprite_name = _template["sprite_name"]
         self.template.combat_front = _template["combat_front"]
-        self.load_sprites()
-
-    def load_sprites(self) -> None:
-        """Load sprite graphics."""
-        # TODO: refactor animations into renderer
-        # Get all of the player's standing animation images.
-        self.interactive_obj: bool = False
-        if self.template.slug == "interactive_obj":
-            self.interactive_obj = True
-
-        self.standing = {}
-        for standing_type in list(EntityFacing):
-            # if the template slug is interactive_obj, then it needs _front
-            if self.interactive_obj:
-                filename = f"{self.template.sprite_name}.png"
-                path = os.path.join("sprites_obj", filename)
-            else:
-                filename = (
-                    f"{self.template.sprite_name}_{standing_type.value}.png"
-                )
-                path = os.path.join("sprites", filename)
-            self.standing[standing_type] = load_and_scale(path)
-        # The player's sprite size in pixels
-        self.playerWidth, self.playerHeight = self.standing[
-            EntityFacing.front
-        ].get_size()
-
-        # avoid cutoff frames when steps don't line up with tile movement
-        n_frames = 3
-        frame_duration = (1000 / CONFIG.player_walkrate) / n_frames / 1000 * 2
-
-        # Load all of the player's sprite animations
-        anim_types = list(EntityFacing)
-        for anim_type in anim_types:
-            if not self.interactive_obj:
-                images: list[str] = []
-                anim_0 = f"sprites/{self.template.sprite_name}_{anim_type.value}_walk"
-                anim_1 = f"sprites/{self.template.sprite_name}_{anim_type.value}.png"
-                images.append(f"{anim_0}.{str(0).zfill(3)}.png")
-                images.append(anim_1)
-                images.append(f"{anim_0}.{str(1).zfill(3)}.png")
-                images.append(anim_1)
-
-                frames: list[tuple[pygame.surface.Surface, float]] = []
-                for image in images:
-                    surface = load_and_scale(image)
-                    frames.append((surface, frame_duration))
-
-                _surfanim = surfanim.SurfaceAnimation(frames, loop=True)
-                self.sprite[f"{anim_type.value}_walk"] = _surfanim
-
-        # Have the animation objects managed by a SurfaceAnimationCollection.
-        # With the SurfaceAnimationCollection, we can call play() and stop() on
-        # all the animation objects at the same time, so that way they'll
-        # always be in sync with each other.
-        self.surface_animations.add(self.sprite)
+        self.sprite_renderer._load_sprites()
 
     def pathfind(self, destination: tuple[int, int]) -> None:
         """
@@ -415,8 +334,8 @@ class NPC(Entity[NPCState]):
 
         """
         # update physics.  eventually move to another class
+        self.sprite_renderer.update(time_delta)
         self.update_physics(time_delta)
-        self.surface_animations.update(time_delta)
 
         if self.pathfinding and not self.path:
             # wants to pathfind, but there was no path last check
@@ -449,7 +368,7 @@ class NPC(Entity[NPCState]):
         # TODO: its not possible to move the entity with physics b/c this stops that
         if not self.path:
             self.cancel_movement()
-            self.surface_animations.stop()
+            self.sprite_renderer.surface_animations.stop()
 
     def move_one_tile(self, direction: Direction) -> None:
         """
@@ -462,36 +381,6 @@ class NPC(Entity[NPCState]):
         self.path.append(
             vector2_to_tile_pos(Vector2(self.tile_pos) + dirs2[direction])
         )
-
-    def valid_movement(self, tile: tuple[int, int]) -> bool:
-        """
-        Check the game map to determine if a tile can be moved into.
-
-        * Only checks adjacent tiles
-        * Uses all advanced tile movements, like continue tiles
-
-        Parameters:
-            tile: Coordinates of the tile.
-
-        Returns:
-            If the tile can be moved into.
-
-        """
-        _map_size = self.world.map_size
-        _exit = tile in self.world.get_exits(self.tile_pos)
-
-        _direction = []
-        for neighbor in get_coords_ext(tile, _map_size):
-            char = self.world.get_entity_pos(neighbor)
-            if (
-                char
-                and char.moving
-                and char.moverate == CONFIG.player_walkrate
-                and self.facing != char.facing
-            ):
-                _direction.append(char)
-
-        return _exit and not _direction or self.ignore_collisions
 
     @property
     def move_destination(self) -> Optional[tuple[int, int]]:
@@ -513,8 +402,8 @@ class NPC(Entity[NPCState]):
         target = self.path[-1]
         direction = get_direction(proj(self.position3), target)
         self.facing = direction
-        if self.valid_movement(target):
-            moverate = self.check_moverate(target)
+        if self.world.pathfinder.is_tile_traversable(self, target):
+            moverate = self.world.pathfinder.get_tile_moverate(self, target)
             # surfanim has horrible clock drift.  even after one animation
             # cycle, the time will be off.  drift causes the walking steps to not
             # align with tiles and some frames will only last one game frame.
@@ -523,7 +412,7 @@ class NPC(Entity[NPCState]):
             # it still occasionally happens though!
             # eventually, there will need to be a global clock for the game,
             # not based on wall time, to prevent visual glitches.
-            self.surface_animations.play()
+            self.sprite_renderer.surface_animations.play()
             self.path_origin = self.tile_pos
             self.velocity3 = moverate * dirs3[direction]
             self.remove_collision()
@@ -552,17 +441,6 @@ class NPC(Entity[NPCState]):
             else:
                 # give up and wait until the target is clear again
                 pass
-
-    def check_moverate(self, destination: tuple[int, int]) -> float:
-        """
-        Check character moverate and adapt it, since there could be some
-        tiles where the coefficient is different (by default 1).
-
-        """
-        surface_map = self.world.surface_map
-        rate = self.world.get_tile_moverate(surface_map, destination)
-        _moverate = self.moverate * rate
-        return _moverate
 
     def check_waypoint(self) -> None:
         """
@@ -593,15 +471,19 @@ class NPC(Entity[NPCState]):
 
     def network_notify_start_moving(self, direction: Direction) -> None:
         r"""WIP guesswork ¯\_(ツ)_/¯"""
-        if self.world.client.isclient or self.world.client.ishost:
-            self.world.client.client.update_player(
+        self.network = self.world.client.network_manager
+        if self.network.isclient or self.network.ishost:
+            assert self.network.client
+            self.network.client.update_player(
                 direction, event_type="CLIENT_MOVE_START"
             )
 
     def network_notify_stop_moving(self) -> None:
         r"""WIP guesswork ¯\_(ツ)_/¯"""
-        if self.world.client.isclient or self.world.client.ishost:
-            self.world.client.client.update_player(
+        self.network = self.world.client.network_manager
+        if self.network.isclient or self.network.ishost:
+            assert self.network.client
+            self.network.client.update_player(
                 self.facing, event_type="CLIENT_MOVE_COMPLETE"
             )
 
@@ -707,44 +589,6 @@ class NPC(Entity[NPCState]):
             self.monsters[index_1],
         )
 
-    def load_party(self) -> None:
-        """Loads the party of this npc from their npc.json entry."""
-        for monster in self.monsters:
-            self.remove_monster(monster)
-
-        self.monsters = []
-
-        # Look up the NPC's details from our NPC database
-        npc_details = db.lookup(self.slug, "npc")
-        self.forfeit = npc_details.forfeit
-        npc_party = npc_details.monsters
-        for npc_monster_details in npc_party:
-            # This seems slightly wrong. The only usable element in
-            # npc_monsters_details, which is a PartyMemberModel, is "slug"
-            monster = Monster(save_data=npc_monster_details.model_dump())
-            monster.money_modifier = npc_monster_details.money_mod
-            monster.experience_modifier = npc_monster_details.exp_req_mod
-            monster.set_level(npc_monster_details.level)
-            monster.set_moves(npc_monster_details.level)
-            monster.current_hp = monster.hp
-            monster.gender = npc_monster_details.gender
-
-            # Add our monster to the NPC's party
-            self.add_monster(monster, len(npc_party))
-
-        # load NPC bag
-        for item in self.items:
-            self.remove_item(item)
-        self.items = []
-        npc_bag = npc_details.items
-        for npc_itm_details in npc_bag:
-            itm = Item(save_data=npc_itm_details.model_dump())
-            itm.quantity = npc_itm_details.quantity
-
-        # load NPC template
-        self.template = npc_details.template
-        self.load_sprites()
-
     def has_tech(self, tech: Optional[str]) -> bool:
         """
         Returns TRUE if there is the technique in the party.
@@ -758,18 +602,13 @@ class NPC(Entity[NPCState]):
                     return True
         return False
 
-    def has_type(self, element: Optional[ElementType]) -> bool:
+    def has_type(self, element: Optional[str]) -> bool:
         """
         Returns TRUE if there is the type in the party.
         """
-        ret: bool = False
         if element:
-            eles = []
-            for mon in self.monsters:
-                eles = [ele for ele in mon.types if ele.slug == element]
-            if eles:
-                ret = True
-        return ret
+            return any(mon.has_type(element) for mon in self.monsters)
+        return False
 
     ####################################################
     #                      Items                       #
@@ -819,36 +658,3 @@ class NPC(Entity[NPCState]):
         return next(
             (m for m in self.items if m.instance_id == instance_id), None
         )
-
-    ####################################################
-    #                    Missions                      #
-    ####################################################
-
-    def add_mission(self, mission: Mission) -> None:
-        """
-        Adds a mission to the npc's missions.
-
-        """
-        self.missions.append(mission)
-
-    def remove_mission(self, mission: Mission) -> None:
-        """
-        Removes a mission from this npc's missions.
-
-        """
-        if mission in self.missions:
-            self.missions.remove(mission)
-
-    def find_mission(self, mission: str) -> Optional[Mission]:
-        """
-        Finds a mission in the npc's missions.
-
-        """
-        for mis in self.missions:
-            if mis.slug == mission:
-                return mis
-
-        return None
-
-    def speed_test(self, action: EnqueuedAction) -> int:
-        return self.speed

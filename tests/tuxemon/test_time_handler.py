@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 import unittest
 from datetime import datetime
 
@@ -61,12 +61,14 @@ class TestTimeFunctions(unittest.TestCase):
 
         for time, expected in test_cases:
             self.assertEqual(
-                determine_season(time, hemisphere=prepare.NORTHERN), expected
+                determine_season(time, hemisphere="northern"),
+                expected,
             )
 
         for time, expected in test_cases_southern_hemisphere:
             self.assertEqual(
-                determine_season(time, hemisphere=prepare.SOUTHERN), expected
+                determine_season(time, hemisphere="southern"),
+                expected,
             )
 
     def test_is_leap_year(self):

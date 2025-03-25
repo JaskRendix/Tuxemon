@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 import logging
@@ -9,39 +9,37 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any, Optional
 
 from tuxemon import formula, fusion, graphics, prepare, tools
-from tuxemon.condition.condition import (
-    Condition,
-    decode_condition,
-    encode_condition,
-)
 from tuxemon.db import (
-    CategoryCondition,
-    ElementType,
+    CategoryStatus,
     EvolutionStage,
     GenderType,
     MonsterEvolutionItemModel,
     MonsterHistoryItemModel,
     MonsterMovesetItemModel,
-    MonsterShape,
     PlagueType,
-    ResponseCondition,
+    ResponseStatus,
     StatType,
-    TasteCold,
-    TasteWarm,
     db,
 )
 from tuxemon.element import Element
 from tuxemon.evolution import Evolution
+from tuxemon.item.item import Item
 from tuxemon.locale import T
 from tuxemon.shape import Shape
 from tuxemon.sprite import Sprite
+from tuxemon.status.status import (
+    Status,
+    decode_status,
+    encode_status,
+)
+from tuxemon.taste import Taste
 from tuxemon.technique.technique import Technique, decode_moves, encode_moves
+from tuxemon.time_handler import today_ordinal
 
 if TYPE_CHECKING:
     import pygame
 
     from tuxemon.npc import NPC
-    from tuxemon.states.combat.combat_classes import EnqueuedAction
 
 logger = logging.getLogger(__name__)
 
@@ -127,6 +125,7 @@ class Monster:
         self.faint_cry = ""
         self.owner: Optional[NPC] = None
         self.possible_genders: list[GenderType] = []
+        self.held_item = MonsterItemHandler()
 
         self.money_modifier = 0
         self.experience_modifier = 1
@@ -134,7 +133,7 @@ class Monster:
 
         self.types: list[Element] = []
         self.default_types: list[Element] = []
-        self.shape = MonsterShape.default
+        self.shape = ""
         self.randomly = True
         self.out_of_range = False
         self.got_experience = False
@@ -142,10 +141,10 @@ class Monster:
         self.traded = False
         self.wild = False
 
-        self.status: list[Condition] = []
+        self.status: list[Status] = []
         self.plague: dict[str, PlagueType] = {}
-        self.taste_cold = TasteCold.tasteless
-        self.taste_warm = TasteWarm.tasteless
+        self.taste_cold: str = "tasteless"
+        self.taste_warm: str = "tasteless"
 
         self.max_moves = prepare.MAX_MOVES
         self.txmn_id = 0
@@ -207,8 +206,9 @@ class Monster:
         self.description = T.translate(f"{results.slug}_description")
         self.cat = results.category
         self.category = T.translate(f"cat_{self.cat}")
-        self.shape = results.shape or MonsterShape.default
+        self.shape = results.shape
         self.stage = results.stage or EvolutionStage.standalone
+        self.tags = results.tags
         self.taste_cold = self.set_taste_cold(self.taste_cold)
         self.taste_warm = self.set_taste_warm(self.taste_warm)
         self.steps = self.steps
@@ -256,12 +256,12 @@ class Monster:
         self.combat_call = (
             results.sounds.combat_call
             if results.sounds
-            else f"sound_{self.types[0].name}_call"
+            else f"sound_{self.types[0].slug}_call"
         )
         self.faint_call = (
             results.sounds.faint_call
             if results.sounds
-            else f"sound_{self.types[0].name}_faint"
+            else f"sound_{self.types[0].slug}_faint"
         )
 
     def learn(
@@ -311,12 +311,14 @@ class Monster:
 
         return stat_map.get(stat, 0)
 
-    def has_type(self, element: Optional[ElementType]) -> bool:
+    def has_type(self, type_slug: Optional[str]) -> bool:
         """
         Returns TRUE if there is the type among the types.
         """
-        return element is not None and any(
-            ele.slug == element for ele in self.types
+        return (
+            type_slug in [type_obj.slug for type_obj in self.types]
+            if type_slug
+            else False
         )
 
     def give_experience(self, amount: int = 1) -> int:
@@ -347,13 +349,13 @@ class Monster:
             levels += 1
         return levels
 
-    def apply_status(self, status: Condition) -> None:
+    def apply_status(self, status: Status) -> None:
         """
         Apply a status to the monster by replacing or removing
         the previous status.
 
         Parameters:
-            status: The status condition.
+            status: The status.
 
         """
         if not self.status:
@@ -366,15 +368,15 @@ class Monster:
         self.status[0].nr_turn = 0
         status.nr_turn = 1
 
-        if self.status[0].category == CategoryCondition.positive:
-            if status.repl_pos == ResponseCondition.replaced:
+        if self.status[0].category == CategoryStatus.positive:
+            if status.repl_pos == ResponseStatus.replaced:
                 self.status = [status]
-            elif status.repl_pos == ResponseCondition.removed:
+            elif status.repl_pos == ResponseStatus.removed:
                 self.status.clear()
-        elif self.status[0].category == CategoryCondition.negative:
-            if status.repl_neg == ResponseCondition.replaced:
+        elif self.status[0].category == CategoryStatus.negative:
+            if status.repl_neg == ResponseStatus.replaced:
                 self.status = [status]
-            elif status.repl_pos == ResponseCondition.removed:
+            elif status.repl_pos == ResponseStatus.removed:
                 self.status.clear()
         else:
             self.status = [status]
@@ -385,7 +387,7 @@ class Monster:
         """
         level = self.level
         multiplier = level + prepare.COEFF_STATS
-        shape = Shape(self.shape)
+        shape = Shape(self.shape).attributes
         self.armour = (shape.armour * multiplier) + self.mod_armour
         self.dodge = (shape.dodge * multiplier) + self.mod_dodge
         self.hp = (shape.hp * multiplier) + self.mod_hp
@@ -397,11 +399,23 @@ class Monster:
         """
         Apply updates to the monster's stats.
         """
-        self.armour += formula.update_stat(self, "armour")
-        self.dodge += formula.update_stat(self, "dodge")
-        self.melee += formula.update_stat(self, "melee")
-        self.ranged += formula.update_stat(self, "ranged")
-        self.speed += formula.update_stat(self, "speed")
+        taste_cold = Taste.get_taste(self.taste_cold)
+        taste_warm = Taste.get_taste(self.taste_warm)
+        self.armour = formula.update_stat(
+            "armour", self.armour, taste_cold, taste_warm
+        )
+        self.dodge = formula.update_stat(
+            "dodge", self.dodge, taste_cold, taste_warm
+        )
+        self.melee = formula.update_stat(
+            "melee", self.melee, taste_cold, taste_warm
+        )
+        self.ranged = formula.update_stat(
+            "ranged", self.ranged, taste_cold, taste_warm
+        )
+        self.speed = formula.update_stat(
+            "speed", self.speed, taste_cold, taste_warm
+        )
 
     def set_stats(self) -> None:
         """
@@ -414,35 +428,55 @@ class Monster:
         self.calculate_base_stats()
         self.apply_stat_updates()
 
-    def set_taste_cold(self, taste_cold: TasteCold) -> TasteCold:
-        """
-        It returns the cold taste.
-        """
-        if taste_cold.tasteless:
-            self.taste_cold = random.choice(
-                [t for t in TasteCold if t != TasteCold.tasteless]
-            )
+    def set_taste_cold(self, taste_slug: str = "tasteless") -> str:
+        """Sets the cold taste of the monster."""
+
+        if taste_slug == "tasteless":
+            cold_tastes = [
+                taste.slug
+                for taste in Taste.get_all_tastes().values()
+                if taste.taste_type == "cold" and taste.slug != "tasteless"
+            ]
+            if cold_tastes:
+                self.taste_cold = random.choice(cold_tastes)
+            else:
+                self.taste_cold = taste_slug
         else:
-            self.taste_cold = taste_cold
+            taste = Taste.get_taste(taste_slug)
+            if taste is None:
+                self.taste_cold = taste_slug
+            else:
+                self.taste_cold = taste.slug
+
         return self.taste_cold
 
-    def set_taste_warm(self, taste_warm: TasteWarm) -> TasteWarm:
-        """
-        It returns the warm taste.
-        """
-        if taste_warm.tasteless:
-            self.taste_warm = random.choice(
-                [t for t in TasteWarm if t != TasteWarm.tasteless]
-            )
+    def set_taste_warm(self, taste_slug: str = "tasteless") -> str:
+        """Sets the warm taste of the monster."""
+
+        if taste_slug == "tasteless":
+            warm_tastes = [
+                taste.slug
+                for taste in Taste.get_all_tastes().values()
+                if taste.taste_type == "warm" and taste.slug != "tasteless"
+            ]
+            if warm_tastes:
+                self.taste_warm = random.choice(warm_tastes)
+            else:
+                self.taste_warm = taste_slug
         else:
-            self.taste_warm = taste_warm
+            taste = Taste.get_taste(taste_slug)
+            if taste is None:
+                self.taste_warm = taste_slug
+            else:
+                self.taste_warm = taste.slug
+
         return self.taste_warm
 
     def set_capture(self, amount: int) -> int:
         """
         It returns the capture date.
         """
-        self.capture = formula.today_ordinal() if amount == 0 else amount
+        self.capture = today_ordinal() if amount == 0 else amount
         return self.capture
 
     def set_char_weight(self, value: float) -> float:
@@ -680,8 +714,9 @@ class Monster:
         if body:
             save_data["body"] = body
 
-        save_data["condition"] = encode_condition(self.status)
+        save_data["status"] = encode_status(self.status)
         save_data["moves"] = encode_moves(self.moves)
+        save_data["held_item"] = self.held_item.encode_item()
 
         return save_data
 
@@ -697,13 +732,12 @@ class Monster:
             return
 
         self.load_from_db(save_data["slug"])
-        self.plague = save_data["plague"]
 
         self.moves = []
         for move in decode_moves(save_data.get("moves")):
             self.moves.append(move)
         self.status = []
-        for cond in decode_condition(save_data.get("condition")):
+        for cond in decode_status(save_data.get("status")):
             self.status.append(cond)
 
         for key, value in save_data.items():
@@ -713,6 +747,12 @@ class Monster:
                 self.instance_id = uuid.UUID(value)
             elif key in SIMPLE_PERSISTANCE_ATTRIBUTES:
                 setattr(self, key, value)
+            elif key == "plague" and value:
+                self.plague = value
+            elif key == "held_item" and value:
+                item = self.held_item.decode_item(value)
+                if item:
+                    self.held_item.set_item(item)
 
         self.load_sprites()
 
@@ -720,7 +760,7 @@ class Monster:
         """
         Kills the monster, sets 0 HP and applies faint status.
         """
-        faint = Condition()
+        faint = Status()
         faint.load("faint")
         self.current_hp = 0
         self.status.clear()
@@ -739,29 +779,6 @@ class Monster:
         else:
             self.status = []
 
-    def speed_test(self, action: EnqueuedAction) -> int:
-        """
-        Calculate the speed modifier for the given action.
-        """
-        assert isinstance(action.method, Technique)
-        technique = action.method
-        multiplier_speed = prepare.MULTIPLIER_SPEED
-        base_speed = float(self.speed)
-        base_speed_bonus = multiplier_speed if technique.is_fast else 1.0
-        speed_modifier = base_speed * base_speed_bonus
-
-        # Add a controlled random element
-        speed_offset = prepare.SPEED_OFFSET
-        random_offset = random.uniform(-speed_offset, speed_offset)
-        speed_modifier += random_offset
-
-        # Ensure the speed modifier is not negative
-        speed_modifier = max(speed_modifier, 1)
-        # Use dodge as a tiebreaker
-        speed_modifier += float(self.dodge) * 0.01
-
-        return int(speed_modifier)
-
     def find_tech_by_id(self, instance_id: uuid.UUID) -> Optional[Technique]:
         """
         Finds a tech among the monster's moves which has the given id.
@@ -770,6 +787,34 @@ class Monster:
         return next(
             (m for m in self.moves if m.instance_id == instance_id), None
         )
+
+
+class MonsterItemHandler:
+    def __init__(self, item: Optional[Item] = None):
+        self.item = item
+
+    def set_item(self, item: Item) -> None:
+        if item.behaviors.holdable:
+            self.item = item
+        else:
+            logger.error(f"{item.name} can't be held")
+
+    def get_item(self) -> Optional[Item]:
+        return self.item
+
+    def has_item(self) -> bool:
+        return self.item is not None
+
+    def clear_item(self) -> None:
+        self.item = None
+
+    def encode_item(self) -> Mapping[str, Any]:
+        return self.item.get_state() if self.item is not None else {}
+
+    def decode_item(
+        self, json_data: Optional[Mapping[str, Any]]
+    ) -> Optional[Item]:
+        return Item(save_data=json_data) if json_data is not None else None
 
 
 def decode_monsters(

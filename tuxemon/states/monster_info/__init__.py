@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
-import uuid
 from typing import Any, Optional
 
 import pygame_menu
@@ -16,6 +15,7 @@ from tuxemon.monster import Monster
 from tuxemon.platform.const import buttons
 from tuxemon.platform.events import PlayerInput
 from tuxemon.session import local_session
+from tuxemon.time_handler import today_ordinal
 
 lookup_cache: dict[str, MonsterModel] = {}
 
@@ -66,9 +66,8 @@ class MonsterInfoState(PygameMenuState):
             return
         diff_weight = formula.diff_percentage(monster.weight, results.weight)
         diff_height = formula.diff_percentage(monster.height, results.height)
-        player = local_session.player
-        unit = player.game_variables.get("unit_measure", prepare.METRIC)
-        if unit == prepare.METRIC:
+        unit = self.client.config.unit_measure
+        if unit == "metric":
             mon_weight = monster.weight
             mon_height = monster.height
             unit_weight = prepare.U_KG
@@ -167,7 +166,7 @@ class MonsterInfoState(PygameMenuState):
         )
         lab9.translate(fix_measure(width, 0.50), fix_measure(height, 0.45))
         # capture
-        doc = formula.today_ordinal() - monster.capture
+        doc = today_ordinal() - monster.capture
         if doc >= 1:
             ref = (
                 T.format("tuxepedia_trade", {"doc": doc})

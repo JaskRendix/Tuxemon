@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2014-2024 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
+# Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -10,12 +10,13 @@ from pygame_menu import locals
 
 from tuxemon import formula
 from tuxemon import prepare as pre
-from tuxemon.db import MonsterModel, OutputBattle, SeenStatus, db
+from tuxemon.db import MonsterModel, OutputBattle, db
 from tuxemon.locale import T
 from tuxemon.menu.menu import PygameMenuState
 from tuxemon.npc import NPC
 from tuxemon.platform.const import buttons
 from tuxemon.platform.events import PlayerInput
+from tuxemon.time_handler import today_ordinal
 
 MenuGameObj = Callable[[], object]
 lookup_cache: dict[str, MonsterModel] = {}
@@ -62,19 +63,25 @@ class CharacterState(PygameMenuState):
 
         # tuxepedia data
         filters = list(lookup_cache.values())
-        tuxepedia = list(self.char.tuxepedia.values())
-        caught = tuxepedia.count(SeenStatus.caught)
-        seen = tuxepedia.count(SeenStatus.seen) + caught
-        percentage = round((seen / len(filters)) * 100, 1)
+        completeness = self.char.tuxepedia.get_completeness(len(filters))
+        percentage = round(completeness * 100, 1)
+        seen = self.char.tuxepedia.get_seen_count()
+        caught = self.char.tuxepedia.get_caught_count()
 
-        _msg_progress = {"value": str(percentage)}
+        if self.char.tuxepedia.entries:
+            _msg_progress = {"value": str(percentage)}
+            _msg_seen = {"param": str(seen + caught), "all": str(len(filters))}
+            _msg_caught = {"param": str(caught), "all": str(len(filters))}
+        else:
+            _msg_progress = {"value": "-"}
+            _msg_seen = {"param": "-", "all": "-"}
+            _msg_caught = {"param": "-", "all": "-"}
+
         msg_progress = T.format("tuxepedia_progress", _msg_progress)
-        _msg_seen = {"param": str(seen), "all": str(len(filters))}
         msg_seen = T.format("tuxepedia_data_seen", _msg_seen)
-        _msg_caught = {"param": str(caught), "all": str(len(filters))}
         msg_caught = T.format("tuxepedia_data_caught", _msg_caught)
 
-        today = formula.today_ordinal()
+        today = today_ordinal()
         date = self.char.game_variables.get("date_start_game", today)
         date_begin = today - int(date)
         msg_begin = (
@@ -107,8 +114,8 @@ class CharacterState(PygameMenuState):
         msg_battles = T.format("player_battles", _msg_battles)
         # steps
         steps = self.char.steps
-        unit = self.char.game_variables.get("unit_measure", pre.METRIC)
-        if unit == pre.METRIC:
+        unit = self.client.config.unit_measure
+        if unit == "metric":
             walked = formula.convert_km(steps)
             unit_walked = pre.U_KM
         else:
@@ -128,7 +135,7 @@ class CharacterState(PygameMenuState):
         )
         lab1.translate(fix_measure(width, 0.45), fix_measure(height, 0.15))
         # money
-        money = self.char.money.get(player, 0)
+        money = self.char.money_controller.money_manager.get_money()
         lab2: Any = menu.add.label(
             title=f"{T.translate('wallet')}: {money}",
             label_id="money",
