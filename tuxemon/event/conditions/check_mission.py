@@ -51,7 +51,9 @@ class CheckMissionCondition(EventCondition):
         # retrieve all missions
         _missions: list[str] = []
         if _mission == "all":
-            _missions = [m.slug for m in character.mission_manager.missions]
+            _missions = [
+                m.slug for m in character.mission_controller.get_missions()
+            ]
         else:
             _missions = _mission.split(":")
 
@@ -60,7 +62,7 @@ class CheckMissionCondition(EventCondition):
 
         result = [
             mission
-            for mission in character.mission_manager.missions
+            for mission in character.mission_controller.get_missions()
             if mission.status == _status and mission.slug in _missions
         ]
         return bool(result)

@@ -47,7 +47,7 @@ class MissionState(PygameMenuState):
         width = int(0.8 * width)
         height = int(0.8 * height)
         super().__init__(height=height, width=width)
-        self.character.mission_manager.update_mission_progress()
+        self.character.mission_controller.update_mission_progress()
         self.initialize_items(self.menu)
         self.reset_theme()
 
@@ -58,7 +58,7 @@ class MissionState(PygameMenuState):
         def change_state(state: str, **kwargs: Any) -> MenuGameObj:
             return partial(self.client.push_state, state, **kwargs)
 
-        missions = self.character.mission_manager.get_active_missions()
+        missions = self.character.mission_controller.get_active_missions()
         for key, mission in enumerate(missions, start=1):
             if mission.check_all_prerequisites(self.character):
                 progress = mission.get_progress(self.character)
@@ -123,7 +123,7 @@ class SingleMissionState(PygameMenuState):
             self.client.remove_state_by_name("ChoiceState")
             self.client.pop_state()
 
-        missions = self.character.mission_manager.get_active_missions()
+        missions = self.character.mission_controller.get_active_missions()
 
         single = missions.index(self.mission)
         menu.add.label(
@@ -175,7 +175,7 @@ class SingleMissionState(PygameMenuState):
 
     def process_event(self, event: PlayerInput) -> Optional[PlayerInput]:
         client = self.client
-        missions = self.character.mission_manager.get_active_missions()
+        missions = self.character.mission_controller.get_active_missions()
         if event.button in (buttons.RIGHT, buttons.LEFT) and event.pressed:
             if len(missions) == 1:
                 return None

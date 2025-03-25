@@ -37,9 +37,9 @@ class SetMissionAction(EventAction):
             return
 
         missions = (
-            character.mission_manager.get_missions_with_met_prerequisites()
+            character.mission_controller.get_missions_with_met_prerequisites()
         )
         if not missions:
             return
         else:
-            character.mission_manager.update_mission_progress()
+            character.mission_controller.update_mission_progress()

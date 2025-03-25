@@ -73,7 +73,9 @@ class WorldMenuState(PygameMenuState):
         if player.menu_player:
             CharacterState = change("CharacterState", kwargs=param)
             menu.append(("menu_player", CharacterState))
-        mission = player.mission_manager.get_missions_with_met_prerequisites()
+        mission = (
+            player.mission_controller.get_missions_with_met_prerequisites()
+        )
         if mission:
             MissionState = change("MissionState", kwargs=param)
             menu.append(("menu_missions", MissionState))
