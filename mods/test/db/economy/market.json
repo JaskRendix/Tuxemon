@@ -1,8 +1,9 @@
 {
   "slug": "market",
+  "monsters": [],
   "items": [
     {
-      "item_name": "tuxeball",
+      "name": "tuxeball",
       "price": 50,
       "cost": 10
     }

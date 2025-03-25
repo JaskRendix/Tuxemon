@@ -110,7 +110,7 @@ class TuxemonConfig:
         self.keyboard_button_map = get_custom_pygame_keyboard_controls(cfg)
 
         # not configurable from the file yet
-        self.mods = ["tuxemon", "test"]
+        self.mods = ["tuxemon"]
 
 
 def get_custom_pygame_keyboard_controls(
