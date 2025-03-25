@@ -24,6 +24,7 @@ from tuxemon.monster import Monster, decode_monsters, encode_monsters
 from tuxemon.prepare import CONFIG
 from tuxemon.session import Session
 from tuxemon.technique.technique import Technique
+from tuxemon.teleporter import TeleportFaint
 from tuxemon.tools import vector2_to_tile_pos
 from tuxemon.tuxepedia import Tuxepedia, decode_tuxepedia, encode_tuxepedia
 
@@ -52,6 +53,7 @@ class NPCState(TypedDict):
     monster_boxes: dict[str, Sequence[Mapping[str, Any]]]
     item_boxes: dict[str, Sequence[Mapping[str, Any]]]
     tile_pos: tuple[int, int]
+    teleport_faint: tuple[str, int, int]
 
 
 def tile_distance(tile0: Iterable[float], tile1: Iterable[float]) -> float:
@@ -114,6 +116,7 @@ class NPC(Entity[NPCState]):
         self.items: list[Item] = []
         self.mission_manager = MissionManager(self)
         self.economy: Optional[Economy] = None
+        self.teleport_faint = TeleportFaint()
         # Variables for long-term item and monster storage
         # Keeping these separate so other code can safely
         # assume that all values are lists
@@ -178,6 +181,7 @@ class NPC(Entity[NPCState]):
             "monster_boxes": dict(),
             "item_boxes": dict(),
             "tile_pos": self.tile_pos,
+            "teleport_faint": self.teleport_faint.to_tuple(),
         }
 
         self.monster_boxes.save(state)
@@ -214,6 +218,10 @@ class NPC(Entity[NPCState]):
         self.money_controller.load(save_data)
         self.monster_boxes.load(save_data)
         self.item_boxes.load(save_data)
+
+        self.teleport_faint = TeleportFaint.from_tuple(
+            save_data["teleport_faint"]
+        )
 
         _template = save_data["template"]
         self.template.slug = _template["slug"]
