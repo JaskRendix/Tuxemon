@@ -7,11 +7,11 @@ import uuid
 from dataclasses import dataclass
 from typing import final
 
-from tuxemon import formula
 from tuxemon.db import SeenStatus, db
 from tuxemon.event import get_monster_by_iid
 from tuxemon.event.eventaction import EventAction
 from tuxemon.monster import Monster
+from tuxemon.time_handler import today_ordinal
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +55,7 @@ class TradingAction(EventAction):
             slot = monster_id.owner.monsters.index(monster_id)
             monster_id.owner.remove_monster(monster_id)
             monster_id.owner.add_monster(new, slot)
+            monster_id.owner.tuxepedia.add_entry(new.slug, SeenStatus.caught)
         else:
             _added_id = uuid.UUID(player.game_variables[self.added])
             added_id = get_monster_by_iid(self.session, _added_id)
@@ -70,7 +71,7 @@ def _create_traded_monster(removed: Monster, added: str) -> Monster:
     new.load_from_db(added)
     new.set_level(removed.level)
     new.set_moves(removed.level)
-    new.set_capture(formula.today_ordinal())
+    new.set_capture(today_ordinal())
     new.current_hp = new.hp
     new.traded = True
     return new
@@ -97,8 +98,8 @@ def _switch_monsters(removed: Monster, added: Monster) -> None:
 
     giver.remove_monster(removed)
     receiver.add_monster(added, slot_removed)
-    receiver.tuxepedia[added.slug] = SeenStatus.caught
+    receiver.tuxepedia.add_entry(added.slug, SeenStatus.caught)
 
     receiver.remove_monster(added)
     giver.add_monster(removed, slot_added)
-    giver.tuxepedia[removed.slug] = SeenStatus.caught
+    giver.tuxepedia.add_entry(removed.slug, SeenStatus.caught)

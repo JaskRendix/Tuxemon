@@ -2,16 +2,19 @@
   "animation": null,
   "accuracy": 0.0,
   "effects": [
-    "plague spyderbite,0.125"
+    {
+      "type": "plague",
+      "parameters": ["spyderbite","0.125"]
+    }
   ],
   "flip_axes": "",
-  "icon": "gfx/ui/icons/status/icon_spyderbite.png",
   "potency": 0.0,
   "power": 0.0,
   "range": "special",
   "sfx": "sfx_pulse",
   "slug": "spyderbite",
   "sort": "meta",
+  "modifiers": [],
   "target": {
     "enemy_monster": false,
     "enemy_team": false,
@@ -21,7 +24,7 @@
     "own_trainer": false
   },
 	"category": "notype",
-	"tags": ["NoType"],
+	"tags": ["notype"],
   "tech_id": 0,
   "use_failure": "combat_miss",
   "use_success": null,

@@ -7,6 +7,7 @@ import inspect
 import logging
 import os
 import sys
+from abc import ABC, abstractmethod
 from collections.abc import Iterable, Mapping, Sequence
 from types import ModuleType
 from typing import (
@@ -18,6 +19,8 @@ from typing import (
     overload,
     runtime_checkable,
 )
+
+from tuxemon.constants.paths import PLUGIN_INCLUDE_PATTERNS
 
 logger = logging.getLogger(__name__)
 log_hdlr = logging.StreamHandler(sys.stdout)
@@ -45,90 +48,141 @@ class Plugin(Generic[T]):
         self.plugin_object = module
 
 
-class PluginManager:
-    """Yapsy semi-compatible plugin manager."""
+class PluginDiscovery(ABC):
+    """
+    Responsible for discovering plugins in a given folder.
+    """
 
-    def __init__(self) -> None:
-        self.folders: list[str] = []
-        self.modules: list[str] = []
-        self.file_extension = (".py", ".pyc")
-        self.exclude_classes = ["IPlugin"]
-        self.include_patterns = [
-            "event.actions",
-            "event.conditions",
-            "item.effects",
-            "item.conditions",
-            "technique.effects",
-            "technique.conditions",
-            "condition.effects",
-            "condition.conditions",
-        ]
+    @abstractmethod
+    def discover_plugins(self) -> list[str]:
+        """Discovers plugin modules."""
 
-    def set_plugin_places(self, plugin_folders: Sequence[str]) -> None:
-        """Set plugin search locations."""
-        self.folders = list(plugin_folders)
+    @abstractmethod
+    def set_folders(self, folders: list[str]) -> None:
+        """Sets the folders to search for plugins."""
 
-    def collect_plugins(self) -> None:
-        """Collect plugins from the specified folders."""
+
+class PluginLoader(ABC):
+    """
+    Responsible for loading plugins from a module.
+    """
+
+    @abstractmethod
+    def load_plugin(self, module_name: str) -> ModuleType:
+        """Loads a plugin module."""
+
+
+class FileSystemPluginDiscovery(PluginDiscovery):
+    FOLDER = "tuxemon"
+    FILE_EXTENSIONS = (".py", ".pyc")
+
+    def __init__(
+        self,
+        folders: list[str],
+        file_extensions: tuple[str, str] = FILE_EXTENSIONS,
+    ):
+        self.folders = folders if folders else []
+        self.file_extensions = file_extensions
+
+    def discover_plugins(self) -> list[str]:
+        """Discovers plugin modules from the file system."""
+        modules = []
         for folder in self.folders:
-            logger.debug(f"Searching for plugins: {folder}")
             if not os.path.exists(folder):
                 logger.warning(f"Folder {folder} does not exist")
                 continue
 
-            folder = folder.replace("\\", "/")
-            match = folder[folder.rfind("tuxemon") :]
-            if not match:
-                raise RuntimeError(
-                    f"Unable to determine plugin module path for: {folder}"
-                )
+            module_path = self._get_module_path(folder)
+            for file_name in os.listdir(folder):
+                if file_name.endswith(self.file_extensions):
+                    module_name = os.path.splitext(file_name)[0]
+                    modules.append(f"{module_path}.{module_name}")
+        return modules
 
-            module_path = match.replace("/", ".")
-            for f in os.listdir(folder):
-                if f.endswith(self.file_extension):
-                    module_name = os.path.splitext(f)[0]
-                    self.modules.append(f"{module_path}.{module_name}")
+    def set_folders(self, folders: list[str]) -> None:
+        """Sets the folders to search for plugins."""
+        self.folders = folders
 
+    def _get_module_path(self, folder: str) -> str:
+        """Converts a folder path to a module path."""
+        folder = folder.replace("\\", "/")
+        match = folder[folder.rfind(self.FOLDER) :]
+        if not match:
+            raise RuntimeError(
+                f"Unable to determine plugin module path for: {folder}"
+            )
+        return match.replace("/", ".")
+
+
+class DefaultPluginLoader(PluginLoader):
+    def load_plugin(self, module_name: str) -> ModuleType:
+        """Loads a plugin module using importlib."""
+        try:
+            return importlib.import_module(module_name)
+        except ImportError as e:
+            logger.error(f"Failed to import module {module_name}: {e}")
+            raise
+
+
+class PluginManager:
+    """Yapsy semi-compatible plugin manager."""
+
+    EXCLUDE_CLASSES = ["IPlugin"]
+    INCLUDE_PATTERNS = PLUGIN_INCLUDE_PATTERNS
+
+    def __init__(
+        self, discovery: PluginDiscovery, loader: PluginLoader
+    ) -> None:
+        self.discovery = discovery
+        self.loader = loader
+        self.modules: list[str] = []
+
+    def collect_plugins(self) -> None:
+        """Collect plugins from the specified folders."""
+        logger.debug("Discovering plugins...")
+        self.modules = self.discovery.discover_plugins()
         logger.debug(f"Modules to load: {self.modules}")
 
     def get_all_plugins(
         self, *, interface: type[InterfaceValue]
     ) -> Sequence[Plugin[type[InterfaceValue]]]:
         """Get all loaded plugins implementing the given interface."""
-
-        if not isinstance(interface, type):
-            raise TypeError("interface must be a type")
-
-        imported_modules: list[Plugin[type[InterfaceValue]]] = []
+        imported_plugins: list[Plugin[type[InterfaceValue]]] = []
         for module_name in self.modules:
-            logger.debug(f"Searching module: {module_name}")
-            try:
-                module = importlib.import_module(module_name)
-            except ImportError as e:
-                logger.error(f"Failed to import module {module_name}: {e}")
+            module = self.loader.load_plugin(module_name)
+            imported_plugins.extend(
+                self._get_plugins_from_module(module, module_name, interface)
+            )
+        return imported_plugins
+
+    def _get_plugins_from_module(
+        self, module: ModuleType, module_name: str, interface: type
+    ) -> list[Plugin[type[InterfaceValue]]]:
+        """
+        Retrieves plugins from a given module, filtering by a specific interface
+        and inclusion patterns.
+        """
+        plugins: list[Plugin[type[InterfaceValue]]] = []
+        for class_name, class_obj in self._get_classes_from_module(
+            module, interface
+        ):
+            if class_name in self.EXCLUDE_CLASSES:
+                logger.debug(f"Skipping {module_name}.{class_name}")
                 continue
 
-            for class_name, class_obj in self._get_classes_from_module(
-                module, interface
+            if any(
+                pattern in str(class_obj) for pattern in self.INCLUDE_PATTERNS
             ):
-                if class_name in self.exclude_classes:
-                    logger.debug(f"Skipping {module_name}")
-                    continue
-
-                if any(
-                    pattern in str(class_obj)
-                    for pattern in self.include_patterns
-                ):
-                    logger.debug(f"Importing: {class_name}")
-                    imported_modules.append(
-                        Plugin(f"{module_name}.{class_name}", class_obj)
-                    )
-
-        return imported_modules
+                logger.debug(f"Importing: {module_name}.{class_name}")
+                plugins.append(
+                    Plugin(f"{module_name}.{class_name}", class_obj)
+                )
+        return plugins
 
     def _get_classes_from_module(
         self, module: ModuleType, interface: type
     ) -> Iterable[tuple[str, type]]:
+        """Retrieves classes from a module that match a given interface."""
         # This is required because of
         # https://github.com/python/typing/issues/822
         #
@@ -152,8 +206,9 @@ def load_directory(plugin_folder: str) -> PluginManager:
     Returns:
         A plugin manager, with the modules already loaded.
     """
-    manager = PluginManager()
-    manager.set_plugin_places([plugin_folder])
+    discovery = FileSystemPluginDiscovery([plugin_folder])
+    loader = DefaultPluginLoader()
+    manager = PluginManager(discovery, loader)
     manager.collect_plugins()
     return manager
 

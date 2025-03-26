@@ -43,7 +43,9 @@ class LocalPygameClient:
 
     """
 
-    def __init__(self, config: TuxemonConfig) -> None:
+    def __init__(
+        self, config: TuxemonConfig, screen: pg.surface.Surface
+    ) -> None:
         self.config = config
 
         self.state_manager = StateManager(
@@ -51,7 +53,7 @@ class LocalPygameClient:
             on_state_change=self.on_state_change,
         )
         self.state_manager.auto_state_discovery()
-        self.screen = pg.display.get_surface()
+        self.screen = screen
         self.caption = config.window_caption
         self.done = False
         self.fps = config.fps
@@ -70,10 +72,8 @@ class LocalPygameClient:
         self.save_to_disk = False
 
         # Set up our networking for multiplayer.
-        self.server = networking.TuxemonServer(self)
-        self.client = networking.TuxemonClient(self)
-        self.ishost = False
-        self.isclient = False
+        self.network_manager = networking.NetworkManager(self)
+        self.network_manager.initialize()
 
         # Set up our combat engine and router.
         # self.combat_engine = CombatEngine(self)
@@ -302,14 +302,10 @@ class LocalPygameClient:
 
         """
         # Update our networking
-        if self.client.listening:
-            self.client.update(time_delta)
-            self.add_clients_to_map(self.client.client.registry)
-        if self.server.listening:
-            self.server.update()
+        self.network_manager.update(time_delta)
 
         # get all the input waiting for use
-        events = self.input_manager.event_queue.process_events()
+        events = self.input_manager.process_events()
 
         # process the events and collect the unused ones
         key_events = list(self.process_events(events))
@@ -403,10 +399,8 @@ class LocalPygameClient:
         Compute and print the frames per second.
 
         This function only prints FPS if that option has been set in the
-        config.
-        In order to have a long enough time interval to accurately compute the
-        FPS, it only prints the FPS if at least one second has elapsed since
-        last time it printed them.
+        config. It only prints the FPS if at least one second has elapsed
+        since the last time it printed them.
 
         Parameters:
             clock_tick: Seconds elapsed since the last ``update`` call.
@@ -417,18 +411,19 @@ class LocalPygameClient:
 
         Returns:
             Updated values of ``fps_timer`` and ``frames``. They will be the
-            same as the valued passed unless the FPS are printed, in which case
+            same as the values passed unless the FPS are printed, in which case
             they are reset to 0.
-
         """
-        if self.show_fps:
-            fps_timer += clock_tick
-            if fps_timer >= 1:
-                with_fps = f"{self.caption} - {frames / fps_timer:.2f} FPS"
-                pg.display.set_caption(with_fps)
-                return 0, 0
+        if not self.show_fps:
             return fps_timer, frames
-        return 0, 0
+
+        fps_timer += clock_tick
+        if fps_timer >= 1:
+            with_fps = f"{self.caption} - {frames / fps_timer:.2f} FPS"
+            pg.display.set_caption(with_fps)
+            return 0, 0
+
+        return fps_timer, frames
 
     def add_clients_to_map(self, registry: Mapping[str, Any]) -> None:
         """
@@ -580,6 +575,14 @@ class LocalPygameClient:
     ) -> State:
         """Replace current state with new one"""
         return self.state_manager.replace_state(state_name, **kwargs)
+
+    def push_state_with_timeout(
+        self,
+        state_name: Union[str, StateType],
+        updates: int = 1,
+    ) -> None:
+        """Push new state, by name, by with timeout"""
+        self.state_manager.push_state_with_timeout(state_name, updates)
 
     @property
     def active_states(self) -> Sequence[State]:
