@@ -55,7 +55,7 @@ class Item:
         self.use_success = ""
         self.use_failure = ""
         self.usable_in: Sequence[State] = []
-        self.cost: Optional[int] = None
+        self.cost: int = 0
 
         self.effect_manager = EffectManager(ItemEffect, paths.ITEM_EFFECT_PATH)
         self.condition_manager = ConditionManager(
