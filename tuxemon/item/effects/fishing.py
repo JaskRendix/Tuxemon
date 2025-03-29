@@ -5,12 +5,12 @@ from __future__ import annotations
 import logging
 import random
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Union
 
 import yaml
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field
 
-from tuxemon.constants.paths import ITEM_EFFECT_PATH
+from tuxemon.constants import paths
 from tuxemon.db import MonsterModel, db
 from tuxemon.item.itemeffect import ItemEffect, ItemEffectResult
 
@@ -20,40 +20,55 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 lookup_cache: dict[str, MonsterModel] = {}
-fishing_configs: dict[str, FishingConfig] = {}
 
 
-class FishingConfig(BaseModel):
-    bait: float = Field(..., ge=0, le=1)
-    lower_bound: int = Field(..., ge=0)
-    upper_bound: int = Field(..., ge=0)
+@dataclass
+class FishingConfig:
+    bait: float
+    lower_bound: int
+    upper_bound: int
     stage: list[str]
     shape: list[str]
     shape_weights: dict[str, float]
     sea_blue_color: list[int]
     environment: dict[str, str]
+    held_items: list[str]
+
+    def validate_parameters(self) -> None:
+        if not (0 <= self.bait <= 1):
+            raise ValueError("Bait must be between 0 and 1 inclusive.")
+        if self.lower_bound < 0:
+            raise ValueError("Lower bound must be non-negative.")
+        if self.upper_bound < 0:
+            raise ValueError("Upper bound must be non-negative.")
+        if self.lower_bound > self.upper_bound:
+            raise ValueError("Lower bound cannot be greater than upper bound.")
 
 
-def load_fishing_config_pydantic(yaml_path: str) -> None:
+def load_yaml(filepath: str) -> Any:
     try:
-        with open(yaml_path) as file:
-            logger.debug("Loading YAML file...")
-            data = yaml.safe_load(file)
-            logger.debug("YAML file loaded. Data:", data)
-            if not isinstance(data, dict):
-                logger.error("Error: Data is not a dictionary.")
-                return
-            fishing_configs["fishing"] = {
-                item_slug: FishingConfig(**item_config)
-                for item_slug, item_config in data.items()
-            }
-            logger.debug("Fishing configs loaded:", fishing_configs)
+        with open(filepath) as file:
+            return yaml.safe_load(file)
     except FileNotFoundError:
-        logger.error("Error: YAML file not found.")
-    except yaml.YAMLError as e:
-        logger.error("Error: YAML file is malformed. Error:", e)
-    except Exception as e:
-        logger.error("Error: An error occurred. Error:", e)
+        logger.error(f"Config file not found: {filepath}")
+        raise
+    except yaml.YAMLError as exc:
+        logger.error(f"Error parsing YAML file: {exc}")
+        raise exc
+
+
+class Loader:
+    _config_fishing: dict[str, FishingConfig] = {}
+
+    @classmethod
+    def get_config_fishing(cls, filename: str) -> dict[str, FishingConfig]:
+        yaml_path = f"{paths.mods_folder}/{filename}"
+        if not cls._config_fishing:
+            raw_map = load_yaml(yaml_path)
+            cls._config_fishing = {
+                key: FishingConfig(**item) for key, item in raw_map.items()
+            }
+        return cls._config_fishing
 
 
 @dataclass
@@ -69,14 +84,10 @@ class FishingEffect(ItemEffect):
             _lookup_monsters()
 
         self.player = self.session.player
+        fishing_configs = Loader.get_config_fishing(f"{self.name}.yaml")
 
-        yaml_filename = f"/{self.name}.yaml"
-        yaml_path = ITEM_EFFECT_PATH + yaml_filename
-
-        if not fishing_configs:
-            load_fishing_config_pydantic(yaml_path)
-
-        self._fish: FishingConfig = fishing_configs["fishing"][item.slug]
+        self._fish: FishingConfig = fishing_configs[item.slug]
+        self._fish.validate_parameters()
 
         monster_lists = self._get_fishing_monsters()
 
@@ -123,9 +134,14 @@ class FishingEffect(ItemEffect):
             else self._fish.environment.get("default")
         )
         rgb = ":".join(map(str, self._fish.sea_blue_color))
+        held_item = (
+            random.choice(self._fish.held_items)
+            if self._fish.held_items
+            else None
+        )
         client.event_engine.execute_action(
             "wild_encounter",
-            [mon_slug, level, None, None, environment, rgb, None],
+            [mon_slug, level, None, None, environment, rgb, held_item],
             True,
         )
 
