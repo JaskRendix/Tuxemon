@@ -248,9 +248,6 @@ WEIGHT_RANGE: tuple[float, float] = (-0.1, 0.1)
 HEIGHT_RANGE: tuple[float, float] = (-0.1, 0.1)
 
 # Capture
-TOTAL_SHAKES: int = 4
-MAX_SHAKE_RATE: int = 65536
-SHAKE_CONSTANT: int = 524325
 # default modifiers
 STATUS_MODIFIER: float = 1.0
 TUXEBALL_MODIFIER: float = 1.0
