@@ -1,12 +1,13 @@
 {
     "active_mods": [
-      "tuxemon"
+      "tuxemon", "test"
     ],
     "mod_versions": {
       "tuxemon": "1.0.0"
     },
     "mod_activation": {
-      "tuxemon": true
+      "tuxemon": true,
+      "test": true
     },
     "mod_tables": {
       "tuxemon": [
@@ -29,7 +30,11 @@
         "mission",
         "terrain",
         "weather"
-      ]
+      ],
+      "test": ["npc"]
     },
-    "mod_table_exclusions": {}
+    "mod_table_exclusions": {},
+    "mod_dependencies": {
+        "test": ["tuxemon"]
+    }
   }

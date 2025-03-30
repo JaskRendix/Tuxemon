@@ -150,7 +150,7 @@ class ModsChoice(PygameMenuState):
             map_path = prepare.fetch("maps", destination)
             self.client.push_state("WorldState", map_name=map_path)
             game_var = local_session.player.game_variables
-            game_var["date_start_game"] = formula.today_ordinal()
+            game_var["date_start_game"] = today_ordinal()
             self.client.remove_state_by_name("StartState")
             self.client.remove_state_by_name("ModsChoice")
 

@@ -97,7 +97,7 @@ class TuxemonConfig:
         self.locale = LocaleConfig(cfg)
 
         # not configurable from the file yet
-        self.mods = ["tuxemon"]
+        self.mods = ["tuxemon", "test"]
 
     def save_config(self) -> None:
         assert self.config_path
