@@ -796,6 +796,9 @@ msgstr "{name} cannot be used on any of your Tuxemon right now."
 msgid "technique_description"
 msgstr "ID.{id} ({types}) - Accuracy {acc}%, Potency {pot}%, Power {pow}/3, Recharge {rec} turns"
 
+msgid "technique_combat"
+msgstr "{name} ({types})\n Power {pow}/{max_pow}\n Accuracy {acc}%\n Recharge {rec} turns"
+
 msgid "technique_id_types_recharge"
 msgstr "ID.{id} ({types}) - Recharge {rec} turns"
 
