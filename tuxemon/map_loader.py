@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0
 # Copyright (c) 2014-2025 William Edwards <shadowapex@gmail.com>, Benjamin Bean <superman2k5@gmail.com>
 import logging
+import os
 import uuid
 from collections.abc import Generator
 from math import cos, pi, sin
@@ -46,6 +47,77 @@ region_properties = [
     "endure",
     "key",
 ]
+
+
+class MapLoader:
+
+    def load_map_data(self, path: str) -> TuxemonMap:
+        """
+        Loads map data from a TMX file and associated YAML event files.
+
+        Parameters:
+            path: The path to the TMX map file.
+
+        Returns:
+            A TuxemonMap object containing the loaded map data and events.
+        """
+        logger.debug(f"Load map '{path}'.")
+        txmn_map = self._load_map_from_disk(path)
+        self._process_and_merge_events(txmn_map, path)
+        return txmn_map
+
+    def _load_map_from_disk(self, path: str) -> TuxemonMap:
+        """
+        Loads only the TMX map data from the file.
+
+        Parameters:
+            path: The path to the TMX map file.
+
+        Returns:
+            A TuxemonMap object with the loaded map data.
+        """
+        try:
+            return TMXMapLoader().load(path)
+        except Exception as e:
+            logger.error(f"Failed to load TMX map from {path}: {e}")
+            raise
+
+    def _process_and_merge_events(
+        self, txmn_map: TuxemonMap, path: str
+    ) -> None:
+        """
+        Processes and merges events from YAML files into the map.
+
+        Parameters:
+            txmn_map: The TuxemonMap object to update.
+            path: The path to the TMX map file for deriving YAML paths.
+        """
+        yaml_files = [path.replace(".tmx", ".yaml")]
+        if txmn_map.scenario:
+            _scenario = prepare.fetch("maps", f"{txmn_map.scenario}.yaml")
+            yaml_files.append(_scenario)
+
+        yaml_loader = YAMLEventLoader()
+        events = {"event": list(txmn_map.events), "init": list(txmn_map.inits)}
+
+        for yaml_file in yaml_files:
+            if os.path.exists(yaml_file):
+                try:
+                    events["event"].extend(
+                        yaml_loader.load_events(yaml_file, "event")["event"]
+                    )
+                    events["init"].extend(
+                        yaml_loader.load_events(yaml_file, "init")["init"]
+                    )
+                except Exception as e:
+                    logger.error(
+                        f"Failed to load events from {yaml_file}: {e}"
+                    )
+            else:
+                logger.warning(f"YAML file {yaml_file} not found")
+
+        txmn_map.events = events["event"]
+        txmn_map.inits = events["init"]
 
 
 class YAMLEventLoader:
