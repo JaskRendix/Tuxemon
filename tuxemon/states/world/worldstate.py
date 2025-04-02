@@ -822,11 +822,16 @@ class WorldState(state.State):
         _events = list(txmn_map.events)
         _inits = list(txmn_map.inits)
         events = {"event": _events, "init": _inits}
+        yaml_collision: MutableMapping[
+            tuple[int, int], Optional[RegionProperties]
+        ] = {}
 
         yaml_loader = YAMLEventLoader()
 
         for yaml_file in yaml_files:
             if os.path.exists(yaml_file):
+                event = yaml_loader.load_collision(yaml_file)
+                yaml_collision.update(event)
                 yaml_data = yaml_loader.load_events(yaml_file, "event")
                 events["event"].extend(yaml_data["event"])
                 yaml_data = yaml_loader.load_events(yaml_file, "init")
@@ -834,6 +839,7 @@ class WorldState(state.State):
             else:
                 logger.warning(f"YAML file {yaml_file} not found")
 
+        txmn_map.collision_map.update(yaml_collision)
         txmn_map.events = events["event"]
         txmn_map.inits = events["init"]
         return txmn_map
