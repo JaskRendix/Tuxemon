@@ -3401,6 +3401,9 @@ msgstr "German"
 msgid "language_eo"
 msgstr "Esperanto"
 
+msgid "language_en_us"
+msgstr "English"
+
 msgid "language_es_es"
 msgstr "Spanish"
 
