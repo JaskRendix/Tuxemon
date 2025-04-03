@@ -13,24 +13,24 @@ from tuxemon.states.world.worldstate import WorldState
 
 @final
 @dataclass
-class ScreenTransitionAction(EventAction):
+class FadeInAction(EventAction):
     """
-    Initiate a screen transition.
+    Fade in.
 
     Script usage:
         .. code-block::
 
-            screen_transition [trans_time][,rgb]
+            fade_in [trans_time][,rgb]
 
     Script parameters:
         trans_time: Transition time in seconds - default 0.3
         rgb: color (eg red > 255,0,0 > 255:0:0) - default rgb(0,0,0)
 
-    eg: "screen_transition 3"
-    eg: "screen_transition 3,255:0:0:50" (red)
+    eg: "fade_in 3"
+    eg: "fade_in 3,255:0:0:50" (red)
     """
 
-    name = "screen_transition"
+    name = "fade_in"
     trans_time: Optional[float] = None
     rgb: Optional[str] = None
 
@@ -43,10 +43,5 @@ class ScreenTransitionAction(EventAction):
         rgb: ColorLike = BLACK_COLOR
         if self.rgb:
             rgb = string_to_colorlike(self.rgb)
-
-        def fade_in() -> None:
-            world.transition_manager.fade_in(_time, rgb)
-
-        world.transition_manager.fade_out(_time, rgb)
-        world.task(fade_in, _time)
+        world.transition_manager.fade_in(_time, rgb)
         self.stop()

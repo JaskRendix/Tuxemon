@@ -35,6 +35,8 @@
 .. autoscriptinfoclass:: tuxemon.event.actions.delayed_teleport.DelayedTeleportAction
 .. autoscriptinfoclass:: tuxemon.event.actions.dojo_method.DojoMethodAction
 .. autoscriptinfoclass:: tuxemon.event.actions.evolution.EvolutionAction
+.. autoscriptinfoclass:: tuxemon.event.actions.fade_in.FadeInAction
+.. autoscriptinfoclass:: tuxemon.event.actions.fade_out.FadeOutAction
 .. autoscriptinfoclass:: tuxemon.event.actions.fadeout_music.FadeoutMusicAction
 .. autoscriptinfoclass:: tuxemon.event.actions.format_variable.FormatVariableAction
 .. autoscriptinfoclass:: tuxemon.event.actions.get_monster_tech.GetMonsterTechAction
