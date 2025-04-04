@@ -6740,32 +6740,62 @@ msgstr "Taste Cold"
 msgid "taste_peppy"
 msgstr "Peppy"
 
+msgid "taste_peppy_description"
+msgstr "A burst of fizzy energy, like popping candy that makes you twitch with anticipation."
+
 msgid "taste_mild"
 msgstr "Mild"
+
+msgid "taste_mild_description"
+msgstr "A gentle, calming flavor, like warm milk that slows the world around you."
 
 msgid "taste_salty"
 msgstr "Salty"
 
+msgid "taste_salty_description"
+msgstr "A briny taste, like seawater on a storm-tossed deck, that strengthens your resolve."
+
 msgid "taste_sweet"
 msgstr "Sweet"
+
+msgid "taste_sweet_description"
+msgstr "A cloying, sugary flavor, like melted candy that makes your limbs heavy."
 
 msgid "taste_hearty"
 msgstr "Hearty"
 
+msgid "taste_hearty_description"
+msgstr "A rich, earthy taste, like dense bread that fortifies your defenses."
+
 msgid "taste_soft"
 msgstr "Soft"
+
+msgid "taste_soft_description"
+msgstr "A delicate, airy flavor, like whipped cream that leaves you feeling vulnerable."
 
 msgid "taste_zesty"
 msgstr "Zesty"
 
+msgid "taste_zesty_description"
+msgstr "A sharp, tangy taste, like citrus sparks that ignite your focus."
+
 msgid "taste_flakey"
 msgstr "Flakey"
+
+msgid "taste_flakey_description"
+msgstr "A crumbly, light flavor, like dry pastry that makes your aim waver."
 
 msgid "taste_refined"
 msgstr "Refined"
 
+msgid "taste_refined_description"
+msgstr "A subtle, elegant taste, like fine tea that sharpens your reflexes."
+
 msgid "taste_dry"
 msgstr "Dry"
+
+msgid "taste_dry_description"
+msgstr "A parched, dusty flavor, like stale crackers that dull your senses."
 
 # Terrains
 
