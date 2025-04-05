@@ -108,21 +108,9 @@ class InputMenu(Menu[InputMenuObj]):
         # add the keys
         for char in self.chars:
             if char == "\0":
-                empty = MenuItem(
-                    self.shadow_text(" "),
-                    None,
-                    None,
-                    InputMenuObj(self.empty),
-                )
-                empty.enabled = False
-                yield empty
+                yield self._create_empty_item()
             else:
-                yield MenuItem(
-                    self.shadow_text(char),
-                    None,
-                    None,
-                    InputMenuObj(partial(self.add_input_char, char), char),
-                )
+                yield self._create_char_item(char)
 
         # backspace key
         yield MenuItem(
@@ -151,43 +139,15 @@ class InputMenu(Menu[InputMenuObj]):
 
     def process_event(self, event: PlayerInput) -> Optional[PlayerInput]:
         if event.button in (buttons.A, intentions.SELECT):
-            menu_item = self.get_selected_item()
-            if menu_item is None:
-                return None
-
-            if event.triggered:
-                if self.leaving_char_variant_dialog:
-                    self.leaving_char_variant_dialog = False
-                else:
-                    menu_item.game_object()
-
-            # Wait roughly 1 sec before showing the char variants menu
-            elif event.held and event.hold_time > self.client.fps:
-                base_char = menu_item.game_object.char
-                if base_char:
-                    variants = self.char_variants.get(base_char, "")
-                    all_variants = base_char + variants
-                    choices = [
-                        (c, c, partial(self.add_input_char_and_pop, c))
-                        for c in all_variants
-                    ]
-                    self.client.push_state(ChoiceState(menu=choices))
+            self._handle_select_event(event)
             return None
-
-        maybe_event = super().process_event(event)
-
-        if maybe_event and maybe_event.pressed:
-            if maybe_event.button == events.BACKSPACE:
-                self.backspace()
-                return None
-
-            if maybe_event.button == events.UNICODE:
-                char = maybe_event.value
-                if char == " " or char in self.all_chars:
-                    self.add_input_char(char)
-                return None
-
-        return maybe_event
+        if event.pressed and event.button == events.BACKSPACE:
+            self._handle_backspace_event()
+            return None
+        if event.pressed and event.button == events.UNICODE:
+            self._handle_unicode_event(event.value)
+            return None
+        return super().process_event(event)
 
     def empty(self) -> None:
         pass
@@ -225,7 +185,8 @@ class InputMenu(Menu[InputMenuObj]):
         """
         if not self.text_area.text:
             return
-        assert self.callback
+        if self.callback is None:
+            raise ValueError("Callback function not provided!")
         self.callback(self.input_string)
         self.client.pop_state(self)
 
@@ -247,3 +208,48 @@ class InputMenu(Menu[InputMenuObj]):
             default_names = T.translate("random_names")
         self.input_string = rd.choice(default_names.split("\n"))
         self.update_text_area()
+
+    def _create_empty_item(self) -> MenuItem[InputMenuObj]:
+        empty = MenuItem(
+            self.shadow_text(" "),
+            None,
+            None,
+            InputMenuObj(self.empty),
+        )
+        empty.enabled = False
+        return empty
+
+    def _create_char_item(self, char: str) -> MenuItem[InputMenuObj]:
+        return MenuItem(
+            self.shadow_text(char),
+            None,
+            None,
+            InputMenuObj(partial(self.add_input_char, char), char),
+        )
+
+    def _handle_select_event(self, event: PlayerInput) -> None:
+        menu_item = self.get_selected_item()
+        if menu_item is None:
+            return
+        if event.triggered:
+            if self.leaving_char_variant_dialog:
+                self.leaving_char_variant_dialog = False
+            else:
+                menu_item.game_object()
+        elif event.held and event.hold_time > self.client.fps:
+            base_char = menu_item.game_object.char
+            if base_char:
+                variants = self.char_variants.get(base_char, "")
+                all_variants = base_char + variants
+                choices = [
+                    (c, c, partial(self.add_input_char_and_pop, c))
+                    for c in all_variants
+                ]
+                self.client.push_state(ChoiceState(menu=choices))
+
+    def _handle_backspace_event(self) -> None:
+        self.backspace()
+
+    def _handle_unicode_event(self, char: str) -> None:
+        if char == " " or char in self.all_chars:
+            self.add_input_char(char)
