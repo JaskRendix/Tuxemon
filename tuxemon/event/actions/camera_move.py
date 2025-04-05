@@ -15,49 +15,50 @@ logger = logging.getLogger(__name__)
 
 @final
 @dataclass
-class CameraPositionAction(EventAction):
+class CameraMoveAction(EventAction):
     """
-    Move the camera on a coordinate.
+    Smoothly move the camera to a specific coordinate or reset it to its original position.
 
     Script usage:
         .. code-block::
 
-            camera_position <x>,<y>
+            camera_move <time>,<x>,<y>
 
     Script parameters:
+        time: the duration (in seconds) required for the camera to transition to the target position.
         x,y: the coordinates where the camera needs to be centered.
-
     """
 
-    name = "camera_position"
+    name = "camera_move"
+    time: float
     x: Optional[int] = None
     y: Optional[int] = None
 
     def start(self) -> None:
         world = self.session.client.get_state_by_name(WorldState)
-        camera = world.camera_manager.get_active_camera()
-        if camera is None:
+        self.camera = world.camera_manager.get_active_camera()
+        if self.camera is None:
             logger.error("No active camera found.")
             return
         if self.x is not None and self.y is not None:
-            map_size = self.session.client.map_size
             if not world.boundary_checker.is_within_boundaries(
                 (self.x, self.y)
             ):
+                map_size = self.session.client.map_size
                 logger.error(
                     f"({self.x, self.y}) is outside the map bounds {map_size}"
                 )
                 return
-            self._move_camera(camera, self.x, self.y)
+            self._move_camera(self.camera, self.x, self.y)
         else:
-            self._reset_camera(camera)
+            self._reset_camera(self.camera)
 
     def _move_camera(self, camera: Camera, x: int, y: int) -> None:
         if camera.follows_entity:
             camera.unfollow()
-        camera.set_position(x, y)
-        logger.info(f"Camera has been set to ({x, y})")
+        camera.move_smoothly_to(x, y, self.time)
+        logger.info(f"Camera has been moved to ({x, y})")
 
     def _reset_camera(self, camera: Camera) -> None:
-        camera.reset_to_entity_center()
+        camera.smooth_reset_to_entity_center(self.time)
         logger.info("Camera has been reset to entity's center")

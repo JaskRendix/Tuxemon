@@ -199,7 +199,7 @@ class WorldState(state.State):
         super().update(time_delta)
         self.update_npcs(time_delta)
         self.map_renderer.update(time_delta)
-        self.camera_manager.update()
+        self.camera_manager.update(time_delta)
 
         logger.debug("*** Game Loop Started ***")
 
