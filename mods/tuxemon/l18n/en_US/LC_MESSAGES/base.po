@@ -9707,48 +9707,67 @@ msgstr "Vince"
 
 msgid "spyder_routea_rosy1"
 msgstr "I came here to play with my Shammer, but he's just lazing around in the sun."
+
 msgid "spyder_routea_rosy2"
 msgstr "That perked him up, thank you!"
+
 msgid "spyder_routea_lotu1"
 msgstr "You younglings, always in such a rush to experience the world."
+
 msgid "spyder_routea_lotu2"
 msgstr "Leave time to stop and smell the flowers every once in a while."
+
 msgid "spyder_routea_connie1"
 msgstr "A morning run's just the thing to clear the head."
+
 msgid "spyder_routea_connie2"
 msgstr "A tuxemon battle, that's the tonic!"
+
 msgid "spyder_routea_lexi1"
 msgstr "There's some great tuxemon on this route!"
+
 msgid "spyder_routea_lexi2"
 msgstr "I simply love bugs, don't you?"
+
 msgid "spyder_routea_joe1"
 msgstr "I got my report card from school yesterday."
+
 msgid "spyder_routea_joe2"
 msgstr "'Needs improvement.'' Where have I heard that before?"
+
 msgid "spyder_routea_koan1"
 msgstr "Flower City is cold but I like where I'm living."
+
 msgid "spyder_routea_koan2"
 msgstr "What can I possibly say?"
+
 msgid "spyder_routea_dagger1"
 msgstr "Someone said you were asking after me."
+
 msgid "spyder_routea_dagger2"
 msgstr "No one said you were asking after me. I'm just a blaggard."
+
 msgid "spyder_routea_doris1"
 msgstr "I love the color of the leaves this time of year."
+
 msgid "spyder_routea_doris2"
 msgstr "Thank you. It's always a pleasure to battle someone new."
+
 msgid "spyder_routea_vince1"
 msgstr "I love to just sit by myself in the park and read."
+
 msgid "spyder_routea_vince2"
 msgstr "... Just me, alone in nature."
+
 msgid "spyder_routea_vince3"
 msgstr "... Gee, you really can't take a hint can you kid?"
+
 msgid "spyder_routea_vince4"
 msgstr "Oh golly, my spine is broken! On my book, I mean."
+
 msgid "spyder_routea_maniac"
 msgstr "It's funny\n I come to the park to get away from people\n but I always end up running into someone I know!"
-msgid "spyder_routea_little1"
-msgstr "The access is blocked. A landslide damaged the route."
+
 msgid "spyder_routea_firefighter"
 msgstr "It's so quiet here.\n It's a nice break from the noise of the city."
 
@@ -12065,8 +12084,6 @@ msgid "spyder_wayfarer2_kim"
 msgstr "Kim"
 msgid "spyder_routea_john"
 msgstr "John"
-msgid "spyder_routea_little"
-msgstr "Little"
 msgid "spyder_candyhouse1_sawyer"
 msgstr "Sawyer"
 msgid "spyder_leathermuseum_giles"
@@ -12097,18 +12114,6 @@ msgid "spyder_cottoncenter_ada"
 msgstr "Ada"
 msgid "spyder_cottoncenter_ada1"
 msgstr "The computer system is experiencing technical difficulties.\n Withdrawing and depositing monsters and items is currently unavailable.\n Thank you for your patience."
-msgid "spyder_candyscoop_clint"
-msgstr "Clint"
-msgid "spyder_cottonscoop_joe"
-msgstr "Joe"
-msgid "spyder_flowerscoop_jarod"
-msgstr "Jarod"
-msgid "spyder_paperscoop_santino"
-msgstr "Santino"
-msgid "spyder_timberscoop_leandro"
-msgstr "Leandro"
-msgid "spyder_leatherscoop_blake"
-msgstr "Blake"
 
 msgid "spyder_riverboatcaptain"
 msgstr "Riverboat Captain"
