@@ -38,5 +38,9 @@
     {
         "slug" : "party6",
         "file" : "tileset"
+    },
+    {
+        "slug" : "splash",
+        "file" : "tileset"
     }
 ]

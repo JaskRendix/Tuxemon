@@ -92,6 +92,8 @@ def configure_game_states(
         client.pop_state()
 
     elif config.splash:
+        client.push_state("SplashState2", parent=client.state_manager)
+        client.push_state("FadeInTransition")
         client.push_state("SplashState", parent=client.state_manager)
         client.push_state("FadeInTransition")
 
