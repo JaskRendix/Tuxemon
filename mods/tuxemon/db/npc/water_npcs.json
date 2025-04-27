@@ -1,0 +1,74 @@
+[
+  {
+    "slug": "water_disciple",
+    "template": {
+      "sprite_name": "disciple",
+      "combat_front": "disciple",
+      "slug": "disciple"
+    }
+  },
+  {
+    "slug": "water_nice_mayor",
+    "template": {
+      "sprite_name": "florist",
+      "combat_front": "florist",
+      "slug": "florist"
+    }
+  },
+  {
+    "slug": "water_niceguy1",
+    "template": {
+      "sprite_name": "knightlord",
+      "combat_front": "knightlord",
+      "slug": "knightlord"
+    }
+  },
+  {
+    "slug": "water_niceguy2",
+    "template": {
+      "sprite_name": "knightlord",
+      "combat_front": "knightlord",
+      "slug": "knightlord"
+    }
+  },
+  {
+    "slug": "water_outskirts_dude",
+    "template": {
+      "sprite_name": "tennisplayer",
+      "combat_front": "tennisplayer",
+      "slug": "tennisplayer"
+    }
+  },
+  {
+    "slug": "water_rock",
+    "template": {
+      "sprite_name": "boulder",
+      "combat_front": "noclass",
+      "slug": "interactive_obj"
+    }
+  },
+  {
+    "slug": "water_rude_dude",
+    "template": {
+      "sprite_name": "tennisplayer",
+      "combat_front": "tennisplayer",
+      "slug": "tennisplayer"
+    }
+  },
+  {
+    "slug": "water_snow_mayor",
+    "template": {
+      "sprite_name": "knightlord",
+      "combat_front": "knightlord",
+      "slug": "knightlord"
+    }
+  },
+  {
+    "slug": "water_jemuar",
+    "template": {
+      "sprite_name": "water_jemuar",
+      "combat_front": "noclass",
+      "slug": "interactive_obj"
+    }
+  }
+]
