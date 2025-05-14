@@ -1,0 +1,4 @@
+name: gain_xp
+version: "1.0.0"
+authors: []
+dependencies: ["give_experience"]

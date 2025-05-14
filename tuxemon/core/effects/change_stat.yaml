@@ -1,0 +1,4 @@
+name: change_stat
+version: "1.0.0"
+authors: []
+dependencies: ["modify_monster_stats"]

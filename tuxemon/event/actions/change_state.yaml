@@ -1,0 +1,4 @@
+name: change_state
+version: "1.0.0"
+authors: []
+dependencies: ["set_tuxepedia", "clear_tuxepedia"]

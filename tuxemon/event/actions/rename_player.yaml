@@ -1,0 +1,4 @@
+name: rename_player
+version: "1.0.0"
+authors: []
+dependencies: ["set_player_name"]

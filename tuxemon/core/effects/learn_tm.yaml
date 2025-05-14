@@ -1,0 +1,4 @@
+name: learn_tm
+version: "1.0.0"
+authors: []
+dependencies: ["set_variable", "add_tech"]

@@ -1,0 +1,4 @@
+name: create_npc
+version: "1.0.0"
+authors: []
+dependencies: ["char_position"]

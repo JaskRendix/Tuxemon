@@ -1,0 +1,4 @@
+name: random_item
+version: "1.0.0"
+authors: []
+dependencies: ["add_item"]

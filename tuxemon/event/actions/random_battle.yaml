@@ -1,0 +1,4 @@
+name: random_battle
+version: "1.0.0"
+authors: []
+dependencies: ["create_npc", "play_music"]

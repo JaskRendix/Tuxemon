@@ -10,6 +10,8 @@ import os
 import sys
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import dataclass, field
+from pathlib import Path
 from types import ModuleType
 from typing import (
     ClassVar,
@@ -22,7 +24,10 @@ from typing import (
     runtime_checkable,
 )
 
+import yaml
+
 from tuxemon.constants.paths import PLUGIN_INCLUDE_PATTERNS
+from tuxemon.version import Version
 
 logger = logging.getLogger(__name__)
 log_hdlr = logging.StreamHandler(sys.stdout)
@@ -30,6 +35,31 @@ log_hdlr.setLevel(logging.DEBUG)
 log_hdlr.setFormatter(
     logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"),
 )
+
+
+@dataclass
+class PluginMetadata:
+    name: str
+    version: Version
+    authors: list[str] = field(default_factory=list)
+    dependencies: list[str] = field(default_factory=list)
+
+    @classmethod
+    def from_yaml(cls, metadata_file: str) -> Optional[PluginMetadata]:
+        """Loads metadata from a YAML file and converts the version field."""
+        if not os.path.exists(metadata_file):
+            return None
+
+        with open(metadata_file, encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+
+        try:
+            data["version"] = Version.from_string(data["version"])
+        except ValueError as e:
+            logger.warning(f"Invalid version format in {metadata_file}: {e}")
+            return None
+
+        return cls(**data)
 
 
 @runtime_checkable
@@ -88,7 +118,7 @@ class FileSystemPluginDiscovery(PluginDiscovery):
                 [
                     f"{module_path}.{os.path.splitext(f)[0]}"
                     for f in os.listdir(folder)
-                    if f.endswith(self.file_extensions)
+                    if f.endswith(self.file_extensions) and f != "__init__.py"
                 ]
             )
         return modules
@@ -193,6 +223,7 @@ class PluginManager:
         self.loader = loader
         self.filter = filter or PluginFilter()
         self.modules: list[str] = []
+        self.plugin_metadata: dict[str, PluginMetadata] = {}
 
     def collect_plugins(self) -> None:
         """Collect plugins from the specified folders."""
@@ -207,6 +238,7 @@ class PluginManager:
         """Get all loaded plugins implementing the given interface."""
         imported_plugins: list[Plugin[type[InterfaceValue]]] = []
         for module_name in self.modules:
+            self.load_plugin_metadata(module_name)
             try:
                 module = self.loader.load_plugin(module_name)
                 imported_plugins.extend(
@@ -219,6 +251,34 @@ class PluginManager:
                     f"Skipping module {module_name} due to import error: {e}"
                 )
         return imported_plugins
+
+    def load_plugin_metadata(self, module: str) -> None:
+        """Load metadata for plugins and validate dependencies."""
+        yaml_path = Path(module.replace(".", "/") + ".yaml")
+        metadata = PluginMetadata.from_yaml(yaml_path.as_posix())
+
+        if metadata is None:
+            logger.error(f"No metadata found for {module}.yaml, skipping.")
+            return
+
+        plugin_name = module.split(".")[-1]
+
+        if plugin_name in self.plugin_metadata:
+            logger.error(
+                f"Plugin '{plugin_name}' is already registered, skipping."
+            )
+            return
+
+        self.plugin_metadata[plugin_name] = metadata
+
+        if not metadata.dependencies:
+            return
+
+        for dependency in metadata.dependencies:
+            if dependency not in self.plugin_metadata:
+                logger.error(
+                    f"Dependency {dependency} of plugin {module} not found."
+                )
 
     def _get_plugins_from_module(
         self, module: ModuleType, module_name: str, interface: type

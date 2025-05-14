@@ -1,0 +1,4 @@
+name: random_encounter
+version: "1.0.0"
+authors: []
+dependencies: ["wild_encounter"]

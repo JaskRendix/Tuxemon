@@ -1,0 +1,4 @@
+name: start_double_battle
+version: "1.0.0"
+authors: []
+dependencies: ["play_music"]
