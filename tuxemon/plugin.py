@@ -36,6 +36,8 @@ log_hdlr.setFormatter(
     logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"),
 )
 
+plugin_metadata: dict[str, PluginMetadata] = {}
+
 
 @dataclass
 class PluginMetadata:
@@ -223,7 +225,6 @@ class PluginManager:
         self.loader = loader
         self.filter = filter or PluginFilter()
         self.modules: list[str] = []
-        self.plugin_metadata: dict[str, PluginMetadata] = {}
 
     def collect_plugins(self) -> None:
         """Collect plugins from the specified folders."""
@@ -238,7 +239,6 @@ class PluginManager:
         """Get all loaded plugins implementing the given interface."""
         imported_plugins: list[Plugin[type[InterfaceValue]]] = []
         for module_name in self.modules:
-            self.load_plugin_metadata(module_name)
             try:
                 module = self.loader.load_plugin(module_name)
                 imported_plugins.extend(
@@ -250,11 +250,16 @@ class PluginManager:
                 logger.error(
                     f"Skipping module {module_name} due to import error: {e}"
                 )
+
+        self.modules.sort()
+        for module_name in self.modules:
+            self.load_plugin_metadata(module_name)
+        validate_plugin_dependencies()
         return imported_plugins
 
     def load_plugin_metadata(self, module: str) -> None:
         """Load metadata for plugins and validate dependencies."""
-        yaml_path = Path(module.replace(".", "/") + ".yaml")
+        yaml_path = Path(module.replace(".", "/")).with_suffix(".yaml")
         metadata = PluginMetadata.from_yaml(yaml_path.as_posix())
 
         if metadata is None:
@@ -263,22 +268,13 @@ class PluginManager:
 
         plugin_name = module.split(".")[-1]
 
-        if plugin_name in self.plugin_metadata:
-            logger.error(
-                f"Plugin '{plugin_name}' is already registered, skipping."
-            )
+        if plugin_name in plugin_metadata:
             return
 
-        self.plugin_metadata[plugin_name] = metadata
+        plugin_metadata[plugin_name] = metadata
 
         if not metadata.dependencies:
             return
-
-        for dependency in metadata.dependencies:
-            if dependency not in self.plugin_metadata:
-                logger.error(
-                    f"Dependency {dependency} of plugin {module} not found."
-                )
 
     def _get_plugins_from_module(
         self, module: ModuleType, module_name: str, interface: type
@@ -344,6 +340,22 @@ def get_available_classes(
         plugin.plugin_object
         for plugin in plugin_manager.get_all_plugins(interface=interface)
     ]
+
+
+def validate_plugin_dependencies() -> None:
+    """Final dependency validation after all plugins are registered."""
+    unresolved_dependencies = []
+
+    for plugin_name, metadata in plugin_metadata.items():
+        if metadata.dependencies:
+            for dependency in metadata.dependencies:
+                if dependency not in plugin_metadata:
+                    unresolved_dependencies.append((plugin_name, dependency))
+
+    for plugin_name, dependency in unresolved_dependencies:
+        logger.error(
+            f"Dependency '{dependency}' required by '{plugin_name}' not found."
+        )
 
 
 # Overloads until https://github.com/python/mypy/issues/3737 is fixed
