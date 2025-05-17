@@ -41,6 +41,7 @@ if TYPE_CHECKING:
     from tuxemon.session import Session
     from tuxemon.sprite import Sprite
     from tuxemon.state import State
+    from tuxemon.technique.technique import Technique
 
 
 logger = logging.getLogger(__name__)
@@ -364,9 +365,9 @@ def cast_dataclass_parameters(self: Any) -> None:
             setattr(self, field_name, new_value)
 
 
-def show_item_result_as_dialog(
+def show_result_as_dialog(
     session: Session,
-    item: Item,
+    entity: Union[Item, Technique],
     result: bool,
 ) -> None:
     """
@@ -374,12 +375,11 @@ def show_item_result_as_dialog(
 
     Parameters:
         session: Game session.
-        item: Item object.
+        entity: Object (Item or Technique).
         result: Boolean indicating success or failure.
-
     """
     msg_type = "use_success" if result else "use_failure"
-    template = getattr(item, msg_type)
+    template = getattr(entity, msg_type)
     if template:
         message = T.translate(replace_text(session, template))
         open_dialog(session.client, [message])

@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any
 import pygame_menu
 
 from tuxemon import prepare
+from tuxemon.db import State
 from tuxemon.locale import T
 from tuxemon.menu.interface import MenuItem
 from tuxemon.menu.menu import PygameMenuState
@@ -73,6 +74,33 @@ class WorldMenuState(PygameMenuState):
             menu.append(
                 ("menu_bag", change("ItemMenuState", character=player))
             )
+        if player.monsters or player.items:
+            techs = (
+                [
+                    move
+                    for monster in player.monsters
+                    for move in monster.moves
+                    if move.usable_on
+                ]
+                if player.monsters
+                else []
+            )
+            items = (
+                [
+                    item
+                    for item in player.items
+                    if item.usable_in
+                    and [State["WorldState"]] == item.usable_in
+                    and item.behaviors.visible
+                ]
+                if player.items
+                else []
+            )
+            if techs or items:
+                UseState = change(
+                    "UseState", character=player, items=items, techs=techs
+                )
+                menu.append(("menu_use", UseState))
         if player.menu_player:
             CharacterState = change("CharacterState", kwargs=param)
             menu.append(("menu_player", CharacterState))

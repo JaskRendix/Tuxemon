@@ -3360,6 +3360,9 @@ msgstr "Minigame"
 msgid "menu_player"
 msgstr "Player"
 
+msgid "menu_use"
+msgstr "Use"
+
 msgid "menu_run"
 msgstr "Run"
 
