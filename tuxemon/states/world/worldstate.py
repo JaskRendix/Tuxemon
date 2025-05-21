@@ -25,6 +25,7 @@ from tuxemon.movement import MovementManager, Pathfinder
 from tuxemon.platform.const import intentions
 from tuxemon.platform.events import PlayerInput
 from tuxemon.platform.tools import translate_input_event
+from tuxemon.player import Player
 from tuxemon.session import local_session
 from tuxemon.state import State
 from tuxemon.states.world.world_transition import WorldTransition
@@ -61,9 +62,6 @@ class WorldState(State):
 
     def __init__(self, map_name: str) -> None:
         super().__init__()
-
-        from tuxemon.player import Player
-
         self.movement = MovementManager(self.client)
         self.teleporter = Teleporter(self.client, self)
         self.pathfinder = Pathfinder(self.client, self)
@@ -73,11 +71,9 @@ class WorldState(State):
 
         self.transition_manager = WorldTransition(self)
 
-        if local_session.player is None:
-            new_player = Player(prepare.PLAYER_NPC, world=self)
-            local_session.player = new_player
+        self.player = Player.create(local_session, self)
 
-        self.camera = Camera(local_session.player, self.client.boundary)
+        self.camera = Camera(self.player, self.client.boundary)
         self.map_renderer = MapRenderer(self, self.screen, self.camera)
         self.camera_manager = CameraManager()
         self.camera_manager.add_camera(self.camera)
@@ -613,7 +609,7 @@ class WorldState(State):
                 if self.wants_duel:
                     if event_data["response"] == "Accept":
                         world = self.client.current_state
-                        pd = local_session.player.__dict__
+                        pd = self.player.__dict__
                         event_data = {
                             "type": "CLIENT_INTERACTION",
                             "interaction": "START_DUEL",
