@@ -96,7 +96,9 @@ def configure_game_states(
         if len(config.mods) == 1:
             destination = f"{prepare.STARTING_MAP}{config.mods[0]}.tmx"
             map_name = prepare.fetch("maps", destination)
-            client.push_state("WorldState", map_name=map_name)
+            client.push_state(
+                "WorldState", session=local_session, map_name=map_name
+            )
         else:
             client.push_state("ModsChoice", mods=config.mods)
 
