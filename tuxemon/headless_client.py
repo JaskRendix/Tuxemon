@@ -7,16 +7,10 @@ import time
 from collections.abc import Mapping, Sequence
 from enum import Enum
 from os.path import basename
-from threading import Thread
 from typing import Any, Optional, TypeVar, Union, overload
-
-import pygame
-from pygame.surface import Surface
 
 from tuxemon.audio import MusicPlayerState, SoundManager
 from tuxemon.boundary import BoundaryChecker
-from tuxemon.camera import CameraManager
-from tuxemon.cli.processor import CommandProcessor
 from tuxemon.config import TuxemonConfig
 from tuxemon.event.eventaction import ActionManager
 from tuxemon.event.eventcondition import ConditionManager
@@ -25,14 +19,12 @@ from tuxemon.event.eventmanager import EventManager
 from tuxemon.event.eventpersist import EventPersist
 from tuxemon.map_loader import MapLoader
 from tuxemon.map_manager import MapManager
-from tuxemon.networking import NetworkManager
 from tuxemon.npc_manager import NPCManager
 from tuxemon.platform.events import PlayerInput
 from tuxemon.platform.input_manager import InputManager
 from tuxemon.rumble import RumbleManager
 from tuxemon.session import local_session
-from tuxemon.state import HookManager, State, StateManager, StateRepository
-from tuxemon.state_draw import EventDebugDrawer, Renderer, StateDrawer
+from tuxemon.state import State, StateManager
 
 StateType = TypeVar("StateType", bound=State)
 
@@ -45,62 +37,34 @@ class ClientState(Enum):
     DONE = "done"
 
 
-class LocalPygameClient:
+class HeadlessClient:
     """
-    Client class for the entire project.
-
-    Contains the game loop and the event_loop, which passes events to
-    States as needed.
+    Headless client for server-side processing of game logic.
+    This client runs without graphics, only handling events and
+    game state updates.
 
     Parameters:
         config: The configuration for the game.
-        screen: The surface where the game is rendered.
     """
 
-    def __init__(self, config: TuxemonConfig, screen: Surface) -> None:
+    def __init__(self, config: TuxemonConfig) -> None:
         self.config = config
 
-        self.hook_manager = HookManager()
-        self.state_repository = StateRepository()
         self.state_manager = StateManager(
-            package="tuxemon.states",
-            hook=self.hook_manager,
-            repository=self.state_repository,
+            "tuxemon.states",
             on_state_change=self.on_state_change,
         )
         self.state_manager.auto_state_discovery()
-        self.screen = screen
         self.state = ClientState.RUNNING
-        self.caption = config.window_caption
-        self.fps = config.fps
         self.show_fps = config.show_fps
         self.current_time = 0.0
 
         # setup controls
         self.input_manager = InputManager(config)
 
-        # movie creation
-        self.frame_number = 0
-        self.save_to_disk = False
-
-        # Initialize drawers
-        self.state_drawer = StateDrawer(
-            self.screen, self.state_manager, config
-        )
-        self.event_debug_drawer = EventDebugDrawer(self.screen)
-        self.renderer = Renderer(
-            self.screen,
-            self.state_drawer,
-            config.window_caption,
-        )
-
         # Set up our networking for multiplayer.
-        self.network_manager = NetworkManager(self)
-        self.network_manager.initialize()
-
-        # Set up our combat engine and router.
-        # self.combat_engine = CombatEngine(self)
-        # self.combat_router = CombatRouter(self, self.combat_engine)
+        # self.network_manager = NetworkManager(self)
+        # self.network_manager.initialize()
 
         # Set up our game's event engine which executes actions based on
         # conditions defined in map files.
@@ -116,22 +80,16 @@ class LocalPygameClient:
         self.map_loader = MapLoader()
         self.map_manager = MapManager()
         self.boundary = BoundaryChecker()
-        self.camera_manager = CameraManager()
 
         # Set up a variable that will keep track of currently playing music.
         self.current_music = MusicPlayerState()
         self.sound_manager = SoundManager()
 
-        if self.config.cli:
-            # TODO: There is no protection for the main thread from the cli
-            # actions that execute in this thread may have undefined
-            # behavior for the game.  at some point, a lock should be
-            # implemented so that actions executed here have exclusive
-            # control of the game loop and state.
-            self.cli = CommandProcessor(self)
-            thread = Thread(target=self.cli.run)
-            thread.daemon = True
-            thread.start()
+        # if self.config.cli:
+        #    self.cli = CommandProcessor(self)
+        #    thread = Thread(target=self.cli.run)
+        #    thread.daemon = True
+        #    thread.start()
 
         # Set up rumble support for gamepads
         self.rumble_manager = RumbleManager()
@@ -159,11 +117,7 @@ class LocalPygameClient:
         This leaves the networking component responsible for the main loop.
         """
         update = self.update
-        draw = self.draw
-        screen = self.screen
-        flip = pygame.display.update
         clock = time.time
-        frame_length = 1.0 / self.fps
         time_since_draw = 0.0
         last_update = clock()
 
@@ -173,14 +127,6 @@ class LocalPygameClient:
                 last_update = clock()
                 time_since_draw += clock_tick
                 update(clock_tick)
-                if time_since_draw >= frame_length:
-                    time_since_draw -= frame_length
-                    draw()
-                    if self.input_manager.controller_overlay:
-                        self.input_manager.controller_overlay.draw(screen)
-                    flip()
-                if self.config.show_fps:
-                    self.renderer.update_fps(clock_tick)
                 time.sleep(0.01)
             elif self.state == ClientState.EXITING:
                 self.perform_cleanup()
@@ -193,13 +139,13 @@ class LocalPygameClient:
         This method gets update every frame
         by Asteria Networking's "listen()" function. Every frame we get the
         amount of time that has passed each frame, check game conditions,
-        and draw the game to the screen.
+        and update the game state.
 
         Parameters:
             time_delta: Elapsed time since last frame.
         """
         # Update our networking
-        self.network_manager.update(time_delta)
+        # self.network_manager.update(time_delta)
 
         # get all the input waiting for use
         events = self.input_manager.process_events()
@@ -238,17 +184,6 @@ class LocalPygameClient:
         self.state_manager.update(time_delta)
         if self.state_manager.current_state is None:
             self.state = ClientState.EXITING
-
-    def draw(self) -> None:
-        """Centralized draw logic."""
-        self.renderer.draw(
-            frame_number=self.frame_number,
-            save_to_disk=self.save_to_disk,
-            collision_map=self.config.collision_map,
-            debug_drawer=self.event_debug_drawer,
-            partial_events=self.event_engine.partial_events,
-        )
-        self.frame_number += 1
 
     def get_map_name(self) -> str:
         """

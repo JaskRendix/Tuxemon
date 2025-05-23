@@ -17,7 +17,7 @@ from typing import (
 from pygame.surface import Surface
 
 from tuxemon import networking, prepare
-from tuxemon.camera import Camera, CameraManager
+from tuxemon.camera import Camera
 from tuxemon.db import Direction
 from tuxemon.map import RegionProperties
 from tuxemon.map_view import MapRenderer
@@ -73,10 +73,9 @@ class WorldState(State):
 
         self.player = Player.create(local_session, self)
 
-        self.camera = Camera(self.player, self.client.boundary)
-        self.map_renderer = MapRenderer(self, self.screen, self.camera)
-        self.camera_manager = CameraManager()
-        self.camera_manager.add_camera(self.camera)
+        self.camera = Camera(local_session.player, self.client.boundary)
+        self.client.camera_manager.add_camera(self.camera)
+        self.map_renderer = MapRenderer(self.client)
 
         if map_name:
             self.change_map(map_name)
@@ -128,7 +127,6 @@ class WorldState(State):
         self.client.npc_manager.update_npcs(time_delta, self.client)
         self.client.npc_manager.update_npcs_off_map(time_delta, self.client)
         self.map_renderer.update(time_delta)
-        self.camera_manager.update(time_delta)
 
         logger.debug("*** Game Loop Started ***")
 
@@ -198,7 +196,7 @@ class WorldState(State):
         # Handle directional movement
         if (direction := direction_map.get(event.button)) is not None:
             if not self.camera.follows_entity:
-                return self.camera_manager.handle_input(event)
+                return self.client.camera_manager.handle_input(event)
             if event.held:
                 self.movement.queue_movement(self.player.slug, direction)
                 if self.movement.is_movement_allowed(self.player):
