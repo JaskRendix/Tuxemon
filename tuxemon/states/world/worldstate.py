@@ -73,9 +73,9 @@ class WorldState(State):
 
         self.transition_manager = WorldTransition(self)
 
-        if local_session.player is None:
+        if not local_session.has_player():
             new_player = Player(prepare.PLAYER_NPC, world=self)
-            local_session.player = new_player
+            local_session.set_player(new_player)
 
         self.camera = Camera(local_session.player, self.client.boundary)
         self.client.camera_manager.add_camera(self.camera)

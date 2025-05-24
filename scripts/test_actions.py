@@ -16,7 +16,7 @@ from tuxemon.session import Session
 db.load("monster")
 action = ActionManager()
 condition = ConditionManager()
-engine = EventEngine(Session(None, None, None), action, condition)
+engine = EventEngine(Session(), action, condition)
 loader = TMXMapLoader()
 loader.image_loader = MagicMock()
 

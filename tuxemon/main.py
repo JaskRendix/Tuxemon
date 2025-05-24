@@ -40,7 +40,7 @@ def main(load_slot: Optional[int] = None) -> None:
     # global/singleton hack for now
     setattr(prepare, "GLOBAL_CONTROL", client)
     # WIP.  Will be more complete with game-view
-    local_session.client = client
+    local_session.set_client(client)
 
     configure_game_states(client, config, load_slot)
 
