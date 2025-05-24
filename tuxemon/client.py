@@ -57,6 +57,26 @@ class LocalPygameClient:
         screen: The surface where the game is rendered.
     """
 
+    @classmethod
+    def create(
+        cls, config: TuxemonConfig, screen: Surface
+    ) -> LocalPygameClient:
+        """
+        Initialize the LocalPygameClient with the given configuration and screen.
+        """
+        try:
+            client = LocalPygameClient(config, screen)
+            logger.info("Client initialized successfully.")
+        except (TypeError, ValueError) as e:
+            logger.error(f"Failed to initialize client: {e}")
+            raise
+        except Exception as e:
+            logger.critical(
+                f"Unexpected error during client initialization: {e}"
+            )
+            raise
+        return client
+
     def __init__(self, config: TuxemonConfig, screen: Surface) -> None:
         self.config = config
 
