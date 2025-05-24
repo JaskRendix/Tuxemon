@@ -6,10 +6,10 @@ import importlib
 import importlib.util
 import inspect
 import logging
-import os
 import sys
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Mapping, Sequence
+from pathlib import Path
 from types import ModuleType
 from typing import (
     ClassVar,
@@ -79,16 +79,17 @@ class FileSystemPluginDiscovery(PluginDiscovery):
         """Discovers plugin modules from the file system."""
         modules = []
         for folder in self.folders:
-            if not os.path.exists(folder):
-                logger.warning(f"Folder {folder} does not exist")
+            folder_path = Path(folder)
+            if not folder_path.exists():
+                logger.warning(f"Folder {folder_path} does not exist")
                 continue
 
-            module_path = self._get_module_path(folder)
+            module_path = self._get_module_path(folder_path.as_posix())
             modules.extend(
                 [
-                    f"{module_path}.{os.path.splitext(f)[0]}"
-                    for f in os.listdir(folder)
-                    if f.endswith(self.file_extensions)
+                    f"{module_path}.{file.stem}"
+                    for file in folder_path.iterdir()
+                    if file.suffix in self.file_extensions and file.is_file()
                 ]
             )
         return modules

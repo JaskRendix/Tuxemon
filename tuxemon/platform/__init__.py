@@ -50,7 +50,7 @@ def init() -> None:
             logger.error(f"Failed to initialize Pygame mixer: {e}")
 
 
-def get_user_storage_dir() -> str:
+def get_user_storage_dir() -> Path:
     """
     Returns the user storage directory.
     Mutable storage for things like config, save games, mods, cache.
@@ -58,8 +58,8 @@ def get_user_storage_dir() -> str:
     if is_android():
         paths = _get_android_storage_paths()
         if paths:
-            return paths[0]
-    return str(Path.home() / ".tuxemon")
+            return Path(paths[0])
+    return Path.home() / ".tuxemon"
 
 
 def is_android() -> bool:
