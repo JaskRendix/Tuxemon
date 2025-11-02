@@ -46,6 +46,7 @@ default_lookup_table: monster
 # A list of mod directories that are currently enabled and should be loaded.
 active_mods:
   - tuxemon
+  - eclipse
 
 # A dictionary indicating whether specific mods are activated. This offers a more
 # granular control over mod loading beyond just being in 'active_mods'.
@@ -78,6 +79,8 @@ mod_tables:
     - terrain
     - weather
     - flair
+  eclipse:
+    - npc
 
 # A dictionary to specify tables that should be excluded for certain mods.
 # For example, a mod might explicitly opt out of providing 'item' data.
@@ -86,4 +89,6 @@ mod_table_exclusions: {}
 
 # A dictionary defining dependencies between mods. If mod A depends on mod B,
 # mod B will be loaded before mod A. Currently, no dependencies are specified.
-mod_dependencies: {}
+mod_dependencies:
+  eclipse:
+    - tuxemon
