@@ -207,7 +207,23 @@ class MovementMiddleware(EventMiddleware):
 
         # Handle directional movement
         if direction:
-            if event.held:
+            logger.debug(
+                f"[INPUT] dir={direction} "
+                f"pressed={event.pressed} held={event.held} released={event.released} "
+                f"hold_time={event.hold_time} hold_duration={event.hold_duration:.3f}"
+            )
+
+            # TAP = FACE (first frame only)
+            if event.pressed:
+                logger.debug(f"[FACE] Facing {direction}")
+                self.character.set_facing(direction)
+                # Do NOT return here; allow walking if held long enough
+
+            # HOLD = WALK
+            if event.is_held(0.15):
+                logger.debug(
+                    f"[MOVE] Walking {direction} (held {event.hold_duration:.3f}s)"
+                )
                 self.movement_manager.queue_movement(
                     self.character.slug, direction
                 )
@@ -215,11 +231,11 @@ class MovementMiddleware(EventMiddleware):
                     self.movement_manager.move_char(self.character, direction)
                 return None
 
-            if (
-                not event.pressed
-                and self.movement_manager.has_pending_movement(self.character)
-            ):
-                self.movement_manager.stop_char(self.character)
+            # RELEASE = STOP
+            if event.released:
+                if self.movement_manager.has_pending_movement(self.character):
+                    logger.debug(f"[STOP] Released {direction}")
+                    self.movement_manager.stop_char(self.character)
                 return None
 
         return event
