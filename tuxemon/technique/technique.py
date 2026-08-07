@@ -246,6 +246,12 @@ class Technique:
             for rule in self.effect_defs
         )
 
+    def targets_enemy(self) -> bool:
+        """Returns True if this technique needs the player to select a specific enemy target."""
+        if self.target.get("enemy_monster"):
+            return True
+        return any("enemy_monster" in e.parameters for e in self.effect_defs)
+
     def use(
         self, session: Session, user: Monster, target: Monster
     ) -> TechEffectResult:

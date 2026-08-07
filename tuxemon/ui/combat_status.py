@@ -60,7 +60,7 @@ class StatusIconManager:
                         sprite = self._state.load_sprite(
                             status.icon,
                             layer=self._layer,
-                            center=position,
+                            topleft=position,
                         )
                         self._status_icon_cache[key] = sprite
                     else:
@@ -126,7 +126,9 @@ class StatusIconManager:
     ) -> tuple[float, float]:
         owner = monster.get_owner()
         layout_data = self._layouts.get(owner, {})
-        key = f"monster_status_icon_slot_{index}"
+        ui = self._tracker._monster_ui.get(monster)
+        is_double = ui.is_double if ui else False
+        key = f"monster_status_icon_slot_{index}" if is_double else "monster_status_icon"
         rects = layout_data.get(key, [])
 
         if not rects:
@@ -147,4 +149,4 @@ class StatusIconManager:
             index = ui.slot_index
             pos = self.get_icon_position(monster, index)
             for icon in ui.status_icons:
-                icon.rect.center = pos
+                icon.rect.topleft = pos

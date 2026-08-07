@@ -26,6 +26,7 @@ class Side(Enum):
 @dataclass
 class MonsterUI:
     slot_index: int = 0
+    is_double: bool = False
     layout_key: str = "home"
     hud_sprite: Sprite | None = None
     status_icons: list[Sprite] = field(default_factory=list)
@@ -70,6 +71,7 @@ class CombatLayoutManager:
         self._layout_keys[(npc, monster)] = key
         self._monster_ui[monster] = MonsterUI(
             slot_index=slot_index,
+            is_double=is_double,
             layout_key=key,
             feet_pos=feet,
         )

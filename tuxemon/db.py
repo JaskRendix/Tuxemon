@@ -634,7 +634,6 @@ class SoundProperties(BaseModel):
 
 class MusicProperties(BaseModel):
     music: str | None = Field(..., description="Music to play")
-    volume: float = Field(..., ge=0.0, description="Playback volume")
 
     @field_validator("music")
     def music_exists(cls, v: str | None) -> str | None:
@@ -2021,6 +2020,15 @@ class NpcTemplateModel(TemplateModel):
     )
     combat_frame_width: int = 64
     combat_frame_height: int = 64
+    combat_back_frame_height: int | None = Field(
+        None,
+        description=(
+            "Optional explicit height of the back frame. The back fills the "
+            "full sheet height and the front is top-aligned within its "
+            "column, so a taller back is normally auto-detected from the PNG "
+            "and this only needs setting to enforce a specific height."
+        ),
+    )
     combat_rows: int = 1
     combat_columns: int = 2
 
@@ -2192,6 +2200,14 @@ class BattleHudModel(BaseModel):
     hud_opponent: str = Field(
         ..., description="Sprite used for hud opponent background"
     )
+    double_player: str = Field(
+        "gfx/ui/combat/double_player.png",
+        description="Sprite used for hud player background in double battles",
+    )
+    double_opponent: str = Field(
+        "gfx/ui/combat/double_opponent.png",
+        description="Sprite used for hud opponent background in double battles",
+    )
     tray_player: str = Field(
         ..., description="Sprite used for tray player background"
     )
@@ -2253,6 +2269,8 @@ class BattleHudModel(BaseModel):
         "hud_opponent",
         "tray_player",
         "tray_opponent",
+        "double_player",
+        "double_opponent",
     )
     def file_exists(cls, v: str) -> str:
         if has.file(v):

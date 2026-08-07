@@ -441,11 +441,11 @@ class CombatAnimations(Menu[None], ABC):
         _, h_align = self.combat_zone.get_zone(hud_rect)
         is_player = h_align is HorizontalAlignment.RIGHT
 
-        hud_graphics = (
-            self.env.get_battle_graphics().hud.hud_player
-            if is_player
-            else self.env.get_battle_graphics().hud.hud_opponent
-        )
+        hud_model = self.env.get_battle_graphics().hud
+        if self.combat_session.is_double:
+            hud_graphics = hud_model.double_player if is_player else hud_model.double_opponent
+        else:
+            hud_graphics = hud_model.hud_player if is_player else hud_model.hud_opponent
 
         hud = self.check_hud(monster, hud_graphics)
         hud.base_image = hud.image.copy()
@@ -508,7 +508,15 @@ class CombatAnimations(Menu[None], ABC):
 
         return tray, party_layout.centerx, party_layout.offset
 
-    def animate_party_hud_right(self, home: Rect) -> tuple[Sprite, int, int]:
+    def animate_party_hud_right(
+        self, home: Rect
+    ) -> tuple[Sprite | None, int, int]:
+        if self.combat_session.is_double:
+            return (
+                None,
+                home.left + self.scale_int(13),
+                self.scale_int(8),
+            )
         hud_data = self.env.data.get_battle_graphics().hud
         party_layout = self.env.get_party_layout("player", home, HUD_LAYER)
 
@@ -681,6 +689,10 @@ class CombatAnimations(Menu[None], ABC):
             self.update_hud(opponent, True, True)
 
         player_pos = layout.get_combatant_pos("player", front_island.rect)
+        # Bring the trainer on lower so the (taller) back sprite sits on the
+        # island rather than floating above it. 64 is a nominal value, scaled
+        # to the current display.
+        player_pos["bottom"] += self.scale_int(64)
         player_surface = player.combat_sheet.back()
         player_surface = graphics.scale_surface(player_surface, self.factor)
         player_back = self.load_surface(player_surface, **player_pos)

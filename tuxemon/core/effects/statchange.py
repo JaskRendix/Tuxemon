@@ -77,6 +77,7 @@ class StatChangeEffect(CoreEffect):
     """
 
     name = "statchange"
+    objectives: str = ""
 
     def apply_status(
         self, session: Session, status: Status
@@ -84,7 +85,7 @@ class StatChangeEffect(CoreEffect):
         host = status.host
 
         if status.has_phase(
-            EffectPhase.PERFORM_STATUS
+            EffectPhase.ON_START
         ) and not status.is_already_applied(self.name):
             apply_stat_modifiers(host, status, status.stat_modifiers)
             status.mark_applied(self.name)
@@ -96,29 +97,12 @@ class StatChangeEffect(CoreEffect):
     def apply_tech_target(
         self, session: Session, tech: Technique, user: Monster, target: Monster
     ) -> TechEffectResult:
-        t = tech.target
-
-        if t["own_monster"]:
-            apply_stat_modifiers(user, tech, tech.stat_modifiers)
-
-        if t["enemy_monster"]:
-            apply_stat_modifiers(target, tech, tech.stat_modifiers)
-
-        if t["own_team"]:
-            for mon in session.client.combat_session.get_own_monsters(user):
-                apply_stat_modifiers(mon, tech, tech.stat_modifiers)
-
-        if t["enemy_team"]:
-            for mon in session.client.combat_session.get_own_monsters(target):
-                apply_stat_modifiers(mon, tech, tech.stat_modifiers)
-
-        if t["own_trainer"]:
-            for mon in session.client.combat_session.get_party(user):
-                apply_stat_modifiers(mon, tech, tech.stat_modifiers)
-
-        if t["enemy_trainer"]:
-            for mon in session.client.combat_session.get_party(target):
-                apply_stat_modifiers(mon, tech, tech.stat_modifiers)
+        if self.objectives:
+            monsters = session.client.combat_session.get_target_monsters(
+                self.objectives.split(":"), user, target
+            )
+            for monster in monsters:
+                apply_stat_modifiers(monster, tech, tech.stat_modifiers)
 
         return TechEffectResult(name=tech.name, success=True)
 
